@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const fs = require('fs');
 const childProcess = require('child_process');
 
@@ -30,6 +31,24 @@ Utils.readFile = function (filePath) {
         fs.readFile(filePath, "utf8", (err, data) => {
             if (err) return reject(err);
             resolve(data);
+        });
+    });
+};
+
+/**
+ * Sorts all files by name in the given dir and returns the contents of the last one.
+ * @param dir the dir in which to lookup the files
+ * @returns {Promise<string>}
+ */
+Utils.readLastFileSortedByName = function (dir) {
+    return new Promise((resolve, reject) => {
+        fs.readdir(dir, (err, files) => {
+            if (err) return reject(err);
+            if (!files.length) return resolve(null);
+
+            files.sort();
+            let fileName = files[files.length - 1];
+            Utils.readFile(path.join(dir, fileName)).then(content => resolve(content));
         });
     });
 };

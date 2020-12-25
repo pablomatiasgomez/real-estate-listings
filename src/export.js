@@ -49,9 +49,12 @@ function initServicesAndExecute() {
             Utils.readFile(`${__project_dir}/urls.txt`),
             Utils.readFile(`${__project_dir}/telegram-token`),
         ]);
-    }).then((urls, telegramToken) => {
-        urls = urls.split("\n").filter(url => !!url);
-        let notifierService = new NotifierService(telegramToken);
+    }).then(result => {
+        let urls = result[0].split("\n")
+            .map(url => url.trim())
+            .filter(url => !!url && !url.startsWith("//"));
+
+        let notifierService = new NotifierService(result[1]);
         exportService = new ExportService(browser, notifierService);
         return exportService.exportData(urls);
     }).finally(() => {

@@ -52,6 +52,7 @@ Browser.prototype.fetchData = function (url) {
         }).then(() => {
             return {
                 id: siteBrowser.name() + "-" + siteBrowser.getId(url),
+                url: url,
                 data: data
             };
         });
