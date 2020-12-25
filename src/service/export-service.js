@@ -6,8 +6,9 @@ const logger = include('utils/logger').newLogger('ExportService');
 
 //----------------------
 
-function ExportService(browser) {
+function ExportService(browser, notifierService) {
     this.browser = browser;
+    this.notifierService = notifierService;
 }
 
 ExportService.prototype.exportData = function (urls) {

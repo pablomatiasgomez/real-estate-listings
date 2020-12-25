@@ -8,3 +8,4 @@ exports/
 .idea
 .nyc_output/
 urls.txt
+telegram-token

@@ -12,6 +12,7 @@ const Utils = include('utils/utils');
 const Browser = include('connector/browser');
 
 const ExportService = include('service/export-service');
+const NotifierService = include('service/notifier-service');
 
 //----------------------
 
@@ -44,10 +45,14 @@ function initServicesAndExecute() {
         browser = new Browser();
         return browser.init();
     }).then(() => {
-        return Utils.readFile(`${__project_dir}/urls.txt`);
-    }).then(urls => {
+        return Promise.all([
+            Utils.readFile(`${__project_dir}/urls.txt`),
+            Utils.readFile(`${__project_dir}/telegram-token`),
+        ]);
+    }).then((urls, telegramToken) => {
         urls = urls.split("\n").filter(url => !!url);
-        exportService = new ExportService(browser);
+        let notifierService = new NotifierService(telegramToken);
+        exportService = new ExportService(browser, notifierService);
         return exportService.exportData(urls);
     }).finally(() => {
         logger.info(`Shutting down the browser..`);
