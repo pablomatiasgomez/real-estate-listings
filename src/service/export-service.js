@@ -20,16 +20,28 @@ ExportService.prototype.exportData = function (urls) {
             return self.browser.fetchData(url);
         }).then(response => {
             logger.info(`Going to save data exported for id ${response.id}`);
-            return Utils.createFile(self.getFilePath(response.id), JSON.stringify(response.data));
+            return self.createDataFile(response.id, response.data);
         }).catch(e => {
             logger.error(`Failed to export data for url: `, url, e);
             throw e;
-        });
-    })
+        }).delay(5000);
+    });
+    return promise;
+};
+
+ExportService.prototype.createDataFile = function (id, data) {
+    let self = this;
+    Utils.createDirIfNotExists(self.getFileDir(id));
+    return Utils.createFile(self.getFilePath(id), JSON.stringify(data));
 };
 
 ExportService.prototype.getFilePath = function (id) {
-    return `${__project_dir}/exports/${id}/${new Date().toISOString().split(".")[0]}.json`;
+    let self = this;
+    return `${self.getFileDir(id)}/${new Date().toISOString().split(".")[0]}.json`;
+};
+
+ExportService.prototype.getFileDir = function (id) {
+    return `${__project_dir}/exports/${id}`;
 };
 
 module.exports = ExportService;

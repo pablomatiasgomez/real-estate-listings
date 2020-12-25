@@ -12,6 +12,10 @@ Utils.CURRENT_BUILD = {
     branch: childProcess.execSync(`git -C ${__project_dir} rev-parse --abbrev-ref HEAD`).toString().trim()
 };
 
+Utils.createDirIfNotExists = function (dir) {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, {recursive: true});
+};
+
 Utils.createFile = function (filePath, contents) {
     return new Promise((resolve, reject) => {
         fs.writeFile(filePath, contents, err => {
