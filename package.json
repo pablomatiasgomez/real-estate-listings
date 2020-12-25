@@ -1,0 +1,30 @@
+{
+  "name": "real-estate-listings",
+  "description": "Script that helps to keep track of the real estate listing changes.",
+  "version": "1.0.0",
+  "main": "src/export.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "url": "https://github.com/pablomatiasgomez/real-estate-listings",
+  "email": "pablomatiasgomez@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pablomatiasgomez/real-estate-listings.git"
+  },
+  "author": {
+    "name": "Pablo Matias Gomez",
+    "email": "pablomatiasgomez@gmail.com",
+    "url": "http://pablomatiasgomez.com.ar"
+  },
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "puppeteer": "^5.5.0"
+  },
+  "bugs": {
+    "url": "https://github.com/pablomatiasgomez/real-estate-listings/issues"
+  },
+  "homepage": "https://github.com/pablomatiasgomez/real-estate-listings#readme",
+  "scripts": {
+    "start": "src/export.js"
+  }
+}
