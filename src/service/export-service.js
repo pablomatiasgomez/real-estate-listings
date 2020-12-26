@@ -18,11 +18,12 @@ ExportService.prototype.exportData = function (urls) {
     logger.info(`Exporting all data...`);
 
     let promise = Promise.resolve();
-    urls.forEach(url => {
+    urls.forEach((url, i) => {
         // We know that zonaprop has some issues with captcha.. so we are ignoring it fow now..
         if (url.indexOf("zonaprop") !== -1) return;
 
         promise = promise.then(() => {
+            logger.info(`[${i + 1}/${urls.length}] Processing url ${url} ..`);
             return self.browser.fetchData(url);
         }).then(response => {
             Utils.createDirIfNotExists(self.getFileDir(response.id));
