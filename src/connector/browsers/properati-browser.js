@@ -28,7 +28,11 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         // noinspection JSUnresolvedVariable
-        return window.__NEXT_DATA__.props.pageProps.property;
+        let response = window.__NEXT_DATA__.props.pageProps.property;
+        // noinspection JSUnresolvedVariable
+        delete response.seller;
+
+        return response;
     });
 };
 
