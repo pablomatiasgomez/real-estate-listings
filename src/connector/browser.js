@@ -13,6 +13,7 @@ const MalumaBrowser = include('connector/maluma-browser');
 const ICasasBrowser = include('connector/icasas-browser');
 const SiGroupBrowser = include('connector/sigroup-browser');
 const CabaPropBrowser = include('connector/cabaprop-browser');
+const VarcasiaBrowser = include('connector/varcasia-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -32,6 +33,7 @@ const SITE_BROWSERS = [
     new ICasasBrowser(),
     new SiGroupBrowser(),
     new CabaPropBrowser(),
+    new VarcasiaBrowser(),
 ];
 
 function Browser() {
