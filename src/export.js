@@ -24,6 +24,13 @@ Array.prototype.flatMap = function (lambda) {
     return Array.prototype.concat.apply([], this.map(lambda));
 };
 
+Array.prototype.shuffle = function () {
+    for (let i = this.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [this[i], this[j]] = [this[j], this[i]];
+    }
+};
+
 //----------------------
 
 let browser;
@@ -53,6 +60,7 @@ function initServicesAndExecute() {
         let urls = result[0].split("\n")
             .map(url => url.trim())
             .filter(url => !!url && !url.startsWith("//"));
+        urls.shuffle();
 
         let notifierService = new NotifierService(result[1]);
         exportService = new ExportService(browser, notifierService);
