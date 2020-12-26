@@ -27,7 +27,7 @@ ProperatiBrowser.prototype.fetchData = function (browserPage, url) {
     logger.info(`Getting url ${url} ..`);
 
     return Promise.resolve().then(() => {
-        return browserPage.goto(url);
+        return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
     }).then(() => {
         return browserPage.evaluate(() => {
             // noinspection JSUnresolvedVariable
