@@ -11,6 +11,7 @@ const RemaxBrowser = include('connector/remax-browser');
 const LaGranInmobiliariaBrowser = include('connector/lagraninmobiliaria-browser');
 const MalumaBrowser = include('connector/maluma-browser');
 const ICasasBrowser = include('connector/icasas-browser');
+const SiGroupBrowser = include('connector/sigroup-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -29,6 +30,7 @@ const SITE_BROWSERS = [
     new LaGranInmobiliariaBrowser(),
     new MalumaBrowser(),
     new ICasasBrowser(),
+    new SiGroupBrowser(),
 ];
 
 function Browser() {
