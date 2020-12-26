@@ -50,7 +50,7 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
             color: false
         });
         if (diff) {
-            logger.info("Differences were found for ${id}", diff);
+            logger.info(`Differences were found for ${id}\n`, diff);
             let message = `A difference was found for: \n` +
                 `ID: ${id}\n` +
                 `URL: ${url}\n\n` +
