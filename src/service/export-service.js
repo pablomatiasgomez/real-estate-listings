@@ -15,7 +15,7 @@ function ExportService(browser, notifierService) {
 
 ExportService.prototype.exportData = function (urls) {
     let self = this;
-    logger.info(`Exporting all urls.. ${urls.length}`);
+    logger.info(`Exporting ${urls.length} urls..`);
 
     let startTime = Date.now();
     let promise = Promise.resolve();
