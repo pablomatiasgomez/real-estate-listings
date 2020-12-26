@@ -42,6 +42,7 @@ Browser.prototype.init = function () {
         return puppeteer.launch({
             headless: !DEBUG,
             devtools: DEBUG,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
         });
     }).then(browser => {
         self.browser = browser;
