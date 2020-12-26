@@ -28,15 +28,15 @@ ProperatiBrowser.prototype.fetchData = function (browserPage, url) {
 
     return Promise.resolve().then(() => {
         return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).then(() => {
+    }).delay(5000).then(() => {
         return browserPage.evaluate(() => {
             // noinspection JSUnresolvedVariable
             return window.__NEXT_DATA__.props.pageProps.property;
         });
-    }).delay(1000).then(data => {
+    }).delay(3000).then(data => {
         logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
         return data;
-    }).delay(1000);
+    });
 };
 
 // ---------

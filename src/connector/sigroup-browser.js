@@ -28,7 +28,7 @@ SiGroupBrowser.prototype.fetchData = function (browserPage, url) {
 
     return Promise.resolve().then(() => {
         return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).then(() => {
+    }).delay(5000).then(() => {
         return browserPage.evaluate(() => {
             let response = {};
 
@@ -50,10 +50,10 @@ SiGroupBrowser.prototype.fetchData = function (browserPage, url) {
 
             return response;
         });
-    }).delay(1000).then(data => {
+    }).delay(3000).then(data => {
         logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
         return data;
-    }).delay(1000);
+    });
 };
 
 // ---------
