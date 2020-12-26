@@ -1,6 +1,10 @@
 'use strict';
 
-const puppeteer = require('puppeteer');
+//const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
+const UserAgents = require('user-agents');
 
 const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
 const ArgenPropBrowser = include('connector/browsers/argenprop-browser');
@@ -43,7 +47,10 @@ function Browser() {
 Browser.prototype.init = function () {
     let self = this;
 
+    self.userAgents = new UserAgents();
+
     return Promise.resolve().then(() => {
+        puppeteer.use(StealthPlugin());
         return puppeteer.launch({
             headless: !DEBUG,
             devtools: DEBUG,
@@ -71,6 +78,19 @@ Browser.prototype.fetchData = function (url) {
     }).then(page => {
         let data;
         return Promise.resolve().then(() => {
+            // Randomize viewport
+            return page.setViewport({
+                width: 1920 + Math.floor(Math.random() * 100),
+                height: 3000 + Math.floor(Math.random() * 100),
+                deviceScaleFactor: 1,
+                hasTouch: false,
+                isLandscape: false,
+                isMobile: false,
+            });
+        }).then(() => {
+            // Randomize user agent
+            return page.setUserAgent(self.userAgents.toString());
+        }).then(() => {
             return page.goto(url, {
                 waitUntil: 'load',
                 timeout: 60 * 1000,
