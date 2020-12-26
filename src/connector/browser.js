@@ -8,6 +8,7 @@ const MercadoLibreBrowser = include('connector/mercadolibre-browser');
 const ProperatiBrowser = include('connector/properati-browser');
 const EnBuenosAiresBrowser = include('connector/enbuenosaires-browser');
 const RemaxBrowser = include('connector/remax-browser');
+const LaGranInmobiliaria = include('connector/lagraninmobiliaria-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -23,6 +24,7 @@ const SITE_BROWSERS = [
     new ProperatiBrowser(),
     new EnBuenosAiresBrowser(),
     new RemaxBrowser(),
+    new LaGranInmobiliaria(),
 ];
 
 function Browser() {
