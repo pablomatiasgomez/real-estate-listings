@@ -29,7 +29,6 @@ ArgenPropBrowser.prototype.fetchData = function (browserPage, url) {
     return Promise.resolve().then(() => {
         return browserPage.goto(url);
     }).then(() => {
-
         return browserPage.evaluate(() => {
             let response = {};
 
