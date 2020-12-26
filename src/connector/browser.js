@@ -6,6 +6,7 @@ const ZonaPropBrowser = include('connector/zonaprop-browser');
 const ArgenPropBrowser = include('connector/argenprop-browser');
 const MercadoLibreBrowser = include('connector/mercadolibre-browser');
 const ProperatiBrowser = include('connector/properati-browser');
+const EnBuenosAiresBrowser = include('connector/enbuenosaires-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -19,6 +20,7 @@ const SITE_BROWSERS = [
     new ArgenPropBrowser(),
     new MercadoLibreBrowser(),
     new ProperatiBrowser(),
+    new EnBuenosAiresBrowser(),
 ];
 
 function Browser() {
