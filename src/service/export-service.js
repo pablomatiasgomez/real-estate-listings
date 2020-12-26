@@ -31,7 +31,8 @@ ExportService.prototype.exportData = function (urls) {
             });
         }).catch(e => {
             logger.error(`Failed to export data for url: `, url, e);
-            throw e;
+            // Log error to telegram and continue
+            self.notifierService.notify(`Unable to export data for url ${url}`);
         }).delay(5000);
     });
     return promise;

@@ -7,6 +7,7 @@ const ArgenPropBrowser = include('connector/argenprop-browser');
 const MercadoLibreBrowser = include('connector/mercadolibre-browser');
 const ProperatiBrowser = include('connector/properati-browser');
 const EnBuenosAiresBrowser = include('connector/enbuenosaires-browser');
+const RemaxBrowser = include('connector/remax-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -21,6 +22,7 @@ const SITE_BROWSERS = [
     new MercadoLibreBrowser(),
     new ProperatiBrowser(),
     new EnBuenosAiresBrowser(),
+    new RemaxBrowser(),
 ];
 
 function Browser() {
@@ -63,6 +65,9 @@ Browser.prototype.fetchData = function (url) {
                 url: url,
                 data: data
             };
+        }).catch(e => {
+            logger.error(`Unable to fetch data for url ${url}.. `, e);
+            throw e;
         });
     });
 
