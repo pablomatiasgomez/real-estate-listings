@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('ZonaPropBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/.*.zonaprop.com.ar\/.*-(\d+).html$/;
+const URL_REGEX = /^https?:\/\/www.zonaprop.com.ar\/.*-(\d+).html$/;
 
 function ZonaPropBrowser() {
 }

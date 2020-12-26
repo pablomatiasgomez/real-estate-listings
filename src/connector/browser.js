@@ -3,6 +3,7 @@
 const puppeteer = require('puppeteer');
 
 const ZonaPropBrowser = include('connector/zonaprop-browser');
+const ArgenPropBrowser = include('connector/argenprop-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -12,7 +13,8 @@ const logger = include('utils/logger').newLogger('Browser');
 const DEBUG = true;
 
 const SITE_BROWSERS = [
-    new ZonaPropBrowser()
+    new ZonaPropBrowser(),
+    new ArgenPropBrowser()
 ];
 
 function Browser() {

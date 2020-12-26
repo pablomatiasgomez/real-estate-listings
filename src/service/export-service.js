@@ -22,6 +22,8 @@ ExportService.prototype.exportData = function (urls) {
         promise = promise.then(() => {
             return self.browser.fetchData(url);
         }).then(response => {
+            Utils.createDirIfNotExists(self.getFileDir(response.id));
+
             // First we check for data changes and notify:
             return self.verifyDataDifference(response.url, response.id, response.data).then(() => {
                 logger.info(`Going to save data exported for id ${response.id}`);
@@ -68,7 +70,6 @@ ExportService.prototype.getLastDataFile = function (id) {
 
 ExportService.prototype.createDataFile = function (id, data) {
     let self = this;
-    Utils.createDirIfNotExists(self.getFileDir(id));
     return Utils.createFile(self.getFilePath(id), JSON.stringify(data));
 };
 
