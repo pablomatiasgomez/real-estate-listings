@@ -70,10 +70,12 @@ Browser.prototype.fetchData = function (url) {
         return self.browser.newPage();
     }).then(page => {
         let data;
-        return page.goto(url, {
-            waitUntil: 'load',
-            timeout: 60 * 1000,
-            referer: "https://www.google.com/"
+        return Promise.resolve().then(() => {
+            return page.goto(url, {
+                waitUntil: 'load',
+                timeout: 60 * 1000,
+                referer: "https://www.google.com/"
+            });
         }).delay(5000).then(() => {
             return siteBrowser.extractData(page);
         }).delay(3000).then(d => {
