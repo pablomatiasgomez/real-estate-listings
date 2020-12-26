@@ -19,6 +19,9 @@ ExportService.prototype.exportData = function (urls) {
 
     let promise = Promise.resolve();
     urls.forEach(url => {
+        // We know that zonaprop has some issues with captcha.. so we are ignoring it fow now..
+        if (url.indexOf("zonaprop") !== -1) return;
+
         promise = promise.then(() => {
             return self.browser.fetchData(url);
         }).then(response => {
@@ -31,10 +34,6 @@ ExportService.prototype.exportData = function (urls) {
             });
         }).catch(e => {
             logger.error(`Failed to export data for url: `, url, e);
-
-            // We know that zonaprop has some issues with captcha.. so we are ignoring it fow now..
-            if (url.indexOf("zonaprop") !== -1) return;
-
             // Log error to telegram and continue
             self.notifierService.notify(`Failed to export data for url ${url}`);
         }).delay(20000);
