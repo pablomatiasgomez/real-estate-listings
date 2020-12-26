@@ -2,18 +2,18 @@
 
 const puppeteer = require('puppeteer');
 
-const ZonaPropBrowser = include('connector/zonaprop-browser');
-const ArgenPropBrowser = include('connector/argenprop-browser');
-const MercadoLibreBrowser = include('connector/mercadolibre-browser');
-const ProperatiBrowser = include('connector/properati-browser');
-const EnBuenosAiresBrowser = include('connector/enbuenosaires-browser');
-const RemaxBrowser = include('connector/remax-browser');
-const LaGranInmobiliariaBrowser = include('connector/lagraninmobiliaria-browser');
-const MalumaBrowser = include('connector/maluma-browser');
-const ICasasBrowser = include('connector/icasas-browser');
-const SiGroupBrowser = include('connector/sigroup-browser');
-const CabaPropBrowser = include('connector/cabaprop-browser');
-const VarcasiaBrowser = include('connector/varcasia-browser');
+const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
+const ArgenPropBrowser = include('connector/browsers/argenprop-browser');
+const MercadoLibreBrowser = include('connector/browsers/mercadolibre-browser');
+const ProperatiBrowser = include('connector/browsers/properati-browser');
+const EnBuenosAiresBrowser = include('connector/browsers/enbuenosaires-browser');
+const RemaxBrowser = include('connector/browsers/remax-browser');
+const LaGranInmobiliariaBrowser = include('connector/browsers/lagraninmobiliaria-browser');
+const MalumaBrowser = include('connector/browsers/maluma-browser');
+const ICasasBrowser = include('connector/browsers/icasas-browser');
+const SiGroupBrowser = include('connector/browsers/sigroup-browser');
+const CabaPropBrowser = include('connector/browsers/cabaprop-browser');
+const VarcasiaBrowser = include('connector/browsers/varcasia-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
