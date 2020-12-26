@@ -63,7 +63,7 @@ MercadoLibreBrowser.prototype.fetchData = function (browserPage, url) {
             return response;
         });
     }).delay(1000).then(data => {
-        logger.info(`Data fetched from url ${url}:`, JSON.stringify(data));
+        logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
         return data;
     }).delay(1000);
 };
