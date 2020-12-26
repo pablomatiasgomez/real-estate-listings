@@ -23,55 +23,48 @@ ICasasBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-ICasasBrowser.prototype.fetchData = function (browserPage, url) {
-    logger.info(`Getting url ${url} ..`);
+ICasasBrowser.prototype.extractData = function (browserPage) {
+    logger.info(`Extracting data...`);
 
-    return Promise.resolve().then(() => {
-        return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).delay(5000).then(() => {
-        return browserPage.evaluate(() => {
-            let response = {};
+    return browserPage.evaluate(() => {
+        let response = {};
 
-            // Title
-            let title = document.querySelector("#firstLine h1").innerText;
-            response.title = title;
-            let subtitle = document.querySelector("#firstLine h2").innerText;
-            response.subtitle = subtitle;
+        // Title
+        let title = document.querySelector("#firstLine h1").innerText;
+        response.title = title;
+        let subtitle = document.querySelector("#firstLine h2").innerText;
+        response.subtitle = subtitle;
 
-            // Description
-            let description = document.querySelector(".description").innerText;
-            response.description = description;
+        // Description
+        let description = document.querySelector(".description").innerText;
+        response.description = description;
 
-            // Price
-            let price = document.querySelector(".price").innerText;
-            response.price = price;
+        // Price
+        let price = document.querySelector(".price").innerText;
+        response.price = price;
 
-            // Location
-            let address = document.querySelector(".location_info").innerText;
-            response.address = address;
+        // Location
+        let address = document.querySelector(".location_info").innerText;
+        response.address = address;
 
-            // Pictures
-            let picturesSlider = document.querySelector(".slick-track");
-            if (picturesSlider) {
-                let pictureUrls = [...picturesSlider.querySelectorAll("img")].map(img => {
-                    return img.getAttribute("data-lazy") || img.src;
-                });
-                response.pictures = pictureUrls;
-            }
-
-            // Property features
-            [...document.querySelectorAll(".list li")].forEach(li => {
-                response[li.innerText.trim()] = true;
+        // Pictures
+        let picturesSlider = document.querySelector(".slick-track");
+        if (picturesSlider) {
+            let pictureUrls = [...picturesSlider.querySelectorAll("img")].map(img => {
+                return img.getAttribute("data-lazy") || img.src;
             });
-            [...document.querySelectorAll(".details_list li")].forEach(li => {
-                response[li.className.trim()] = li.innerText.trim();
-            });
+            response.pictures = pictureUrls;
+        }
 
-            return response;
+        // Property features
+        [...document.querySelectorAll(".list li")].forEach(li => {
+            response[li.innerText.trim()] = true;
         });
-    }).delay(3000).then(data => {
-        logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
-        return data;
+        [...document.querySelectorAll(".details_list li")].forEach(li => {
+            response[li.className.trim()] = li.innerText.trim();
+        });
+
+        return response;
     });
 };
 

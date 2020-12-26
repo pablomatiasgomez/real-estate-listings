@@ -23,19 +23,12 @@ ProperatiBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-ProperatiBrowser.prototype.fetchData = function (browserPage, url) {
-    logger.info(`Getting url ${url} ..`);
+ProperatiBrowser.prototype.extractData = function (browserPage) {
+    logger.info(`Extracting data...`);
 
-    return Promise.resolve().then(() => {
-        return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).delay(5000).then(() => {
-        return browserPage.evaluate(() => {
-            // noinspection JSUnresolvedVariable
-            return window.__NEXT_DATA__.props.pageProps.property;
-        });
-    }).delay(3000).then(data => {
-        logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
-        return data;
+    return browserPage.evaluate(() => {
+        // noinspection JSUnresolvedVariable
+        return window.__NEXT_DATA__.props.pageProps.property;
     });
 };
 

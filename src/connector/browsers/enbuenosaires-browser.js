@@ -23,63 +23,56 @@ EnBuenosAiresBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-EnBuenosAiresBrowser.prototype.fetchData = function (browserPage, url) {
-    logger.info(`Getting url ${url} ..`);
+EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
+    logger.info(`Extracting data...`);
 
-    return Promise.resolve().then(() => {
-        return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).delay(5000).then(() => {
-        return browserPage.evaluate(() => {
-            let response = {};
+    return browserPage.evaluate(() => {
+        let response = {};
 
-            // Title
-            let title = document.getElementsByTagName("h1")[0].innerText;
-            response.title = title;
+        // Title
+        let title = document.getElementsByTagName("h1")[0].innerText;
+        response.title = title;
 
-            // Description & features
-            [...document.querySelectorAll(".clearfloats .row")].forEach(row => {
-                let infoList = row.querySelector(".info_list");
-                if (infoList) {
-                    let keys = infoList.querySelectorAll("dt");
-                    let values = infoList.querySelectorAll("dd");
-                    if (keys.length !== values.length) {
-                        throw "keys and values length differ!";
-                    }
-                    for (let i = 0; i < keys.length; i++) {
-                        response[keys[i].innerText.trim()] = values[i].innerText.trim();
-                    }
+        // Description & features
+        [...document.querySelectorAll(".clearfloats .row")].forEach(row => {
+            let infoList = row.querySelector(".info_list");
+            if (infoList) {
+                let keys = infoList.querySelectorAll("dt");
+                let values = infoList.querySelectorAll("dd");
+                if (keys.length !== values.length) {
+                    throw "keys and values length differ!";
                 }
-
-                let isDescription = !!row.querySelector("p[itemprop='description']");
-                if (isDescription) {
-                    response.description = row.querySelectorAll("p")[1].innerText;
+                for (let i = 0; i < keys.length; i++) {
+                    response[keys[i].innerText.trim()] = values[i].innerText.trim();
                 }
-            });
-
-            // Pictures
-            let pictureUrls = [...document.querySelectorAll(".gallery img")].map(img => {
-                return img.getAttribute("data-lazy") || img.src;
-            }).filter(pictureUrl => {
-                return pictureUrl.indexOf("AbstractDefaultAjaxBehavior") === -1;
-            });
-            response.pictures = pictureUrls;
-
-            // Price history
-            let priceHistory = document.querySelector("#stats");
-            if (priceHistory) {
-                response.priceHistory = [...priceHistory.querySelectorAll("li")].map(li => {
-                    return {
-                        date: li.querySelector("span").innerText.trim(),
-                        price: li.querySelector("strong").innerText.trim()
-                    };
-                });
             }
 
-            return response;
+            let isDescription = !!row.querySelector("p[itemprop='description']");
+            if (isDescription) {
+                response.description = row.querySelectorAll("p")[1].innerText;
+            }
         });
-    }).delay(3000).then(data => {
-        logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
-        return data;
+
+        // Pictures
+        let pictureUrls = [...document.querySelectorAll(".gallery img")].map(img => {
+            return img.getAttribute("data-lazy") || img.src;
+        }).filter(pictureUrl => {
+            return pictureUrl.indexOf("AbstractDefaultAjaxBehavior") === -1;
+        });
+        response.pictures = pictureUrls;
+
+        // Price history
+        let priceHistory = document.querySelector("#stats");
+        if (priceHistory) {
+            response.priceHistory = [...priceHistory.querySelectorAll("li")].map(li => {
+                return {
+                    date: li.querySelector("span").innerText.trim(),
+                    price: li.querySelector("strong").innerText.trim()
+                };
+            });
+        }
+
+        return response;
     });
 };
 

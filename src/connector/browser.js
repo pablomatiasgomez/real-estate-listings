@@ -69,8 +69,16 @@ Browser.prototype.fetchData = function (url) {
     return Promise.resolve().then(() => {
         return self.browser.newPage();
     }).then(page => {
+        logger.info(`Getting url ${url} ..`);
         let data;
-        return siteBrowser.fetchData(page, url).then(d => {
+        return page.goto(url, {
+            waitUntil: 'load',
+            timeout: 60 * 1000,
+            referer: "https://www.google.com/"
+        }).delay(5000).then(() => {
+            return siteBrowser.extractData(page);
+        }).delay(3000).then(d => {
+            logger.info(`Data fetched from url ${url}: `, JSON.stringify(d).length);
             data = d;
             return page.close();
         }).then(() => {

@@ -23,53 +23,46 @@ MercadoLibreBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-MercadoLibreBrowser.prototype.fetchData = function (browserPage, url) {
-    logger.info(`Getting url ${url} ..`);
+MercadoLibreBrowser.prototype.extractData = function (browserPage) {
+    logger.info(`Extracting data...`);
 
-    return Promise.resolve().then(() => {
-        return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).delay(5000).then(() => {
-        return browserPage.evaluate(() => {
-            let response = {};
+    return browserPage.evaluate(() => {
+        let response = {};
 
-            if (!document.getElementsByClassName("item-title__primary")[0]) {
-                // No data was found (probably got redirected and the house no longer exists?)
-                return response;
-            }
-
-            // Title
-            let title = document.getElementsByClassName("item-title__primary")[0].innerText;
-            response.title = title;
-
-            // Description
-            let description = document.getElementById("description-includes").innerText;
-            response.description = description;
-
-            // Price
-            let price = document.getElementsByClassName("item-price")[0].innerText.replace("\n", " ");
-            response.price = price;
-
-            // Location
-            let address = document.getElementsByClassName("seller-location")[0].innerText.replace("\n", " ");
-            response.address = address;
-
-            // Property features
-            [...document.getElementsByClassName("specs-item")].forEach(li => {
-                let keyValue = li.innerText.split("\n").map(i => i.trim());
-                response[keyValue[0]] = keyValue[1] || true;
-            });
-
-            // Pictures
-            let pictureUrls = [...document.querySelectorAll("#gallery_dflt img")].map(img => {
-                return img.src;
-            });
-            response.pictures = pictureUrls;
-
+        if (!document.getElementsByClassName("item-title__primary")[0]) {
+            // No data was found (probably got redirected and the house no longer exists?)
             return response;
+        }
+
+        // Title
+        let title = document.getElementsByClassName("item-title__primary")[0].innerText;
+        response.title = title;
+
+        // Description
+        let description = document.getElementById("description-includes").innerText;
+        response.description = description;
+
+        // Price
+        let price = document.getElementsByClassName("item-price")[0].innerText.replace("\n", " ");
+        response.price = price;
+
+        // Location
+        let address = document.getElementsByClassName("seller-location")[0].innerText.replace("\n", " ");
+        response.address = address;
+
+        // Property features
+        [...document.getElementsByClassName("specs-item")].forEach(li => {
+            let keyValue = li.innerText.split("\n").map(i => i.trim());
+            response[keyValue[0]] = keyValue[1] || true;
         });
-    }).delay(3000).then(data => {
-        logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
-        return data;
+
+        // Pictures
+        let pictureUrls = [...document.querySelectorAll("#gallery_dflt img")].map(img => {
+            return img.src;
+        });
+        response.pictures = pictureUrls;
+
+        return response;
     });
 };
 

@@ -23,40 +23,33 @@ MalumaBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-MalumaBrowser.prototype.fetchData = function (browserPage, url) {
-    logger.info(`Getting url ${url} ..`);
+MalumaBrowser.prototype.extractData = function (browserPage) {
+    logger.info(`Extracting data...`);
 
-    return Promise.resolve().then(() => {
-        return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).delay(5000).then(() => {
-        return browserPage.evaluate(() => {
-            let response = {};
+    return browserPage.evaluate(() => {
+        let response = {};
 
-            let script = [...document.getElementsByTagName("script")]
-                .filter(script => script.innerText.indexOf("fichas.propiedades") !== -1)
-                [0]
-                .innerText;
+        let script = [...document.getElementsByTagName("script")]
+            .filter(script => script.innerText.indexOf("fichas.propiedades") !== -1)
+            [0]
+            .innerText;
 
-            let successFnStr = "success:function(response){";
+        let successFnStr = "success:function(response){";
 
-            let startingFunctionIndex = script.indexOf(successFnStr);
-            if (startingFunctionIndex === -1) throw "Couldn't find success fn!";
+        let startingFunctionIndex = script.indexOf(successFnStr);
+        if (startingFunctionIndex === -1) throw "Couldn't find success fn!";
 
-            script = script.substring(0, startingFunctionIndex + successFnStr.length);
+        script = script.substring(0, startingFunctionIndex + successFnStr.length);
 
-            // Create global fn where we will be called.
-            window.customOnSuccessFn = function (r) {
-                response = r;
-            };
+        // Create global fn where we will be called.
+        window.customOnSuccessFn = function (r) {
+            response = r;
+        };
 
-            script += "window.customOnSuccessFn(response); }, async:false });";
+        script += "window.customOnSuccessFn(response); }, async:false });";
 
-            eval(script); // jshint ignore:line
-            return response;
-        });
-    }).delay(3000).then(data => {
-        logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
-        return data;
+        eval(script); // jshint ignore:line
+        return response;
     });
 };
 

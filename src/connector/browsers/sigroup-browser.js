@@ -23,36 +23,29 @@ SiGroupBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-SiGroupBrowser.prototype.fetchData = function (browserPage, url) {
-    logger.info(`Getting url ${url} ..`);
+SiGroupBrowser.prototype.extractData = function (browserPage) {
+    logger.info(`Extracting data...`);
 
-    return Promise.resolve().then(() => {
-        return browserPage.goto(url, {waitUntil: 'load', timeout: 60 * 1000});
-    }).delay(5000).then(() => {
-        return browserPage.evaluate(() => {
-            let response = {};
+    return browserPage.evaluate(() => {
+        let response = {};
 
-            // Many details as plain text..
-            let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")]
-                .map(i => i.innerText);
-            response.textDetails = textDetails;
+        // Many details as plain text..
+        let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")]
+            .map(i => i.innerText);
+        response.textDetails = textDetails;
 
-            // Price
-            let price = [...document.querySelectorAll("[data-testid='linkElement']")]
-                .map(el => el.innerText)
-                .filter(text => text.indexOf("$") !== -1)[0];
-            response.price = price;
+        // Price
+        let price = [...document.querySelectorAll("[data-testid='linkElement']")]
+            .map(el => el.innerText)
+            .filter(text => text.indexOf("$") !== -1)[0];
+        response.price = price;
 
-            // Pictures
-            let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")]
-                .map(img => img.src);
-            response.pictures = pictureUrls;
+        // Pictures
+        let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")]
+            .map(img => img.src);
+        response.pictures = pictureUrls;
 
-            return response;
-        });
-    }).delay(3000).then(data => {
-        logger.info(`Data fetched from url ${url}: `, JSON.stringify(data).length);
-        return data;
+        return response;
     });
 };
 
