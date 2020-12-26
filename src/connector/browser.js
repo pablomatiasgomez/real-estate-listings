@@ -69,7 +69,6 @@ Browser.prototype.fetchData = function (url) {
     return Promise.resolve().then(() => {
         return self.browser.newPage();
     }).then(page => {
-        logger.info(`Getting url ${url} ..`);
         let data;
         return page.goto(url, {
             waitUntil: 'load',
