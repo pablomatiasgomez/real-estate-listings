@@ -10,6 +10,7 @@ const EnBuenosAiresBrowser = include('connector/enbuenosaires-browser');
 const RemaxBrowser = include('connector/remax-browser');
 const LaGranInmobiliariaBrowser = include('connector/lagraninmobiliaria-browser');
 const MalumaBrowser = include('connector/maluma-browser');
+const ICasasBrowser = include('connector/icasas-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -27,6 +28,7 @@ const SITE_BROWSERS = [
     new RemaxBrowser(),
     new LaGranInmobiliariaBrowser(),
     new MalumaBrowser(),
+    new ICasasBrowser(),
 ];
 
 function Browser() {
