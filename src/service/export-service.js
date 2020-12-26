@@ -20,9 +20,6 @@ ExportService.prototype.exportData = function (urls) {
     let startTime = Date.now();
     let promise = Promise.resolve();
     urls.forEach((url, i) => {
-        // We know that zonaprop has some issues with captcha.. so we are ignoring it fow now..
-        // if (url.indexOf("zonaprop") !== -1) return;
-
         promise = promise.then(() => {
             let elapsedMinutes = (Date.now() - startTime) / 1000 / 60;
             let remainingMinutes = i === 0 ? "n/a" : Math.round((urls.length - i) * elapsedMinutes / i) + "m";
