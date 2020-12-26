@@ -72,7 +72,7 @@ Browser.prototype.fetchData = function (url) {
                 data: data
             };
         }).catch(e => {
-            logger.error(`Unable to fetch data for url ${url}.. `, e);
+            logger.error(`Unable to fetch data for url ${url} `, e);
             throw e;
         });
     });

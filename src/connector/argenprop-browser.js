@@ -41,14 +41,17 @@ ArgenPropBrowser.prototype.fetchData = function (browserPage, url) {
             response.description = description;
 
             // Parse some private information from GA tag
-            let ignoredAttributes = [
-                "data-fecha-visita"
-            ];
-            let attributes = document.getElementById("ga-dimension-ficha").attributes;
-            for (let i = 0; i < attributes.length; i++) {
-                let key = attributes[i].nodeName;
-                if (key.startsWith("data-") && !ignoredAttributes.includes(key)) {
-                    response[key.slice(5)] = attributes[i].nodeValue;
+            let gaElement = document.getElementById("ga-dimension-ficha");
+            if (gaElement) {
+                let ignoredAttributes = [
+                    "data-fecha-visita"
+                ];
+                let attributes = gaElement.attributes;
+                for (let i = 0; i < attributes.length; i++) {
+                    let key = attributes[i].nodeName;
+                    if (key.startsWith("data-") && !ignoredAttributes.includes(key)) {
+                        response[key.slice(5)] = attributes[i].nodeValue;
+                    }
                 }
             }
 
@@ -65,6 +68,10 @@ ArgenPropBrowser.prototype.fetchData = function (browserPage, url) {
                 return img.src || img.getAttribute("data-src");
             });
             response.pictures = pictureUrls;
+
+            // Location
+            let address = document.querySelector(".titlebar__address").innerText;
+            response.address = address;
 
             return response;
         });

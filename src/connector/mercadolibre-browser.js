@@ -32,6 +32,11 @@ MercadoLibreBrowser.prototype.fetchData = function (browserPage, url) {
         return browserPage.evaluate(() => {
             let response = {};
 
+            if (!document.getElementsByClassName("item-title__primary")[0]) {
+                // No data was found (probably got redirected and the house no longer exists?)
+                return response;
+            }
+
             // Title
             let title = document.getElementsByClassName("item-title__primary")[0].innerText;
             response.title = title;
