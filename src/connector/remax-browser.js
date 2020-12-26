@@ -31,6 +31,10 @@ RemaxBrowser.prototype.fetchData = function (browserPage, url) {
     }).then(() => {
         return browserPage.evaluate(() => {
             let response = {};
+            if (!document.getElementsByClassName("key-title").length) {
+                // The page is no longer available, probably the property was taken down.
+                return response;
+            }
 
             // Title, price, address, id
             let keysToLookup = [
