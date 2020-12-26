@@ -79,7 +79,7 @@ Browser.prototype.fetchData = function (url) {
         }).delay(5000).then(() => {
             return siteBrowser.extractData(page);
         }).delay(3000).then(d => {
-            logger.info(`Data fetched from url ${url}: `, JSON.stringify(d).length);
+            logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
             data = d;
             return page.close();
         }).then(() => {
