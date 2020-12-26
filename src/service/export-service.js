@@ -36,7 +36,7 @@ ExportService.prototype.exportData = function (urls) {
             if (url.indexOf("zonaprop") !== -1) return;
 
             // Log error to telegram and continue
-            self.notifierService.notify(`Unable to export data for url ${url}`);
+            self.notifierService.notify(`Failed to export data for url ${url}`);
         }).delay(20000);
     });
     return promise;

@@ -43,6 +43,8 @@ Browser.prototype.init = function () {
             headless: !DEBUG,
             devtools: DEBUG,
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            // TODO: use the same profile every time
+            // https://github.com/puppeteer/puppeteer/issues/866
         });
     }).then(browser => {
         self.browser = browser;
@@ -73,11 +75,10 @@ Browser.prototype.fetchData = function (url) {
                 data: data
             };
         }).catch(e => {
-            logger.error(`Unable to fetch data for url ${url} `, e);
+            logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
         });
     });
-
 };
 
 Browser.prototype.dispose = function () {
