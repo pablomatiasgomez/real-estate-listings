@@ -25,8 +25,8 @@ ExportService.prototype.exportData = function (urls) {
 
         promise = promise.then(() => {
             let elapsedMinutes = (Date.now() - startTime) / 1000 / 60;
-            let remainingMinutes = i === 0 ? "n/a" : Math.round((urls.length - i) * elapsedMinutes / i);
-            logger.info(`[${i + 1}/${urls.length}] [ETA:${remainingMinutes}m] Processing url ${url} ..`);
+            let remainingMinutes = i === 0 ? "n/a" : Math.round((urls.length - i) * elapsedMinutes / i) + "m";
+            logger.info(`[${i + 1}/${urls.length}] [ETA:${remainingMinutes}] Processing url ${url} ..`);
             return self.browser.fetchData(url);
         }).then(response => {
             Utils.createDirIfNotExists(self.getFileDir(response.id));
