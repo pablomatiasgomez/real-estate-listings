@@ -9,6 +9,10 @@ const URL_REGEX = /^https?:\/\/www.zonaprop.com.ar\/.*-(\d+).html$/;
 function ZonaPropBrowser() {
 }
 
+ZonaPropBrowser.prototype.useStealthBrowser = function () {
+    return true;
+};
+
 ZonaPropBrowser.prototype.name = function () {
     return "ZonaProp";
 };

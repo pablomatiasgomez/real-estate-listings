@@ -1,7 +1,7 @@
 'use strict';
 
-//const puppeteer = require('puppeteer');
-const puppeteer = require('puppeteer-extra');
+const puppeteer = require('puppeteer');
+const puppeteerExtra = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const UserAgents = require('user-agents');
@@ -48,18 +48,21 @@ Browser.prototype.init = function () {
     let self = this;
 
     self.userAgents = new UserAgents();
+    let browserOptions = {
+        headless: !DEBUG,
+        devtools: DEBUG,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    };
 
     return Promise.resolve().then(() => {
-        puppeteer.use(StealthPlugin());
-        return puppeteer.launch({
-            headless: !DEBUG,
-            devtools: DEBUG,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            // TODO: use the same profile every time
-            // https://github.com/puppeteer/puppeteer/issues/866
-        });
-    }).then(browser => {
-        self.browser = browser;
+        return puppeteer.launch(browserOptions);
+    }).then(normalBrowser => {
+        self.normalBrowser = normalBrowser;
+    }).then(() => {
+        puppeteerExtra.use(StealthPlugin());
+        return puppeteerExtra.launch(browserOptions);
+    }).then(stealthBrowser => {
+        self.stealthBrowser = stealthBrowser;
     });
 };
 
@@ -72,9 +75,10 @@ Browser.prototype.fetchData = function (url) {
         throw `No site browser matches url ${url}`;
     }
 
-    logger.info(`Getting url ${url} using ${siteBrowser.name()} ..`);
     return Promise.resolve().then(() => {
-        return self.browser.newPage();
+        let useStealthBrowser = siteBrowser.useStealthBrowser && siteBrowser.useStealthBrowser();
+        logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);
+        return (useStealthBrowser ? self.stealthBrowser : self.normalBrowser).newPage();
     }).then(page => {
         let data;
         return Promise.resolve().then(() => {
@@ -120,8 +124,12 @@ Browser.prototype.dispose = function () {
 
     let self = this;
     return Promise.resolve().then(() => {
-        if (self.browser) {
-            return self.browser.close();
+        if (self.normalBrowser) {
+            return self.normalBrowser.close();
+        }
+    }).then(() => {
+        if (self.stealthBrowser) {
+            return self.stealthBrowser.close();
         }
     });
 };
