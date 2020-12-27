@@ -46,10 +46,16 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
     let self = this;
 
     return self.getLastDataFile(id).then(previousData => {
+        logger.info(`Checking data changes... for ${id}`);
         if (!previousData) {
+            logger.info(`There was no previous for ${id} .. skipping difference check.`);
             return false;
         }
-        logger.info(`Checking data changes... for ${id}`);
+        let previousDataVersion = previousData.EXPORT_VERSION || "0";
+        if (previousDataVersion !== currentData.EXPORT_VERSION) {
+            logger.info(`Not checking data difference because version is different. Previous Version: ${previousDataVersion} !== ${currentData.EXPORT_VERSION} Current Version.`);
+            return false;
+        }
         let diff = jsonDiff.diffString(previousData, currentData, {
             color: false
         });
@@ -61,6 +67,7 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
                 diff;
             return self.notifierService.notify(message);
         }
+        logger.info("No difference was found!");
     });
 };
 

@@ -27,7 +27,9 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "0"
+        };
 
         if (!document.getElementsByClassName("item-title__primary")[0]) {
             // No data was found (probably got redirected and the house no longer exists?)

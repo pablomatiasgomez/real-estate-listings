@@ -31,8 +31,14 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        // noinspection JSUnresolvedVariable
-        return avisoInfo; // jshint ignore:line
+        let response = {
+            EXPORT_VERSION: "0"
+        };
+
+        // noinspection JSUnresolvedVariable,JSHint
+        Object.assign(response, JSON.parse(JSON.stringify(avisoInfo)));
+
+        return response;
     });
 };
 

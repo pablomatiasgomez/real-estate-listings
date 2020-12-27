@@ -27,7 +27,9 @@ CabaPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "1"
+        };
 
         // Location
         let address = document.querySelector(".pro-head h6").innerText;
@@ -48,7 +50,7 @@ CabaPropBrowser.prototype.extractData = function (browserPage) {
         });
 
         // Pictures
-        let pictureUrls = [...document.querySelectorAll(".slick-list img")]
+        let pictureUrls = [...document.querySelectorAll(".slick-list .slick-slide:not(.slick-cloned) img")]
             .map(img => img.src);
         response.pictures = pictureUrls;
 

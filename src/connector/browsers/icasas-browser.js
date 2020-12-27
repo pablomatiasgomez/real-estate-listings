@@ -27,7 +27,9 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "0"
+        };
 
         // Title
         let title = document.querySelector("#firstLine h1").innerText;

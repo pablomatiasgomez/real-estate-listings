@@ -27,8 +27,12 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
+        let response = {
+            EXPORT_VERSION: "0"
+        };
+
         // noinspection JSUnresolvedVariable
-        let response = window.__NEXT_DATA__.props.pageProps.property;
+        Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
         // noinspection JSUnresolvedVariable
         delete response.seller;
 

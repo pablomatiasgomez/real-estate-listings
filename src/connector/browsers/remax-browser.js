@@ -27,7 +27,9 @@ RemaxBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "0"
+        };
         if (!document.getElementsByClassName("key-title").length) {
             // The page is no longer available, probably the property was taken down.
             return response;

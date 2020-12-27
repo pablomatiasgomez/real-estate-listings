@@ -27,7 +27,9 @@ MalumaBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "0"
+        };
 
         let script = [...document.getElementsByTagName("script")]
             .filter(script => script.innerText.indexOf("fichas.propiedades") !== -1)

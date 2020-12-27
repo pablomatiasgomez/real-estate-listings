@@ -27,7 +27,9 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "0"
+        };
 
         // Many details as plain text..
         let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")]
