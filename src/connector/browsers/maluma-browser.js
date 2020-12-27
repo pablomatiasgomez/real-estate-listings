@@ -45,7 +45,7 @@ MalumaBrowser.prototype.extractData = function (browserPage) {
 
         // Create global fn where we will be called.
         window.customOnSuccessFn = function (r) {
-            response = r;
+            Object.assign(response, r);
         };
 
         script += "window.customOnSuccessFn(response); }, async:false });";
