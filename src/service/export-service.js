@@ -51,9 +51,9 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
             logger.info(`There was no previous for ${id} .. skipping difference check.`);
             return false;
         }
-        let previousDataVersion = previousData.EXPORT_VERSION || "0";
-        if (previousDataVersion !== currentData.EXPORT_VERSION) {
-            logger.info(`Not checking data difference because version is different. Previous Version: ${previousDataVersion} !== ${currentData.EXPORT_VERSION} Current Version.`);
+        previousData.EXPORT_VERSION = previousData.EXPORT_VERSION || "0";
+        if (previousData.EXPORT_VERSION !== currentData.EXPORT_VERSION) {
+            logger.info(`Not checking data difference because version is different. Previous Version: ${previousData.EXPORT_VERSION} !== ${currentData.EXPORT_VERSION} Current Version.`);
             return false;
         }
         let diff = jsonDiff.diffString(previousData, currentData, {
