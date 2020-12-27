@@ -13,6 +13,12 @@ Utils.CURRENT_BUILD = {
     branch: childProcess.execSync(`git -C ${__project_dir} rev-parse --abbrev-ref HEAD`).toString().trim()
 };
 
+Utils.stringifyError = function (error) {
+    if (error instanceof Error) return error.toString() + "\n" + error.stack;
+    if (typeof error === 'object') return JSON.stringify(error);
+    return error;
+};
+
 Utils.createDirIfNotExists = function (dir) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, {recursive: true});
 };

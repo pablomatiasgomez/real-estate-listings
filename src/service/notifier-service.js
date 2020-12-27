@@ -2,6 +2,8 @@
 
 const Telegram = require('telegram-bot-api');
 
+const Utils = include('utils/utils');
+
 const logger = include('utils/logger').newLogger('NotifierService');
 
 //----------------------
@@ -20,7 +22,7 @@ NotifierService.prototype.notify = function (message) {
         chat_id: "-498428304",
         text: message
     }).catch(e => {
-        logger.error("Error while notifying to telegram.. ", e);
+        logger.error("Error while notifying to telegram.. ", Utils.stringifyError(e));
     });
 };
 
