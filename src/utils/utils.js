@@ -41,6 +41,10 @@ Utils.readFile = function (filePath) {
     });
 };
 
+Utils.readFileSync = function (filePath) {
+    return fs.readFileSync(filePath, "utf8");
+};
+
 /**
  * Sorts all files by name in the given dir and returns the contents of the last one.
  * @param dir the dir in which to lookup the files

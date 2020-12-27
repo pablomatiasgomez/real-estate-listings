@@ -71,8 +71,8 @@ Browser.prototype.fetchData = function (url) {
 
     let siteBrowser = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url))[0];
     if (!siteBrowser) {
-        logger.error(`No site browser matches url ${url}`);
-        throw `No site browser matches url ${url}`;
+        logger.info(`No site browser matches url ${url}`);
+        return Promise.resolve(null);
     }
 
     return Promise.resolve().then(() => {

@@ -13,6 +13,7 @@ const Browser = include('connector/browser');
 
 const ExportService = include('service/export-service');
 const NotifierService = include('service/notifier-service');
+const GoogleSheetsService = include('service/googlesheets-service');
 
 //----------------------
 
@@ -33,10 +34,30 @@ Array.prototype.shuffle = function () {
 
 //----------------------
 
+const USE_GOOGLE_SHEETS_URLS = true;
+
 let browser;
-let exportService;
 
 //----------------------
+
+function getUrls() {
+    let provider;
+    if (USE_GOOGLE_SHEETS_URLS) {
+        provider = () => new GoogleSheetsService().getUrls();
+    } else {
+        provider = () => {
+            return Utils.readFile(`${__project_dir}/config/urls.txt`).then(content => {
+                return content.split("\n")
+                    .map(url => url.trim())
+                    .filter(url => !!url && !url.startsWith("//"));
+            });
+        };
+    }
+    return provider().then(urls => {
+        urls.shuffle();
+        return urls;
+    });
+}
 
 function initServicesAndExecute() {
     logger.info('');
@@ -52,18 +73,10 @@ function initServicesAndExecute() {
         browser = new Browser();
         return browser.init();
     }).then(() => {
-        return Promise.all([
-            Utils.readFile(`${__project_dir}/urls.txt`),
-            Utils.readFile(`${__project_dir}/telegram-token`),
-        ]);
-    }).then(result => {
-        let urls = result[0].split("\n")
-            .map(url => url.trim())
-            .filter(url => !!url && !url.startsWith("//"));
-        urls.shuffle();
-
-        let notifierService = new NotifierService(result[1]);
-        exportService = new ExportService(browser, notifierService);
+        return getUrls();
+    }).then(urls => {
+        let notifierService = new NotifierService();
+        let exportService = new ExportService(browser, notifierService);
         return exportService.exportData(urls);
     }).finally(() => {
         logger.info(`Shutting down the browser..`);
@@ -72,6 +85,5 @@ function initServicesAndExecute() {
 }
 
 let promise = initServicesAndExecute();
-
 
 module.exports = promise;

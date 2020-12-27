@@ -7,6 +7,4 @@ exports/
 .DS_Store
 .idea
 .nyc_output/
-urls.txt
-urls.txt.bk
-telegram-token
+config/*

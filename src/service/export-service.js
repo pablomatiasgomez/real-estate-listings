@@ -26,6 +26,8 @@ ExportService.prototype.exportData = function (urls) {
             logger.info(`[${i + 1}/${urls.length}] [ETA:${remainingMinutes}] Processing url ${url} ..`);
             return self.browser.fetchData(url);
         }).then(response => {
+            if (!response) return; // Skip not handled urls.
+
             Utils.createDirIfNotExists(self.getFileDir(response.id));
 
             // First we check for data changes and notify:
@@ -48,7 +50,7 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
     return self.getLastDataFile(id).then(previousData => {
         logger.info(`Checking data changes... for ${id}`);
         if (!previousData) {
-            logger.info(`There was no previous for ${id} .. skipping difference check.`);
+            logger.info(`There was no previous data for ${id} .. skipping difference check.`);
             return false;
         }
         previousData.EXPORT_VERSION = previousData.EXPORT_VERSION || "0";

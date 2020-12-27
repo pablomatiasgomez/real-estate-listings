@@ -8,9 +8,9 @@ const logger = include('utils/logger').newLogger('NotifierService');
 
 //----------------------
 
-function NotifierService(token) {
+function NotifierService() {
     this.telegram = new Telegram({
-        token: token
+        token: Utils.readFileSync(`${__project_dir}/config/telegram-token`)
     });
 }
 
