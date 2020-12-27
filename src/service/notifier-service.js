@@ -17,6 +17,11 @@ function NotifierService(token) {
 NotifierService.prototype.notify = function (message) {
     let self = this;
 
+    // Telegram limit is 4096
+    if (message.length > 4000) {
+        message = message.substring(0, 4000) + " ... CROPPED";
+    }
+
     return self.telegram.sendMessage({
         // Got from https://api.telegram.org/bot{TOKEN}/getUpdates
         chat_id: "-498428304",
