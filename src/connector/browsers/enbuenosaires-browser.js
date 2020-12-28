@@ -31,8 +31,13 @@ EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
             EXPORT_VERSION: "0"
         };
 
+        if (!document.querySelector("h1:not(#main_header)")) {
+            // No data was found (probably got redirected and the house no longer exists?)
+            return response;
+        }
+
         // Title
-        let title = document.getElementsByTagName("h1")[0].innerText;
+        let title = document.querySelector("h1:not(#main_header)").innerText;
         response.title = title;
 
         // Description & features
