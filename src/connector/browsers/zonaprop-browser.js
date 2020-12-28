@@ -37,6 +37,10 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
 
         // noinspection JSUnresolvedVariable,JSHint
         Object.assign(response, JSON.parse(JSON.stringify(avisoInfo)));
+        // noinspection JSUnresolvedVariable
+        delete response.similarPostingsLink;
+        // noinspection JSUnresolvedVariable
+        delete response.similarPostingsLinkDescription;
 
         return response;
     });
