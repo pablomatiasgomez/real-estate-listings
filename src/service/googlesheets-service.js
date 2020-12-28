@@ -30,7 +30,7 @@ GoogleSheetsService.prototype.getUrlsFromSheet = function (sheet) {
     }).then(cells => {
         let columnIndex = cells[0].indexOf("links");
         let columnLetter = GoogleSpreadsheetUtils.columnToLetter(columnIndex + 1);
-        logger.info(`Using column ${columnIndex} -> ${columnLetter}`);
+        logger.info(`Using column ${columnLetter}`);
 
         return sheet.getCellsInRange(`${columnLetter}2:${columnLetter}1000`);
     }).then(cells => {
