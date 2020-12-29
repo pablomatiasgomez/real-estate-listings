@@ -4,9 +4,20 @@ const logger = include('utils/logger').newLogger('ArgenPropBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/www.argenprop.com\/.*--(\d+)$/;
+const LISTING_URL_REGEX = /^https?:\/\/www.argenprop.com\/.*--(\d+)$/;
+const LISTINGS_URL_REGEX = /^https?:\/\/www.argenprop.com\/((?:\w-?)*)$/;
 
 function ArgenPropBrowser() {
+    this.extractDataFns = [
+        {
+            regex: LISTING_URL_REGEX,
+            fn: this.extractListingData,
+        },
+        {
+            regex: LISTINGS_URL_REGEX,
+            fn: this.extractListData,
+        },
+    ];
 }
 
 ArgenPropBrowser.prototype.name = function () {
@@ -14,17 +25,28 @@ ArgenPropBrowser.prototype.name = function () {
 };
 
 ArgenPropBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
+    return this.extractDataFns.some(entry => entry.regex.test(url));
 };
 
 ArgenPropBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
+    return this.extractDataFns
+        .map(entry => entry.regex.exec(url))
+        .filter(match => match && match.length === 2)
+        .map(match => match[1])
+        [0];
 };
 
 ArgenPropBrowser.prototype.extractData = function (browserPage) {
-    logger.info(`Extracting data...`);
+    let self = this;
+
+    return self.extractDataFns
+        .filter(entry => entry.regex.test(browserPage.url()))
+        .map(entry => entry.fn.call(self, browserPage))
+        [0];
+};
+
+ArgenPropBrowser.prototype.extractListingData = function (browserPage) {
+    logger.info(`Extracting listing data...`);
 
     return browserPage.evaluate(() => {
         let response = {
@@ -71,6 +93,36 @@ ArgenPropBrowser.prototype.extractData = function (browserPage) {
         // Location
         let address = document.querySelector(".titlebar__address").innerText;
         response.address = address;
+
+        return response;
+    });
+};
+
+ArgenPropBrowser.prototype.extractListData = function (browserPage) {
+    logger.info(`Extracting list data...`);
+
+    return browserPage.evaluate(() => {
+        let response = {
+            EXPORT_VERSION: "0"
+        };
+
+        [...document.querySelectorAll(".listing__item")].forEach(item => {
+            let id = item.querySelector("a.card").href.split("--")[1];
+
+            let price = item.querySelector(".card__price").innerText.trim();
+            let address = item.querySelector(".card__address").innerText.trim();
+            let title = item.querySelector(".card__title").innerText.trim();
+            let features = [...item.querySelectorAll(".card__common-data span")].map(i => i.innerText.trim());
+            let description = item.querySelector(".card__info").innerText.trim();
+
+            response[id] = {
+                price: price,
+                address: address,
+                title: title,
+                features: features,
+                description: description
+            };
+        });
 
         return response;
     });
