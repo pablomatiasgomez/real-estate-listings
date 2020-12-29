@@ -1,6 +1,7 @@
 'use strict';
 
 const jsonDiff = require('json-diff');
+const sanitize = require("sanitize-filename");
 
 const Utils = include('utils/utils');
 
@@ -27,6 +28,7 @@ ExportService.prototype.exportData = function (urls) {
             return self.browser.fetchData(url);
         }).then(response => {
             if (!response) return; // Skip not handled urls.
+            response.id = sanitize(response.id);
 
             Utils.createDirIfNotExists(self.getFileDir(response.id));
 

@@ -4,9 +4,20 @@ const logger = include('utils/logger').newLogger('CabaPropBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/cabaprop.com.ar\/.+-(\d+)$/;
+const LISTING_URL_REGEX = /^https?:\/\/cabaprop.com.ar\/.+-id-(\d+)$/;
+const LISTINGS_URL_REGEX = /^https?:\/\/cabaprop.com.ar\/propiedades\.php\?(.+)$/;
 
 function CabaPropBrowser() {
+    this.extractDataFns = [
+        {
+            regex: LISTING_URL_REGEX,
+            fn: this.extractListingData,
+        },
+        {
+            regex: LISTINGS_URL_REGEX,
+            fn: this.extractListData,
+        },
+    ];
 }
 
 CabaPropBrowser.prototype.name = function () {
@@ -14,17 +25,28 @@ CabaPropBrowser.prototype.name = function () {
 };
 
 CabaPropBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
+    return this.extractDataFns.some(entry => entry.regex.test(url));
 };
 
 CabaPropBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
+    return this.extractDataFns
+        .map(entry => entry.regex.exec(url))
+        .filter(match => match && match.length === 2)
+        .map(match => match[1])
+        [0];
 };
 
 CabaPropBrowser.prototype.extractData = function (browserPage) {
-    logger.info(`Extracting data...`);
+    let self = this;
+
+    return self.extractDataFns
+        .filter(entry => entry.regex.test(browserPage.url()))
+        .map(entry => entry.fn.call(self, browserPage))
+        [0];
+};
+
+CabaPropBrowser.prototype.extractListingData = function (browserPage) {
+    logger.info(`Extracting listing data...`);
 
     return browserPage.evaluate(() => {
         let response = {
@@ -53,6 +75,34 @@ CabaPropBrowser.prototype.extractData = function (browserPage) {
         let pictureUrls = [...document.querySelectorAll(".slick-list .slick-slide:not(.slick-cloned) img")]
             .map(img => img.src);
         response.pictures = pictureUrls;
+
+        return response;
+    });
+};
+
+CabaPropBrowser.prototype.extractListData = function (browserPage) {
+    logger.info(`Extracting list data...`);
+
+    return browserPage.evaluate(() => {
+        let response = {
+            EXPORT_VERSION: "0"
+        };
+
+        [...document.querySelectorAll(".house-wrapper")].forEach(item => {
+            let id = item.querySelector("a").href.split("id-")[1];
+
+            let price = item.querySelector("p").innerText.trim();
+            let address = item.querySelector("h5").innerText.trim();
+            let features = [...item.querySelectorAll("ul li")].map(i => i.innerText.trim());
+            let seller = item.querySelector(".house-holder-info").innerText.trim();
+
+            response[id] = {
+                price: price,
+                address: address,
+                features: features,
+                seller: seller,
+            };
+        });
 
         return response;
     });
