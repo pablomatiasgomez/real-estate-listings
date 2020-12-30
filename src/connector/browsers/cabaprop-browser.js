@@ -5,7 +5,7 @@ const logger = include('utils/logger').newLogger('CabaPropBrowser');
 //---------------
 
 const LISTING_URL_REGEX = /^https?:\/\/cabaprop.com.ar\/.+-id-(\d+)$/;
-const LISTINGS_URL_REGEX = /^https?:\/\/cabaprop.com.ar\/propiedades\.php\?(.+)$/;
+const LISTINGS_URL_REGEX = /^https?:\/\/cabaprop.com.ar\/propiedades\.php\?(.+orden=\w+.+)$/;
 
 function CabaPropBrowser() {
     this.extractDataFns = [

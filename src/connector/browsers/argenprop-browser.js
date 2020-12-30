@@ -5,7 +5,7 @@ const logger = include('utils/logger').newLogger('ArgenPropBrowser');
 //---------------
 
 const LISTING_URL_REGEX = /^https?:\/\/www.argenprop.com\/.*--(\d+)$/;
-const LISTINGS_URL_REGEX = /^https?:\/\/www.argenprop.com\/((?:\w-?)*)$/;
+const LISTINGS_URL_REGEX = /^https?:\/\/www.argenprop.com\/([\w-]*-orden-(?:\w-?)*)$/;
 
 function ArgenPropBrowser() {
     this.extractDataFns = [
