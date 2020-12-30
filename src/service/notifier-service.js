@@ -19,7 +19,7 @@ NotifierService.prototype.notify = function (message) {
 
     // Telegram limit is 4096
     if (message.length > 4000) {
-        message = message.substring(0, 4000) + " ... CROPPED";
+        message = message.substring(0, 4000) + " ... (cropped)";
     }
 
     return self.telegram.sendMessage({
