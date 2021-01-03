@@ -24,6 +24,10 @@ ZonaPropBrowser.prototype.useStealthBrowser = function () {
     return true;
 };
 
+ZonaPropBrowser.prototype.withJavascriptDisabled = function () {
+    return true;
+};
+
 ZonaPropBrowser.prototype.name = function () {
     return "ZonaProp";
 };
@@ -78,7 +82,7 @@ ZonaPropBrowser.prototype.extractListData = function (browserPage) {
     };
 
     return self.extractListPage(browserPage).then(pageResponse => {
-        logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
+        logger.info(`Assigning ${Object.keys(pageResponse).length - 1} items...`);
         Object.assign(response, pageResponse);
         return pageResponse.pages;
     }).then(pages => {
@@ -92,16 +96,18 @@ ZonaPropBrowser.prototype.extractListData = function (browserPage) {
                 return browserPage.goto(pageUrl, {
                     waitUntil: 'load',
                     timeout: 60 * 1000,
-                    referer: listUrl
+                    referer: listUrl,
                 });
             }).delay(8000).then(() => {
                 return self.extractListPage(browserPage);
             }).then(pageResponse => {
-                logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
+                logger.info(`Assigning ${Object.keys(pageResponse).length - 1} items...`);
                 Object.assign(response, pageResponse);
             }).delay(20000);
         });
         return promise;
+    }).then(() => {
+        return response;
     });
 };
 
@@ -111,8 +117,15 @@ ZonaPropBrowser.prototype.extractListPage = function (browserPage) {
     return browserPage.evaluate(() => {
         let response = {};
 
+        // Grab postingInfo because JS is disabled.
+        eval([...document.scripts]
+            .map(script => script.innerHTML)
+            .filter(script => script.indexOf("postingInfo") !== -1)
+            [0]
+            .replace("let postingInfo = {", "var customPostingInfo = {"));
+
         // noinspection JSUnresolvedVariable,JSHint
-        Object.entries(postingInfo).forEach(entry => {
+        Object.entries(customPostingInfo).forEach(entry => {
             let id = entry[0];
             let item = entry[1];
 

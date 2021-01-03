@@ -50,7 +50,7 @@ MalumaBrowser.prototype.extractData = function (browserPage) {
 
         script += "window.customOnSuccessFn(response); }, async:false });";
 
-        eval(script); // jshint ignore:line
+        eval(script);
         return response;
     });
 };
