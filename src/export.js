@@ -34,7 +34,7 @@ Array.prototype.shuffle = function () {
 
 //----------------------
 
-const USE_GOOGLE_SHEETS_URLS = false;
+const USE_GOOGLE_SHEETS_URLS = true;
 
 let browser;
 
