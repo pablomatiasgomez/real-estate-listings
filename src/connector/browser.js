@@ -82,15 +82,8 @@ Browser.prototype.fetchData = function (url) {
     }).then(page => {
         let data;
         return Promise.resolve().then(() => {
-            // Randomize viewport
-            return page.setViewport({
-                width: 1920 + Math.floor(Math.random() * 100),
-                height: 3000 + Math.floor(Math.random() * 100),
-                deviceScaleFactor: 1,
-                hasTouch: false,
-                isLandscape: false,
-                isMobile: false,
-            });
+            let javascriptEnabled = !siteBrowser.withJavascriptDisabled || !siteBrowser.withJavascriptDisabled();
+            return page.setJavaScriptEnabled(javascriptEnabled);
         }).then(() => {
             // Randomize user agent
             return page.setUserAgent(self.userAgents.toString());
@@ -114,6 +107,7 @@ Browser.prototype.fetchData = function (url) {
             };
         }).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
+            console.error(e);
             throw e;
         });
     });
