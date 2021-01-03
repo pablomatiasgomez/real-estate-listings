@@ -18,17 +18,30 @@ GoogleSheetsService.prototype.getUrls = function () {
     return self.doc.useServiceAccountAuth(require(`${__project_dir}/config/googlesheets-service-account.json`)).then(() => {
         return self.doc.loadInfo();
     }).then(() => {
-        let sheet = self.doc.sheetsByIndex[0];
-        logger.info(`Using sheet ${sheet.title}`);
-        return self.getUrlsFromSheet(sheet);
+        let urls = [];
+        let promise = Promise.resolve();
+        Object.values(self.doc.sheetsByIndex).forEach(sheet => {
+            promise = promise.then(() => {
+                return self.getUrlsFromSheet(sheet);
+            }).then(sheetUrls => {
+                logger.info(`Got ${sheetUrls.length} urls from sheet ${sheet.title}`);
+                urls.push(...sheetUrls);
+            });
+        });
+        return promise.then(() => urls);
     });
 };
 
 GoogleSheetsService.prototype.getUrlsFromSheet = function (sheet) {
+    logger.info(`Getting urls from sheet ${sheet.title}`);
     return Promise.resolve().then(() => {
         return sheet.getCellsInRange('A1:Z1');
     }).then(cells => {
+        if (!cells) return [];
+
         let columnIndex = cells[0].indexOf("links");
+        if (columnIndex === -1) return [];
+
         let columnLetter = GoogleSpreadsheetUtils.columnToLetter(columnIndex + 1);
         logger.info(`Using column ${columnLetter}`);
 
