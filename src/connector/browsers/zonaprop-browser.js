@@ -118,11 +118,14 @@ ZonaPropBrowser.prototype.extractListPage = function (response, browserPage) {
         });
         return response;
     }).then(pageResponse => {
+        logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
         Object.assign(response, pageResponse);
         return browserPage.$eval(".pag-go-next > a", e => e.click());
     }).then(() => {
+        logger.info(`Waiting for network idle...`);
         return browserPage.waitForNavigation({waitUntil: "networkidle0"});
     }).then(() => {
+        logger.info(`Going to extract new page...`);
         return self.extractListPage(response, browserPage);
     }).catch((e) => {
         logger.info("stopping", e);
