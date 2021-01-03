@@ -77,7 +77,7 @@ ZonaPropBrowser.prototype.extractListData = function (browserPage) {
         EXPORT_VERSION: "0"
     };
 
-    return self.extractListPage(response, browserPage).then(pageResponse => {
+    return self.extractListPage(browserPage).then(pageResponse => {
         logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
         Object.assign(response, pageResponse);
         return pageResponse.pages;
@@ -94,8 +94,8 @@ ZonaPropBrowser.prototype.extractListData = function (browserPage) {
                     timeout: 60 * 1000,
                     referer: listUrl
                 });
-            }).then(response => {
-                return self.extractListPage(response, browserPage);
+            }).delay(8000).then(() => {
+                return self.extractListPage(browserPage);
             }).then(pageResponse => {
                 logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
                 Object.assign(response, pageResponse);
@@ -105,7 +105,7 @@ ZonaPropBrowser.prototype.extractListData = function (browserPage) {
     });
 };
 
-ZonaPropBrowser.prototype.extractListPage = function (response, browserPage) {
+ZonaPropBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
 
     return browserPage.evaluate(() => {
