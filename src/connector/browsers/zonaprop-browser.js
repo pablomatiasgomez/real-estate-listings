@@ -71,22 +71,45 @@ ZonaPropBrowser.prototype.extractListingData = function (browserPage) {
 ZonaPropBrowser.prototype.extractListData = function (browserPage) {
     let self = this;
     logger.info(`Extracting list data...`);
+
+    let listUrl = browserPage.url();
     let response = {
         EXPORT_VERSION: "0"
     };
 
-    return self.extractListPage(response, browserPage);
+    return self.extractListPage(response, browserPage).then(pageResponse => {
+        logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
+        Object.assign(response, pageResponse);
+        return pageResponse.pages;
+    }).then(pages => {
+        logger.info(`Pages are: ${pages}. We still need to process: ${pages.slice(1)}`);
+
+        let promise = Promise.resolve();
+        pages.slice(1).forEach(pageNumber => {
+            promise = promise.then(() => {
+                let pageUrl = self.getListPageUrl(listUrl, pageNumber);
+                logger.info(`Processing page ${pageNumber}. Url: ${pageUrl}`);
+                return browserPage.goto(pageUrl, {
+                    waitUntil: 'load',
+                    timeout: 60 * 1000,
+                    referer: listUrl
+                });
+            }).then(response => {
+                return self.extractListPage(response, browserPage);
+            }).then(pageResponse => {
+                logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
+                Object.assign(response, pageResponse);
+            }).delay(20000);
+        });
+        return promise;
+    });
 };
 
-
 ZonaPropBrowser.prototype.extractListPage = function (response, browserPage) {
-    let self = this;
     logger.info(`Extracting list data for ${browserPage.url()}...`);
 
     return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "0"
-        };
+        let response = {};
 
         // noinspection JSUnresolvedVariable,JSHint
         Object.entries(postingInfo).forEach(entry => {
@@ -103,8 +126,7 @@ ZonaPropBrowser.prototype.extractListPage = function (response, browserPage) {
             });
             let title = document.querySelector(`[data-id='${id}'] .postingCardTitle`).innerText.trim();
             let description = document.querySelector(`[data-id='${id}'] .postingCardDescription`).innerText.trim();
-            let link = document.querySelector(`[data-id='${id}'] a.go-to-posting`).href.trim();
-
+            let url = document.querySelector(`[data-id='${id}'] a.go-to-posting`).href.trim();
 
             response[id] = {
                 address: address,
@@ -112,25 +134,20 @@ ZonaPropBrowser.prototype.extractListPage = function (response, browserPage) {
                 features: features,
                 title: title,
                 description: description,
-                link: link,
+                url: url,
             };
             Object.assign(response[id], JSON.parse(JSON.stringify(item)));
+
+            response.pages = [...document.querySelectorAll(".paging li:not(.pag-go-prev):not(.pag-go-next) a")]
+                .map(a => parseInt(a.innerText))
+                .filter(page => !isNaN(page));
         });
         return response;
-    }).then(pageResponse => {
-        logger.info(`Assigning ${Object.keys(pageResponse.length)} items...`);
-        Object.assign(response, pageResponse);
-        return browserPage.$eval(".pag-go-next > a", e => e.click());
-    }).then(() => {
-        logger.info(`Waiting for network idle...`);
-        return browserPage.waitForNavigation({waitUntil: "networkidle0"});
-    }).then(() => {
-        logger.info(`Going to extract new page...`);
-        return self.extractListPage(response, browserPage);
-    }).catch((e) => {
-        logger.info("stopping", e);
-        return response;
     });
+};
+
+ZonaPropBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
+    return listUrl.substring(0, listUrl.length - 5) + `-pagina-${pageNumber}.html`;
 };
 
 // ---------
