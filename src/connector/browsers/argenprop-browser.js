@@ -65,7 +65,9 @@ ArgenPropBrowser.prototype.extractListingData = function (browserPage) {
         let gaElement = document.getElementById("ga-dimension-ficha");
         if (gaElement) {
             let ignoredAttributes = [
-                "data-fecha-visita"
+                "tracker-statistics",
+                "tracker-statistics-url",
+                "data-fecha-visita",
             ];
             let attributes = gaElement.attributes;
             for (let i = 0; i < attributes.length; i++) {
