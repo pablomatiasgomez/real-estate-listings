@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('VarcasiaBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/varcasiapropiedades.com.ar\/propiedades\/(.+)\/$/;
+const URL_REGEX = /^https:\/\/varcasiapropiedades.com.ar\/propiedades\/(.+)\/$/;
 
 function VarcasiaBrowser() {
 }

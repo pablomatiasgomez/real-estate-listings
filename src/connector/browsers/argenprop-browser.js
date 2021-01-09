@@ -4,8 +4,8 @@ const logger = include('utils/logger').newLogger('ArgenPropBrowser');
 
 //---------------
 
-const LISTING_URL_REGEX = /^https?:\/\/www.argenprop.com\/.*--(\d+)$/;
-const LISTINGS_URL_REGEX = /^https?:\/\/www.argenprop.com\/([\w-]*-orden-(?:\w-?)*)$/;
+const LISTING_URL_REGEX = /^https:\/\/www.argenprop.com\/.*--(\d+)$/;
+const LISTINGS_URL_REGEX = /^https:\/\/www.argenprop.com\/([\w-]*-orden-(?:\w-?)*)$/;
 
 function ArgenPropBrowser() {
     this.extractDataFns = [
@@ -100,6 +100,7 @@ ArgenPropBrowser.prototype.extractListingData = function (browserPage) {
     });
 };
 
+// TODO currently does not handle more than 1 page
 ArgenPropBrowser.prototype.extractListData = function (browserPage) {
     logger.info(`Extracting list data...`);
 

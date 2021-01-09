@@ -4,8 +4,8 @@ const logger = include('utils/logger').newLogger('ZonaPropBrowser');
 
 //---------------
 
-const LISTING_URL_REGEX = /^https?:\/\/www.zonaprop.com.ar\/propiedades\/.*-(\d+).html$/;
-const LISTINGS_URL_REGEX = /^https?:\/\/www.zonaprop.com.ar\/([\w-]*[a-zA-Z]).html$/;
+const LISTING_URL_REGEX = /^https:\/\/www.zonaprop.com.ar\/propiedades\/.*-(\d+).html$/;
+const LISTINGS_URL_REGEX = /^https:\/\/www.zonaprop.com.ar\/([\w-]*[a-zA-Z]).html$/;
 
 function ZonaPropBrowser() {
     this.extractDataFns = [

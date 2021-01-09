@@ -4,8 +4,8 @@ const logger = include('utils/logger').newLogger('CabaPropBrowser');
 
 //---------------
 
-const LISTING_URL_REGEX = /^https?:\/\/cabaprop.com.ar\/.+-id-(\d+)$/;
-const LISTINGS_URL_REGEX = /^https?:\/\/cabaprop.com.ar\/propiedades\.php\?(.+orden=\w+.+)$/;
+const LISTING_URL_REGEX = /^https:\/\/cabaprop.com.ar\/.+-id-(\d+)$/;
+const LISTINGS_URL_REGEX = /^https:\/\/cabaprop.com.ar\/propiedades\.php\?(.+orden=\w+.+)$/;
 
 function CabaPropBrowser() {
     this.extractDataFns = [
@@ -80,6 +80,7 @@ CabaPropBrowser.prototype.extractListingData = function (browserPage) {
     });
 };
 
+// TODO currently does not handle more than 1 page
 CabaPropBrowser.prototype.extractListData = function (browserPage) {
     logger.info(`Extracting list data...`);
 

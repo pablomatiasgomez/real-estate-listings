@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('EnBuenosAiresBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/www.enbuenosaires.com\/venta\/.*-(\d+).html$/;
+const URL_REGEX = /^https:\/\/www.enbuenosaires.com\/venta\/.*-(\d+).html$/;
 
 function EnBuenosAiresBrowser() {
 }

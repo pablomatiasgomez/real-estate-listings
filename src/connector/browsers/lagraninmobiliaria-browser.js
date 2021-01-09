@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('LaGranInmobiliariaBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/lagraninmobiliaria.com\/(\d+)-.*$/;
+const URL_REGEX = /^https:\/\/lagraninmobiliaria.com\/(\d+)-.*$/;
 
 function LaGranInmobiliariaBrowser() {
 }
