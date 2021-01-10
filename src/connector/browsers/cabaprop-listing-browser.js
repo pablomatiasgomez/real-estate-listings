@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('CabaPropListingBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/cabaprop\.com.ar\/.+-id-(\d+)$/;
+const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/.+-id-(\d+)$/;
 
 function CabaPropListingBrowser() {
 }

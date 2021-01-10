@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('CabaPropListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/cabaprop\.com.ar\/propiedades\.php\?(.+orden=\w+.+)$/;
+const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\.php\?(.+orden=\w+.+)$/;
 
 function CabaPropListingsBrowser() {
 }

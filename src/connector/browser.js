@@ -6,7 +6,8 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const UserAgents = require('user-agents');
 
-const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
+const ZonaPropListingBrowser = include('connector/browsers/zonaprop-listing-browser');
+const ZonaPropListingsBrowser = include('connector/browsers/zonaprop-listings-browser');
 const ArgenPropListingBrowser = include('connector/browsers/argenprop-listing-browser');
 const ArgenPropListingsBrowser = include('connector/browsers/argenprop-listings-browser');
 const MercadoLibreListingBrowser = include('connector/browsers/mercadolibre-listing-browser');
@@ -29,7 +30,8 @@ const logger = include('utils/logger').newLogger('Browser');
 const DEBUG = false;
 
 const SITE_BROWSERS = [
-    new ZonaPropBrowser(),
+    new ZonaPropListingBrowser(),
+    new ZonaPropListingsBrowser(),
     new ArgenPropListingBrowser(),
     new ArgenPropListingsBrowser(),
     new MercadoLibreListingBrowser(),

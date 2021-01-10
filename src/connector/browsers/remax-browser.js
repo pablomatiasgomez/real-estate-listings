@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('RemaxBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/www.remax\.com.ar.*\/([\d-]+)$/;
+const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar.*\/([\d-]+)$/;
 
 function RemaxBrowser() {
 }

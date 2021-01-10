@@ -1,87 +1,39 @@
 'use strict';
 
-const logger = include('utils/logger').newLogger('ZonaPropBrowser');
+const logger = include('utils/logger').newLogger('ZonaPropListingsBrowser');
 
 //---------------
 
-const LISTING_URL_REGEX = /^https:\/\/www.zonaprop\.com.ar\/propiedades\/.*-(\d+).html$/;
-const LISTINGS_URL_REGEX = /^https:\/\/www.zonaprop\.com.ar\/([\w-]*[a-zA-Z]).html$/;
+const URL_REGEX = /^https:\/\/www\.zonaprop\.com\.ar\/([\w-]*[a-zA-Z]).html$/;
 
-function ZonaPropBrowser() {
-    this.extractDataFns = [
-        {
-            regex: LISTING_URL_REGEX,
-            fn: this.extractListingData,
-        },
-        {
-            regex: LISTINGS_URL_REGEX,
-            fn: this.extractListData,
-        },
-    ];
+function ZonaPropListingsBrowser() {
 }
 
-ZonaPropBrowser.prototype.useStealthBrowser = function () {
+ZonaPropListingsBrowser.prototype.useStealthBrowser = function () {
     return true;
 };
 
-ZonaPropBrowser.prototype.withJavascriptDisabled = function () {
+ZonaPropListingsBrowser.prototype.withJavascriptDisabled = function () {
     return true;
 };
 
-ZonaPropBrowser.prototype.name = function () {
-    return "ZonaProp";
+ZonaPropListingsBrowser.prototype.name = function () {
+    return "ZonaPropListings";
 };
 
-ZonaPropBrowser.prototype.acceptsUrl = function (url) {
-    return this.extractDataFns.some(entry => entry.regex.test(url));
+ZonaPropListingsBrowser.prototype.acceptsUrl = function (url) {
+    return URL_REGEX.test(url);
 };
 
-ZonaPropBrowser.prototype.getId = function (url) {
-    return this.extractDataFns
-        .map(entry => entry.regex.exec(url))
-        .filter(match => match && match.length === 2)
-        .map(match => match[1])
-        [0];
+ZonaPropListingsBrowser.prototype.getId = function (url) {
+    let match = URL_REGEX.exec(url);
+    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
+    return match[1];
 };
 
-ZonaPropBrowser.prototype.extractData = function (browserPage) {
+ZonaPropListingsBrowser.prototype.extractData = function (browserPage) {
     let self = this;
-
-    return self.extractDataFns
-        .filter(entry => entry.regex.test(browserPage.url()))
-        .map(entry => entry.fn.call(self, browserPage))
-        [0];
-};
-
-ZonaPropBrowser.prototype.extractListingData = function (browserPage) {
-    logger.info(`Extracting listing data...`);
-
-    return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "0"
-        };
-
-        // Grab avisoInfo because JS is disabled.
-        eval([...document.scripts]
-            .map(script => script.innerHTML)
-            .filter(script => script.indexOf("avisoInfo") !== -1)
-            [0]
-            .replace("const avisoInfo = {", "var customAvisoInfo = {"));
-
-        // noinspection JSUnresolvedVariable,JSHint
-        Object.assign(response, JSON.parse(JSON.stringify(customAvisoInfo)));
-        // noinspection JSUnresolvedVariable
-        delete response.similarPostingsLink;
-        // noinspection JSUnresolvedVariable
-        delete response.similarPostingsLinkDescription;
-
-        return response;
-    });
-};
-
-ZonaPropBrowser.prototype.extractListData = function (browserPage) {
-    let self = this;
-    logger.info(`Extracting list data...`);
+    logger.info(`Extracting data...`);
 
     let listUrl = browserPage.url();
     let response = {
@@ -118,7 +70,7 @@ ZonaPropBrowser.prototype.extractListData = function (browserPage) {
     });
 };
 
-ZonaPropBrowser.prototype.extractListPage = function (browserPage) {
+ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
 
     return browserPage.evaluate(() => {
@@ -166,10 +118,10 @@ ZonaPropBrowser.prototype.extractListPage = function (browserPage) {
     });
 };
 
-ZonaPropBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
+ZonaPropListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
     return listUrl.substring(0, listUrl.length - 5) + `-pagina-${pageNumber}.html`;
 };
 
 // ---------
 
-module.exports = ZonaPropBrowser;
+module.exports = ZonaPropListingsBrowser;
