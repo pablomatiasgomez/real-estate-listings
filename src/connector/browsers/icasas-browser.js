@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('ICasasBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www.icasas.com.ar\/inmueble\/(\d+)$/;
+const URL_REGEX = /^https:\/\/www.icasas\.com.ar\/inmueble\/(\d+)$/;
 
 function ICasasBrowser() {
 }

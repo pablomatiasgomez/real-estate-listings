@@ -1,29 +1,29 @@
 'use strict';
 
-const logger = include('utils/logger').newLogger('ArgenpropListingBrowser');
+const logger = include('utils/logger').newLogger('ArgenPropListingBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www.argenprop.com\/.*--(\d+)$/;
+const URL_REGEX = /^https:\/\/www.argenprop\.com\/.*--(\d+)$/;
 
-function ArgenpropListingBrowser() {
+function ArgenPropListingBrowser() {
 }
 
-ArgenpropListingBrowser.prototype.name = function () {
-    return "ArgenpropListing";
+ArgenPropListingBrowser.prototype.name = function () {
+    return "ArgenPropListing";
 };
 
-ArgenpropListingBrowser.prototype.acceptsUrl = function (url) {
+ArgenPropListingBrowser.prototype.acceptsUrl = function (url) {
     return URL_REGEX.test(url);
 };
 
-ArgenpropListingBrowser.prototype.getId = function (url) {
+ArgenPropListingBrowser.prototype.getId = function (url) {
     let match = URL_REGEX.exec(url);
     if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
     return match[1];
 };
 
-ArgenpropListingBrowser.prototype.extractData = function (browserPage) {
+ArgenPropListingBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
@@ -80,4 +80,4 @@ ArgenpropListingBrowser.prototype.extractData = function (browserPage) {
 
 // ---------
 
-module.exports = ArgenpropListingBrowser;
+module.exports = ArgenPropListingBrowser;

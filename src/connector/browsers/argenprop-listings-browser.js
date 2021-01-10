@@ -1,30 +1,30 @@
 'use strict';
 
-const logger = include('utils/logger').newLogger('ArgenpropListingsBrowser');
+const logger = include('utils/logger').newLogger('ArgenPropListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www.argenprop.com\/([\w-]*-orden-(?:\w-?)*)$/;
+const URL_REGEX = /^https:\/\/www.argenprop\.com\/([\w-]*-orden-(?:\w-?)*)$/;
 
-function ArgenpropListingsBrowser() {
+function ArgenPropListingsBrowser() {
 }
 
-ArgenpropListingsBrowser.prototype.name = function () {
-    return "ArgenpropListings";
+ArgenPropListingsBrowser.prototype.name = function () {
+    return "ArgenPropListings";
 };
 
-ArgenpropListingsBrowser.prototype.acceptsUrl = function (url) {
+ArgenPropListingsBrowser.prototype.acceptsUrl = function (url) {
     return URL_REGEX.test(url);
 };
 
-ArgenpropListingsBrowser.prototype.getId = function (url) {
+ArgenPropListingsBrowser.prototype.getId = function (url) {
     let match = URL_REGEX.exec(url);
     if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
     return match[1];
 };
 
 // TODO currently does not handle more than 1 page
-ArgenpropListingsBrowser.prototype.extractData = function (browserPage) {
+ArgenPropListingsBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
@@ -56,4 +56,4 @@ ArgenpropListingsBrowser.prototype.extractData = function (browserPage) {
 
 // ---------
 
-module.exports = ArgenpropListingsBrowser;
+module.exports = ArgenPropListingsBrowser;

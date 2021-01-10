@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('SiGroupBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www.sigroupinmobiliaria.com\/(.+)$/;
+const URL_REGEX = /^https:\/\/www.sigroupinmobiliaria\.com\/(.+)$/;
 
 function SiGroupBrowser() {
 }

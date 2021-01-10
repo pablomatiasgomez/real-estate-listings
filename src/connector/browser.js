@@ -7,8 +7,8 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const UserAgents = require('user-agents');
 
 const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
-const ArgenpropListingBrowser = include('connector/browsers/argenprop-listing-browser');
-const ArgenpropListingsBrowser = include('connector/browsers/argenprop-listings-browser');
+const ArgenPropListingBrowser = include('connector/browsers/argenprop-listing-browser');
+const ArgenPropListingsBrowser = include('connector/browsers/argenprop-listings-browser');
 const MercadoLibreListingBrowser = include('connector/browsers/mercadolibre-listing-browser');
 const MercadoLibreListingsBrowser = include('connector/browsers/mercadolibre-listings-browser');
 const ProperatiBrowser = include('connector/browsers/properati-browser');
@@ -18,7 +18,8 @@ const LaGranInmobiliariaBrowser = include('connector/browsers/lagraninmobiliaria
 const MalumaBrowser = include('connector/browsers/maluma-browser');
 const ICasasBrowser = include('connector/browsers/icasas-browser');
 const SiGroupBrowser = include('connector/browsers/sigroup-browser');
-const CabaPropBrowser = include('connector/browsers/cabaprop-browser');
+const CabaPropListingBrowser = include('connector/browsers/cabaprop-listing-browser');
+const CabaPropListingsBrowser = include('connector/browsers/cabaprop-listings-browser');
 const VarcasiaBrowser = include('connector/browsers/varcasia-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
@@ -29,8 +30,8 @@ const DEBUG = false;
 
 const SITE_BROWSERS = [
     new ZonaPropBrowser(),
-    new ArgenpropListingBrowser(),
-    new ArgenpropListingsBrowser(),
+    new ArgenPropListingBrowser(),
+    new ArgenPropListingsBrowser(),
     new MercadoLibreListingBrowser(),
     new MercadoLibreListingsBrowser(),
     new ProperatiBrowser(),
@@ -40,7 +41,8 @@ const SITE_BROWSERS = [
     new MalumaBrowser(),
     new ICasasBrowser(),
     new SiGroupBrowser(),
-    new CabaPropBrowser(),
+    new CabaPropListingBrowser(),
+    new CabaPropListingsBrowser(),
     new VarcasiaBrowser(),
 ];
 

@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('MercadolibreListingBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/.*.mercadolibre.com.ar\/MLA-(\d+)-.*$/;
+const URL_REGEX = /^https?:\/\/.*.mercadolibre\.com.ar\/MLA-(\d+)-.*$/;
 
 function MercadolibreListingBrowser() {
 }

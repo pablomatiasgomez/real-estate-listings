@@ -4,7 +4,7 @@ const logger = include('utils/logger').newLogger('MalumaBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/(?:www.)?maluma.com.ar\/.*MLM(\d+).*$/i;
+const URL_REGEX = /^https?:\/\/(?:www.)?maluma\.com.ar\/.*MLM(\d+).*$/i;
 
 function MalumaBrowser() {
 }
