@@ -8,7 +8,8 @@ const UserAgents = require('user-agents');
 
 const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
 const ArgenPropBrowser = include('connector/browsers/argenprop-browser');
-const MercadoLibreBrowser = include('connector/browsers/mercadolibre-browser');
+const MercadoLibreListingBrowser = include('connector/browsers/mercadolibre-listing-browser');
+const MercadoLibreListingsBrowser = include('connector/browsers/mercadolibre-listings-browser');
 const ProperatiBrowser = include('connector/browsers/properati-browser');
 const EnBuenosAiresBrowser = include('connector/browsers/enbuenosaires-browser');
 const RemaxBrowser = include('connector/browsers/remax-browser');
@@ -28,7 +29,8 @@ const DEBUG = false;
 const SITE_BROWSERS = [
     new ZonaPropBrowser(),
     new ArgenPropBrowser(),
-    new MercadoLibreBrowser(),
+    new MercadoLibreListingBrowser(),
+    new MercadoLibreListingsBrowser(),
     new ProperatiBrowser(),
     new EnBuenosAiresBrowser(),
     new RemaxBrowser(),
