@@ -6,11 +6,11 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const UserAgents = require('user-agents');
 
-const ZonaPropListingBrowser = include('connector/browsers/zonaprop-listing-browser');
+const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
 const ZonaPropListingsBrowser = include('connector/browsers/zonaprop-listings-browser');
-const ArgenPropListingBrowser = include('connector/browsers/argenprop-listing-browser');
+const ArgenPropBrowser = include('connector/browsers/argenprop-browser');
 const ArgenPropListingsBrowser = include('connector/browsers/argenprop-listings-browser');
-const MercadoLibreListingBrowser = include('connector/browsers/mercadolibre-listing-browser');
+const MercadoLibreBrowser = include('connector/browsers/mercadolibre-browser');
 const MercadoLibreListingsBrowser = include('connector/browsers/mercadolibre-listings-browser');
 const ProperatiBrowser = include('connector/browsers/properati-browser');
 const EnBuenosAiresBrowser = include('connector/browsers/enbuenosaires-browser');
@@ -19,7 +19,7 @@ const LaGranInmobiliariaBrowser = include('connector/browsers/lagraninmobiliaria
 const MalumaBrowser = include('connector/browsers/maluma-browser');
 const ICasasBrowser = include('connector/browsers/icasas-browser');
 const SiGroupBrowser = include('connector/browsers/sigroup-browser');
-const CabaPropListingBrowser = include('connector/browsers/cabaprop-listing-browser');
+const CabaPropBrowser = include('connector/browsers/cabaprop-browser');
 const CabaPropListingsBrowser = include('connector/browsers/cabaprop-listings-browser');
 const VarcasiaBrowser = include('connector/browsers/varcasia-browser');
 
@@ -30,11 +30,11 @@ const logger = include('utils/logger').newLogger('Browser');
 const DEBUG = false;
 
 const SITE_BROWSERS = [
-    new ZonaPropListingBrowser(),
+    new ZonaPropBrowser(),
     new ZonaPropListingsBrowser(),
-    new ArgenPropListingBrowser(),
+    new ArgenPropBrowser(),
     new ArgenPropListingsBrowser(),
-    new MercadoLibreListingBrowser(),
+    new MercadoLibreBrowser(),
     new MercadoLibreListingsBrowser(),
     new ProperatiBrowser(),
     new EnBuenosAiresBrowser(),
@@ -43,7 +43,7 @@ const SITE_BROWSERS = [
     new MalumaBrowser(),
     new ICasasBrowser(),
     new SiGroupBrowser(),
-    new CabaPropListingBrowser(),
+    new CabaPropBrowser(),
     new CabaPropListingsBrowser(),
     new VarcasiaBrowser(),
 ];

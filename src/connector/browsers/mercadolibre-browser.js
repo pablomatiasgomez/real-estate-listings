@@ -1,29 +1,29 @@
 'use strict';
 
-const logger = include('utils/logger').newLogger('MercadolibreListingBrowser');
+const logger = include('utils/logger').newLogger('MercadoLibreBrowser');
 
 //---------------
 
 const URL_REGEX = /^https?:\/\/.*.mercadolibre\.com\.ar\/MLA-(\d+)-.*$/;
 
-function MercadolibreListingBrowser() {
+function MercadoLibreBrowser() {
 }
 
-MercadolibreListingBrowser.prototype.name = function () {
-    return "MercadoLibreListing";
+MercadoLibreBrowser.prototype.name = function () {
+    return "MercadoLibre";
 };
 
-MercadolibreListingBrowser.prototype.acceptsUrl = function (url) {
+MercadoLibreBrowser.prototype.acceptsUrl = function (url) {
     return URL_REGEX.test(url);
 };
 
-MercadolibreListingBrowser.prototype.getId = function (url) {
+MercadoLibreBrowser.prototype.getId = function (url) {
     let match = URL_REGEX.exec(url);
     if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
     return match[1];
 };
 
-MercadolibreListingBrowser.prototype.extractData = function (browserPage) {
+MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
@@ -70,4 +70,4 @@ MercadolibreListingBrowser.prototype.extractData = function (browserPage) {
 
 // ---------
 
-module.exports = MercadolibreListingBrowser;
+module.exports = MercadoLibreBrowser;

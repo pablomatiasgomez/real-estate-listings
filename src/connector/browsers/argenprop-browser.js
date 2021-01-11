@@ -1,29 +1,29 @@
 'use strict';
 
-const logger = include('utils/logger').newLogger('ArgenPropListingBrowser');
+const logger = include('utils/logger').newLogger('ArgenPropBrowser');
 
 //---------------
 
 const URL_REGEX = /^https:\/\/www\.argenprop\.com\/.*--(\d+)$/;
 
-function ArgenPropListingBrowser() {
+function ArgenPropBrowser() {
 }
 
-ArgenPropListingBrowser.prototype.name = function () {
-    return "ArgenPropListing";
+ArgenPropBrowser.prototype.name = function () {
+    return "ArgenProp";
 };
 
-ArgenPropListingBrowser.prototype.acceptsUrl = function (url) {
+ArgenPropBrowser.prototype.acceptsUrl = function (url) {
     return URL_REGEX.test(url);
 };
 
-ArgenPropListingBrowser.prototype.getId = function (url) {
+ArgenPropBrowser.prototype.getId = function (url) {
     let match = URL_REGEX.exec(url);
     if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
     return match[1];
 };
 
-ArgenPropListingBrowser.prototype.extractData = function (browserPage) {
+ArgenPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
@@ -80,4 +80,4 @@ ArgenPropListingBrowser.prototype.extractData = function (browserPage) {
 
 // ---------
 
-module.exports = ArgenPropListingBrowser;
+module.exports = ArgenPropBrowser;

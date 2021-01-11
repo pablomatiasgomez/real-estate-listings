@@ -1,29 +1,29 @@
 'use strict';
 
-const logger = include('utils/logger').newLogger('CabaPropListingBrowser');
+const logger = include('utils/logger').newLogger('CabaPropBrowser');
 
 //---------------
 
 const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/.+-id-(\d+)$/;
 
-function CabaPropListingBrowser() {
+function CabaPropBrowser() {
 }
 
-CabaPropListingBrowser.prototype.name = function () {
-    return "CabaPropListing";
+CabaPropBrowser.prototype.name = function () {
+    return "CabaProp";
 };
 
-CabaPropListingBrowser.prototype.acceptsUrl = function (url) {
+CabaPropBrowser.prototype.acceptsUrl = function (url) {
     return URL_REGEX.test(url);
 };
 
-CabaPropListingBrowser.prototype.getId = function (url) {
+CabaPropBrowser.prototype.getId = function (url) {
     let match = URL_REGEX.exec(url);
     if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
     return match[1];
 };
 
-CabaPropListingBrowser.prototype.extractData = function (browserPage) {
+CabaPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
@@ -60,4 +60,4 @@ CabaPropListingBrowser.prototype.extractData = function (browserPage) {
 
 // ---------
 
-module.exports = CabaPropListingBrowser;
+module.exports = CabaPropBrowser;

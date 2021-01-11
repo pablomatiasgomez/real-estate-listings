@@ -1,37 +1,37 @@
 'use strict';
 
-const logger = include('utils/logger').newLogger('ZonaPropListingBrowser');
+const logger = include('utils/logger').newLogger('ZonaPropBrowser');
 
 //---------------
 
 const URL_REGEX = /^https:\/\/www\.zonaprop\.com\.ar\/propiedades\/.*-(\d+).html$/;
 
-function ZonaPropListingBrowser() {
+function ZonaPropBrowser() {
 }
 
-ZonaPropListingBrowser.prototype.useStealthBrowser = function () {
+ZonaPropBrowser.prototype.useStealthBrowser = function () {
     return true;
 };
 
-ZonaPropListingBrowser.prototype.withJavascriptDisabled = function () {
+ZonaPropBrowser.prototype.withJavascriptDisabled = function () {
     return true;
 };
 
-ZonaPropListingBrowser.prototype.name = function () {
-    return "ZonaPropListing";
+ZonaPropBrowser.prototype.name = function () {
+    return "ZonaProp";
 };
 
-ZonaPropListingBrowser.prototype.acceptsUrl = function (url) {
+ZonaPropBrowser.prototype.acceptsUrl = function (url) {
     return URL_REGEX.test(url);
 };
 
-ZonaPropListingBrowser.prototype.getId = function (url) {
+ZonaPropBrowser.prototype.getId = function (url) {
     let match = URL_REGEX.exec(url);
     if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
     return match[1];
 };
 
-ZonaPropListingBrowser.prototype.extractData = function (browserPage) {
+ZonaPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
@@ -59,4 +59,4 @@ ZonaPropListingBrowser.prototype.extractData = function (browserPage) {
 
 // ---------
 
-module.exports = ZonaPropListingBrowser;
+module.exports = ZonaPropBrowser;
