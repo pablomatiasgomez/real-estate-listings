@@ -56,25 +56,28 @@ First you need to create a `config.json`, with the following:
 {
     "urlsSource": {
         "googleSheet": {
-            // Gets all the urls from all the sheets inside this spreadsheet
-            // by looking up all the columns that have "links" as header.
             "enabled": false,
             "credentials": null,
             "spreadsheetId": null
         },
         "files": {
-            // Reads the file line by line and ignores lines that start with "//" or are empty.
             "enabled": false,
             "files": []
         }
     },
     "telegram": {
         "token": null,
-        // Can be retrieved using https://api.telegram.org/bot{TOKEN}/getUpdates
         "chatId": null
     }
 }
 ```
+Where:
+* `urlsSource` - configures where to fetch the urls from:
+  * `googleSheet` - Gets all the urls from all the sheets inside the spreadsheet with id `spreadsheetId`, by looking up all the columns that have "links" as header. Uses `credentials` to authenticate as a service account.
+  * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that start with "//" or are empty.
+* `telegram` - Telegram configuration to notify changes:
+  * `token` - bot token, provided when you create the bot
+  * `chatId` - chat in which you want to receive the notifications, you can retrieve the bot's latest messages by using https://api.telegram.org/bot{TOKEN}/getUpdates
 
 Then you can run it using `./scripts/start.sh` which will run the app in background and notify of any change.
 
