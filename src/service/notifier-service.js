@@ -10,7 +10,7 @@ const logger = include('utils/logger').newLogger('NotifierService');
 
 function NotifierService() {
     this.telegram = new Telegram({
-        token: Utils.readFileSync(`${__project_dir}/config/telegram-token`)
+        token: config.telegram.token
     });
 }
 
@@ -23,8 +23,7 @@ NotifierService.prototype.notify = function (message) {
     }
 
     return self.telegram.sendMessage({
-        // Got from https://api.telegram.org/bot{TOKEN}/getUpdates
-        chat_id: "-498428304",
+        chat_id: config.telegram.chatId,
         text: message
     }).catch(e => {
         logger.error("Error while notifying to telegram.. ", Utils.stringifyError(e));

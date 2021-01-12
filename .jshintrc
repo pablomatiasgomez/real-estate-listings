@@ -91,6 +91,7 @@
         "include": true,
         "__project_dir": true,
         "__src_dir": true,
-        "angular": true
+        "angular": true,
+        "config": true
     }        // additional predefined global variables
 }
