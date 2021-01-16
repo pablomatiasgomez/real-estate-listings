@@ -1,0 +1,17 @@
+{
+    "urlsSource": {
+        "googleSheet": {
+            "enabled": false,
+            "credentials": null,
+            "spreadsheetId": null
+        },
+        "files": {
+            "enabled": false,
+            "files": []
+        }
+    },
+    "telegram": {
+        "token": null,
+        "chatId": null
+    }
+}
