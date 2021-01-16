@@ -4,19 +4,22 @@ Real Estate Listings is a bot that will help you keep track of real estate listi
 
 Currently, supports the following websites:
 
-| Site |  Single Listing | Listings Search |
+| Real Estate Listing Site |  Single Listing | Listings Search |
 | :---: | :---: | :---: |
 | [ZonaProp](https://www.zonaprop.com.ar/)              | ✅ | ✅ |
 | [ArgenProp](https://www.argenprop.com/)               | ✅ | ✅ |
 | [MercadoLibre](https://www.mercadolibre.com.ar/)      | ✅ | ✅ |
+| [CabaProp](https://cabaprop.com.ar/)                  | ✅ | ✅ |
 | [Properati](https://www.properati.com.ar/)            | ✅ |    |
 | [EnBuenosAires](https://www.enbuenosaires.com/)       | ✅ |    |
-| [Remax](https://www.remax.com.ar/)                    | ✅ |    |
 | [LaGranInmobiliaria](https://lagraninmobiliaria.com/) | ✅ |    |
-| [Maluma](https://maluma.com.ar/)                      | ✅ |    |
 | [ICasas](https://www.icasas.com.ar/)                  | ✅ |    |
+
+| Real Estate Agency Specific Listing Site |  Single Listing | Listings Search |
+| :---: | :---: | :---: |
+| [Remax](https://www.remax.com.ar/)                    | ✅ |    |
+| [Maluma](https://maluma.com.ar/)                      | ✅ |    |
 | [SiGroup](https://www.sigroupinmobiliaria.com/)       | ✅ |    |
-| [CabaProp](https://cabaprop.com.ar/)                  | ✅ | ✅ |
 | [Varcasia](https://varcasiapropiedades.com.ar/)       | ✅ |    |
 
 ## Prerequisites
