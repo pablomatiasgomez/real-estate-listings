@@ -52,8 +52,11 @@ npm install
 
 ## Usage
 
-First you need to create a `config.json`, with the following:
+First you need to create a `config.json` located at the root. You can start with the defaults doing:
 
+```
+cp config.default.json config.json
+```
 
 ```json
 {
