@@ -10,8 +10,8 @@ Currently, supports the following websites:
 | [ArgenProp](https://www.argenprop.com/)               | ✅ | ✅ |
 | [MercadoLibre](https://www.mercadolibre.com.ar/)      | ✅ | ✅ |
 | [CabaProp](https://cabaprop.com.ar/)                  | ✅ | ✅ |
+| [EnBuenosAires](https://www.enbuenosaires.com/)       | ✅ | ✅ |
 | [Properati](https://www.properati.com.ar/)            | ✅ |    |
-| [EnBuenosAires](https://www.enbuenosaires.com/)       | ✅ |    |
 | [LaGranInmobiliaria](https://lagraninmobiliaria.com/) | ✅ |    |
 | [ICasas](https://www.icasas.com.ar/)                  | ✅ |    |
 

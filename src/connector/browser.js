@@ -14,6 +14,7 @@ const MercadoLibreBrowser = include('connector/browsers/mercadolibre-browser');
 const MercadoLibreListingsBrowser = include('connector/browsers/mercadolibre-listings-browser');
 const ProperatiBrowser = include('connector/browsers/properati-browser');
 const EnBuenosAiresBrowser = include('connector/browsers/enbuenosaires-browser');
+const EnBuenosAiresListingsBrowser = include('connector/browsers/enbuenosaires-listings-browser');
 const RemaxBrowser = include('connector/browsers/remax-browser');
 const LaGranInmobiliariaBrowser = include('connector/browsers/lagraninmobiliaria-browser');
 const MalumaBrowser = include('connector/browsers/maluma-browser');
@@ -38,6 +39,7 @@ const SITE_BROWSERS = [
     new MercadoLibreListingsBrowser(),
     new ProperatiBrowser(),
     new EnBuenosAiresBrowser(),
+    new EnBuenosAiresListingsBrowser(),
     new RemaxBrowser(),
     new LaGranInmobiliariaBrowser(),
     new MalumaBrowser(),
