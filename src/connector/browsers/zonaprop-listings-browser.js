@@ -42,7 +42,9 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "0"
+        };
 
         // Grab postingInfo because JS is disabled.
         eval([...document.scripts]

@@ -18,9 +18,7 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
     logger.info(`Extracting listings pages data...`);
 
     let listUrl = browserPage.url();
-    let response = {
-        EXPORT_VERSION: "0"
-    };
+    let response = {};
 
     return siteBrowser.extractListPage(browserPage).then(pageResponse => {
         logger.info(`Assigning ${Object.keys(pageResponse).length - 1} items...`);
@@ -42,8 +40,9 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
             }).delay(8000).then(() => {
                 return siteBrowser.extractListPage(browserPage);
             }).then(pageResponse => {
-                logger.info(`Assigning ${Object.keys(pageResponse).length - 1} items...`);
+                let prevItemsCount = Object.keys(response).length;
                 Object.assign(response, pageResponse);
+                logger.info(`Assigned ${Object.keys(response).length - prevItemsCount} items from ${Object.keys(pageResponse).length} page items...`);
             });
         });
         return promise;

@@ -34,7 +34,9 @@ ArgenPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
 
     return browserPage.evaluate(() => {
-        let response = {};
+        let response = {
+            EXPORT_VERSION: "0"
+        };
 
         [...document.querySelectorAll(".listing__item")].forEach(item => {
             let url = item.querySelector("a.card").href;
