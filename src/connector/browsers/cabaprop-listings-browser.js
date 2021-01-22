@@ -1,10 +1,12 @@
 'use strict';
 
+const BrowserUtils = include('connector/browsers/browser-utils');
+
 const logger = include('utils/logger').newLogger('CabaPropListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\.php\?(.+orden=\w+.+)$/;
+const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\.php\?(.+pagina=0.*)$/;
 
 function CabaPropListingsBrowser() {
 }
@@ -23,9 +25,13 @@ CabaPropListingsBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-// TODO currently does not handle more than 1 page
 CabaPropListingsBrowser.prototype.extractData = function (browserPage) {
-    logger.info(`Extracting data...`);
+    let self = this;
+    return BrowserUtils.extractListingsPages(browserPage, self);
+};
+
+CabaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
+    logger.info(`Extracting list data for ${browserPage.url()}...`);
 
     return browserPage.evaluate(() => {
         let response = {
@@ -33,7 +39,8 @@ CabaPropListingsBrowser.prototype.extractData = function (browserPage) {
         };
 
         [...document.querySelectorAll(".house-wrapper")].forEach(item => {
-            let id = item.querySelector("a").href.split("id-")[1];
+            let url = item.querySelector("a").href;
+            let id = url.split("id-")[1];
 
             let price = item.querySelector("p").innerText.trim();
             let address = item.querySelector("h5").innerText.trim();
@@ -41,6 +48,7 @@ CabaPropListingsBrowser.prototype.extractData = function (browserPage) {
             let seller = item.querySelector(".house-holder-info").innerText.trim();
 
             response[id] = {
+                url: url,
                 price: price,
                 address: address,
                 features: features,
@@ -48,8 +56,15 @@ CabaPropListingsBrowser.prototype.extractData = function (browserPage) {
             };
         });
 
+        response.pages = [...document.querySelectorAll(".page-item .page-link")]
+            .map(el => parseInt(el.innerText))
+            .filter(page => !isNaN(page));
         return response;
     });
+};
+
+CabaPropListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
+    return listUrl.replace("pagina=0", "pagina=" + (pageNumber - 1));
 };
 
 // ---------

@@ -21,7 +21,7 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
     let response = {};
 
     return siteBrowser.extractListPage(browserPage).then(pageResponse => {
-        logger.info(`Assigning ${Object.keys(pageResponse).length - 1} items...`);
+        logger.info(`Assigning ${Object.keys(pageResponse).length} properties...`);
         Object.assign(response, pageResponse);
         return pageResponse.pages;
     }).then(pages => {
@@ -42,7 +42,7 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
             }).then(pageResponse => {
                 let prevItemsCount = Object.keys(response).length;
                 Object.assign(response, pageResponse);
-                logger.info(`Assigned ${Object.keys(response).length - prevItemsCount} items from ${Object.keys(pageResponse).length} page items...`);
+                logger.info(`Assigned ${Object.keys(response).length - prevItemsCount} items from ${Object.keys(pageResponse).length} page properties...`);
             });
         });
         return promise;
