@@ -11,7 +11,7 @@ Currently, supports the following websites:
 | [MercadoLibre](https://www.mercadolibre.com.ar/)      | ✅ | ✅ |
 | [CabaProp](https://cabaprop.com.ar/)                  | ✅ | ✅ |
 | [EnBuenosAires](https://www.enbuenosaires.com/)       | ✅ | ✅ |
-| [Properati](https://www.properati.com.ar/)            | ✅ |    |
+| [Properati](https://www.properati.com.ar/)            | ✅ | ✅ |
 | [LaGranInmobiliaria](https://lagraninmobiliaria.com/) | ✅ |    |
 | [ICasas](https://www.icasas.com.ar/)                  | ✅ |    |
 

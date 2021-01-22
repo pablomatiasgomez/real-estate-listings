@@ -13,6 +13,7 @@ const ArgenPropListingsBrowser = include('connector/browsers/argenprop-listings-
 const MercadoLibreBrowser = include('connector/browsers/mercadolibre-browser');
 const MercadoLibreListingsBrowser = include('connector/browsers/mercadolibre-listings-browser');
 const ProperatiBrowser = include('connector/browsers/properati-browser');
+const ProperatiListingsBrowser = include('connector/browsers/properati-listings-browser');
 const EnBuenosAiresBrowser = include('connector/browsers/enbuenosaires-browser');
 const EnBuenosAiresListingsBrowser = include('connector/browsers/enbuenosaires-listings-browser');
 const RemaxBrowser = include('connector/browsers/remax-browser');
@@ -38,6 +39,7 @@ const SITE_BROWSERS = [
     new MercadoLibreBrowser(),
     new MercadoLibreListingsBrowser(),
     new ProperatiBrowser(),
+    new ProperatiListingsBrowser(),
     new EnBuenosAiresBrowser(),
     new EnBuenosAiresListingsBrowser(),
     new RemaxBrowser(),
