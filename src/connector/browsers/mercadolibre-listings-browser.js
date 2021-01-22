@@ -1,5 +1,7 @@
 'use strict';
 
+const BrowserUtils = include('connector/browsers/browser-utils');
+
 const logger = include('utils/logger').newLogger('MercadoLibreListingsBrowser');
 
 //---------------
@@ -23,9 +25,13 @@ MercadoLibreListingsBrowser.prototype.getId = function (url) {
     return match[1];
 };
 
-// TODO currently does not handle more than 1 page
 MercadoLibreListingsBrowser.prototype.extractData = function (browserPage) {
-    logger.info(`Extracting data...`);
+    let self = this;
+    return BrowserUtils.extractListingsPages(browserPage, self);
+};
+
+MercadoLibreListingsBrowser.prototype.extractListPage = function (browserPage) {
+    logger.info(`Extracting list data for ${browserPage.url()}...`);
 
     return browserPage.evaluate(() => {
         let response = {
@@ -49,9 +55,19 @@ MercadoLibreListingsBrowser.prototype.extractData = function (browserPage) {
             };
         });
 
+        response.pages = [...document.querySelectorAll(".ui-search-pagination .andes-pagination__button a")]
+            .map(el => parseInt(el.innerText))
+            .filter(page => !isNaN(page));
         return response;
     });
 };
+
+MercadoLibreListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
+    // TODO pagination not supported for MercadoLibre,
+    //  anyway the pages contain 50 items so its difficult to find a query that returns more than that..
+    throw "Not supported yet!";
+};
+
 
 // ---------
 
