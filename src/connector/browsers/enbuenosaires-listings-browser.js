@@ -47,7 +47,7 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
             let subtitle = item.querySelector(".descriptionproperty strong").innerText.trim();
             let description = item.querySelector(".descriptionproperty p").innerText.trim();
             let seller = item.querySelector(".bottomproperty strong").innerText.trim();
-            let pictureUrls = [...document.querySelectorAll(".snapproperty")[0].querySelectorAll(".gallery li img")].map(img => {
+            let pictureUrls = [item.querySelectorAll(".gallery li img")].map(img => {
                 return img.getAttribute("data-src") || img.src;
             }).filter(pictureUrl => {
                 return pictureUrl.indexOf("loading") === -1;
