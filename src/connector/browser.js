@@ -27,6 +27,7 @@ const CabaPropBrowser = include('connector/browsers/cabaprop-browser');
 const CabaPropListingsBrowser = include('connector/browsers/cabaprop-listings-browser');
 const VarcasiaBrowser = include('connector/browsers/varcasia-browser');
 const MagnaccaBrowser = include('connector/browsers/magnacca-browser');
+const MenendezPropBrowser = include('connector/browsers/menendezprop-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -56,6 +57,7 @@ const SITE_BROWSERS = [
     new CabaPropListingsBrowser(),
     new VarcasiaBrowser(),
     new MagnaccaBrowser(),
+    new MenendezPropBrowser(),
 ];
 
 function Browser() {
@@ -108,10 +110,10 @@ Browser.prototype.fetchData = function (url) {
         }).then(() => {
             return page.goto(url, {
                 waitUntil: 'load',
-                timeout: 60 * 1000,
+                timeout: 5 * 60 * 1000,
                 referer: "https://www.google.com/"
             });
-        }).delay(8000).then(() => {
+        }).delay(6000).then(() => {
             return siteBrowser.extractData(page);
         }).delay(2000).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
