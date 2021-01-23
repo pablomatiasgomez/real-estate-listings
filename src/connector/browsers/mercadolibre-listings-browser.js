@@ -71,7 +71,6 @@ MercadoLibreListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNu
     throw "Not supported yet!";
 };
 
-
 // ---------
 
 module.exports = MercadoLibreListingsBrowser;

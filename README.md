@@ -1,9 +1,12 @@
 # Real Estate Listings
 
-Real Estate Listings is a bot that will help you keep track of real estate listing changes, in particular in for
-Argentinian websites.
+Real Estate Listings is a script that helps you keep track of real estate listing changes. In particular, it currently
+supports mostly Argentinian websites, but it can easily be extended to support other websites as well.
 
-Currently, supports the following websites:
+When the script is run, it will iterate over all the provided urls, and notify you for any change that happened,
+compared to the previous exported version of that website.
+
+The currently supported websites are the following:
 
 | Real Estate Listing Site |  Single Listing | Listings Search |
 | :---: | :---: | :---: |
@@ -89,10 +92,10 @@ Where:
       up all the columns that have "links" as header. Uses `credentials` to authenticate as a service account.
     * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
       start with "//" or are empty.
-* `telegram` - Telegram configuration to notify changes:
+* `telegram` - Telegram configuration used to notify the changes:
     * `token` - bot token, provided when you create the bot
-    * `chatId` - chat in which you want to receive the notifications, you can retrieve the bot's latest messages by
-      using https://api.telegram.org/bot{TOKEN}/getUpdates
+    * `chatId` - chat in which you want to receive the notifications. You can retrieve the bot's chats by getting the
+      latest messages, using https://api.telegram.org/bot{TOKEN}/getUpdates
 
 Then you can run it using `./scripts/start.sh` which will run the app in background and notify of any change.
 
