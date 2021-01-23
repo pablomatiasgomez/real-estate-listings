@@ -17,7 +17,7 @@ Currently, supports the following websites:
 
 | Real Estate Agency Specific Listing Site |  Single Listing | Listings Search |
 | :---: | :---: | :---: |
-| [Remax](https://www.remax.com.ar/)                    | ✅ |    |
+| [Remax](https://www.remax.com.ar/)                    | ✅ | ✅ |
 | [Maluma](https://maluma.com.ar/)                      | ✅ |    |
 | [SiGroup](https://www.sigroupinmobiliaria.com/)       | ✅ |    |
 | [Varcasia](https://varcasiapropiedades.com.ar/)       | ✅ |    |
