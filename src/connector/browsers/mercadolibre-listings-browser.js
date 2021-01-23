@@ -55,9 +55,12 @@ MercadoLibreListingsBrowser.prototype.extractListPage = function (browserPage) {
             };
         });
 
-        response.pages = [...document.querySelectorAll(".ui-search-pagination .andes-pagination__button a")]
+        let pages = [...document.querySelectorAll(".ui-search-pagination .andes-pagination__button a")]
             .map(el => parseInt(el.innerText))
             .filter(page => !isNaN(page));
+        if (!pages.length) pages = [1];
+        response.pages = pages;
+
         return response;
     });
 };

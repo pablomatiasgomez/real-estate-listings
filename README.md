@@ -1,6 +1,7 @@
 # Real Estate Listings
 
-Real Estate Listings is a bot that will help you keep track of real estate listing changes, in particular in for Argentinian websites.
+Real Estate Listings is a bot that will help you keep track of real estate listing changes, in particular in for
+Argentinian websites.
 
 Currently, supports the following websites:
 
@@ -13,7 +14,7 @@ Currently, supports the following websites:
 | [EnBuenosAires](https://www.enbuenosaires.com/)       | ✅ | ✅ |
 | [Properati](https://www.properati.com.ar/)            | ✅ | ✅ |
 | [LaGranInmobiliaria](https://lagraninmobiliaria.com/) | ✅ |    |
-| [ICasas](https://www.icasas.com.ar/)                  | ✅ |    |
+| [ICasas](https://www.icasas.com.ar/)                  | ✅ | ✅ |
 
 | Real Estate Agency Specific Listing Site |  Single Listing | Listings Search |
 | :---: | :---: | :---: |
@@ -24,7 +25,9 @@ Currently, supports the following websites:
 
 ## Prerequisites
 
-Before you begin, you need to have chrome installed in your machine, if you don't have it or you experience errors running `npm install` when installing puppeteer, try running the following:
+Before you begin, you need to have chrome installed in your machine, if you don't have it or you experience errors
+running `npm install` when installing puppeteer, try running the following:
+
 ```
 # Versions
 CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`
@@ -46,6 +49,7 @@ sudo apt-get -y install google-chrome-stable
 ## Installation
 
 Run
+
 ```
 npm install
 ```
@@ -60,30 +64,35 @@ cp config.default.json config.json
 
 ```json
 {
-    "urlsSource": {
-        "googleSheet": {
-            "enabled": false,
-            "credentials": null,
-            "spreadsheetId": null
-        },
-        "files": {
-            "enabled": false,
-            "files": []
-        }
+  "urlsSource": {
+    "googleSheet": {
+      "enabled": false,
+      "credentials": null,
+      "spreadsheetId": null
     },
-    "telegram": {
-        "token": null,
-        "chatId": null
+    "files": {
+      "enabled": false,
+      "files": []
     }
+  },
+  "telegram": {
+    "token": null,
+    "chatId": null
+  }
 }
 ```
+
 Where:
+
 * `urlsSource` - configures where to fetch the urls from:
-  * `googleSheet` - Gets all the urls from all the sheets inside the spreadsheet with id `spreadsheetId`, by looking up all the columns that have "links" as header. Uses `credentials` to authenticate as a service account.
-  * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that start with "//" or are empty.
+    * `googleSheet` - Gets all the urls from all the sheets inside the spreadsheet with id `spreadsheetId`, by looking
+      up all the columns that have "links" as header. Uses `credentials` to authenticate as a service account.
+    * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
+      start with "//" or are empty.
 * `telegram` - Telegram configuration to notify changes:
-  * `token` - bot token, provided when you create the bot
-  * `chatId` - chat in which you want to receive the notifications, you can retrieve the bot's latest messages by using https://api.telegram.org/bot{TOKEN}/getUpdates
+    * `token` - bot token, provided when you create the bot
+    * `chatId` - chat in which you want to receive the notifications, you can retrieve the bot's latest messages by
+      using https://api.telegram.org/bot{TOKEN}/getUpdates
 
 Then you can run it using `./scripts/start.sh` which will run the app in background and notify of any change.
 
