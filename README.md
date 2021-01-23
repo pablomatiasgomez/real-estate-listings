@@ -25,6 +25,7 @@ The currently supported websites are the following:
 | [Maluma](https://maluma.com.ar/)                      | ✅ |    |
 | [SiGroup](https://www.sigroupinmobiliaria.com/)       | ✅ |    |
 | [Varcasia](https://varcasiapropiedades.com.ar/)       | ✅ |    |
+| [Magnacca](https://magnaccapatelli.com/)              | ✅ |    |
 
 ## Prerequisites
 

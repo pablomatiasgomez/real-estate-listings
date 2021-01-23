@@ -26,6 +26,7 @@ const SiGroupBrowser = include('connector/browsers/sigroup-browser');
 const CabaPropBrowser = include('connector/browsers/cabaprop-browser');
 const CabaPropListingsBrowser = include('connector/browsers/cabaprop-listings-browser');
 const VarcasiaBrowser = include('connector/browsers/varcasia-browser');
+const MagnaccaBrowser = include('connector/browsers/magnacca-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -54,6 +55,7 @@ const SITE_BROWSERS = [
     new CabaPropBrowser(),
     new CabaPropListingsBrowser(),
     new VarcasiaBrowser(),
+    new MagnaccaBrowser(),
 ];
 
 function Browser() {
