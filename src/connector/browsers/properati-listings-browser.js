@@ -35,7 +35,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         [...document.querySelectorAll("#property-list article.item")].forEach(item => {
@@ -51,11 +51,18 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
                 features[key] = value;
             });
 
+            let extraData = {};
+            // noinspection JSUnresolvedVariable
+            Object.assign(extraData, JSON.parse(JSON.stringify(window.ninja_params.filter(extraData => extraData.ad_id === parseInt(id))[0])));
+            // noinspection JSUnresolvedVariable
+            delete extraData.trackEvent;
+
             response[id] = {
                 url: url,
                 price: price,
                 address: address,
                 features: features,
+                extraData: extraData,
             };
         });
 
