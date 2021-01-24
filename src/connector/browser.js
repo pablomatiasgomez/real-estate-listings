@@ -28,6 +28,7 @@ const CabaPropListingsBrowser = include('connector/browsers/cabaprop-listings-br
 const VarcasiaBrowser = include('connector/browsers/varcasia-browser');
 const MagnaccaBrowser = include('connector/browsers/magnacca-browser');
 const MenendezPropBrowser = include('connector/browsers/menendezprop-browser');
+const MenendezPropListingsBrowser = include('connector/browsers/menendezprop-listings-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -58,6 +59,7 @@ const SITE_BROWSERS = [
     new VarcasiaBrowser(),
     new MagnaccaBrowser(),
     new MenendezPropBrowser(),
+    new MenendezPropListingsBrowser(),
 ];
 
 function Browser() {
@@ -89,12 +91,16 @@ Browser.prototype.init = function () {
 Browser.prototype.fetchData = function (url) {
     let self = this;
 
-    let siteBrowser = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url))[0];
-    if (!siteBrowser) {
+    let siteBrowsers = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url));
+    if (siteBrowsers.length > 1) {
+        throw "More than one siteBrowsers match the same url: " + siteBrowsers.map(siteBrowser => siteBrowser.name());
+    }
+    if (!siteBrowsers.length) {
         logger.info(`No site browser matches url ${url}`);
         return Promise.resolve(null);
     }
 
+    let siteBrowser = siteBrowsers[0];
     return Promise.resolve().then(() => {
         let useStealthBrowser = siteBrowser.useStealthBrowser && siteBrowser.useStealthBrowser();
         logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);

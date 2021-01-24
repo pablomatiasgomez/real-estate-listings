@@ -26,6 +26,7 @@ The currently supported websites are the following:
 | [SiGroup](https://www.sigroupinmobiliaria.com/)       | ✅ |    |
 | [Varcasia](https://varcasiapropiedades.com.ar/)       | ✅ |    |
 | [Magnacca](https://magnaccapatelli.com/)              | ✅ |    |
+| [MenendezProp](http://www.menendezprop.com.ar/)       | ✅ | ✅ |
 
 ## Prerequisites
 
