@@ -133,7 +133,6 @@ Browser.prototype.fetchData = function (url) {
             };
         }).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
-            console.error(e);
             throw e;
         });
     });
