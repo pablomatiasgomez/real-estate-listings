@@ -6,7 +6,7 @@ const logger = include('utils/logger').newLogger('MercadoLibreListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/inmuebles\.mercadolibre\.com\.ar\/([\w-\/]*)_NoIndex_True$/;
+const URL_REGEX = /^https:\/\/inmuebles\.mercadolibre\.com\.ar\/([\w-\/]*?)(?:_NoIndex_True)?$/;
 
 function MercadoLibreListingsBrowser() {
 }
@@ -66,9 +66,14 @@ MercadoLibreListingsBrowser.prototype.extractListPage = function (browserPage) {
 };
 
 MercadoLibreListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
-    // TODO pagination not supported for MercadoLibre,
-    //  anyway the pages contain 50 items so its difficult to find a query that returns more than that..
-    throw "Not supported yet!";
+    let from = 48 * (pageNumber - 1) + 1;
+    let filter = `_Desde_${from}`;
+
+    let insertIndex = listUrl.lastIndexOf("/") + 1;
+    if (listUrl.substring(insertIndex, insertIndex + 7) === "_Desde_") {
+        throw "Original url already contained page filter!";
+    }
+    return listUrl.substring(0, insertIndex) + filter + listUrl.substring(insertIndex);
 };
 
 // ---------
