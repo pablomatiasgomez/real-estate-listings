@@ -40,7 +40,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
         [...document.querySelectorAll("#property-list article.item")].forEach(item => {
             let id = item.getAttribute("data-id");
-            let url = item.querySelector(".link.item-url").getAttribute("href");
+            let url = item.querySelector(".link.item-url").getAttribute("href").split("#")[0];
 
             let price = item.querySelector(".price").innerText.trim();
             let address = item.querySelector(".address").innerText.trim();
