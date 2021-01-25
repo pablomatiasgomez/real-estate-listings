@@ -8,7 +8,7 @@ compared to the previous exported version of that website.
 
 The currently supported websites are the following:
 
-| Real Estate Listing Site |  Single Listing | Listings Search |
+| Real Estate Listing Site | Single Listing | Listings Search |
 | :---: | :---: | :---: |
 | [ZonaProp](https://www.zonaprop.com.ar/)              | ✅ | ✅ |
 | [ArgenProp](https://www.argenprop.com/)               | ✅ | ✅ |
@@ -20,7 +20,7 @@ The currently supported websites are the following:
 | [ICasas](https://www.icasas.com.ar/)                  | ✅ | ✅ |
 | [MeMudoYa](https://www.memudoya.com/)                 | ✅ | ✅ |
 
-| Real Estate Agency Specific Listing Site |  Single Listing | Listings Search |
+| Real Estate Agency Specific Listing Site | Single Listing | Listings Search |
 | :---: | :---: | :---: |
 | [Remax](https://www.remax.com.ar/)                    | ✅ | ✅ |
 | [Maluma](https://maluma.com.ar/)                      | ✅ |    |
