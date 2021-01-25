@@ -18,6 +18,7 @@ The currently supported websites are the following:
 | [Properati](https://www.properati.com.ar/)            | ✅ | ✅ |
 | [LaGranInmobiliaria](https://lagraninmobiliaria.com/) | ✅ | ✅ |
 | [ICasas](https://www.icasas.com.ar/)                  | ✅ | ✅ |
+| [MeMudoYa](https://www.memudoya.com/)                 | ✅ |    |
 
 | Real Estate Agency Specific Listing Site |  Single Listing | Listings Search |
 | :---: | :---: | :---: |
