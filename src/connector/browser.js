@@ -121,7 +121,7 @@ Browser.prototype.fetchData = function (url) {
                 timeout: 5 * 60 * 1000,
                 referer: "https://www.google.com/"
             });
-        }).delay(12000).then(() => {
+        }).delay(18000).then(() => {
             return siteBrowser.extractData(page);
         }).delay(1000).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
@@ -133,7 +133,7 @@ Browser.prototype.fetchData = function (url) {
                 url: url,
                 data: data
             };
-        }).catch(e => {
+        }).delay(30000).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
         });
