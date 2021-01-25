@@ -28,45 +28,12 @@ LaGranInmobiliariaBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
-        // Title
-        let title = document.querySelector("h1[_ngcontent-euclides-lgi-c4]").innerText;
-        response.title = title;
-
-        // Description
-        let description = document.querySelector(".description").innerText;
-        response.description = description;
-
-        // Property features
-        let keys = document.querySelectorAll(".details dt");
-        let values = document.querySelectorAll(".details dd");
-        if (keys.length !== values.length) {
-            throw "keys and values length differ!";
-        }
-        for (let i = 0; i < keys.length; i++) {
-            response[keys[i].innerText.trim()] = values[i].innerText.trim();
-        }
-
-        // Location
-        let googleUrl = document.querySelector(".location iframe").src;
-        response.location = googleUrl;
-
-        // Price
-        let price = document.querySelector(".quick-info h2").innerText;
-        response.price = price;
-
-        // Other quick features
-        [...document.querySelectorAll(".quick-info-items span.prop-quickinfo")].forEach(item => {
-            response[item.id] = item.innerText;
-        });
-
-        // Pictures
-        let pictureUrls = [...document.querySelectorAll(".photos img")].map(img => {
-            return img.src || img.getAttribute("data-src");
-        });
-        response.pictures = pictureUrls;
+        let id = location.href.split("-")[0].split("/")[3];
+        let data = JSON.parse(document.querySelector("#euclides-lgi-state").innerHTML.replace(/&q;/g, '"'));
+        Object.assign(response, data[`G.https://api.lagraninmobiliaria.com/api/getlisting/id/${id}?`].body);
 
         return response;
     });
