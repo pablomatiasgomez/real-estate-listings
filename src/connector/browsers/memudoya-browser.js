@@ -9,6 +9,9 @@ const URL_REGEX = /^https:\/\/www\.memudoya\.com\/propiedad\/[a-zA-Z-]+([\d-]+)$
 function MeMudoYaBrowser() {
 }
 
+// Exported to be used in the listings search..
+MeMudoYaBrowser.URL_REGEX = URL_REGEX;
+
 MeMudoYaBrowser.prototype.name = function () {
     return "MeMudoYa";
 };
