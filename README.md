@@ -16,7 +16,7 @@ The currently supported websites are the following:
 | [CabaProp](https://cabaprop.com.ar/)                  | ✅ | ✅ |
 | [EnBuenosAires](https://www.enbuenosaires.com/)       | ✅ | ✅ |
 | [Properati](https://www.properati.com.ar/)            | ✅ | ✅ |
-| [LaGranInmobiliaria](https://lagraninmobiliaria.com/) | ✅ |    |
+| [LaGranInmobiliaria](https://lagraninmobiliaria.com/) | ✅ | ✅ |
 | [ICasas](https://www.icasas.com.ar/)                  | ✅ | ✅ |
 
 | Real Estate Agency Specific Listing Site |  Single Listing | Listings Search |

@@ -78,7 +78,6 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 
 MenendezPropListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
     // TODO pagination not supported for MenendezProp, as it is handled via ajax
-    //  anyway the pages contain 12 items so its difficult to find a query that returns more than that..
     throw "Not supported yet!";
 };
 

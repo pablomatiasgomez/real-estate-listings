@@ -19,6 +19,7 @@ const EnBuenosAiresListingsBrowser = include('connector/browsers/enbuenosaires-l
 const RemaxBrowser = include('connector/browsers/remax-browser');
 const RemaxListingsBrowser = include('connector/browsers/remax-listings-browser');
 const LaGranInmobiliariaBrowser = include('connector/browsers/lagraninmobiliaria-browser');
+const LaGranInmobiliariaListingsBrowser = include('connector/browsers/lagraninmobiliaria-listings-browser');
 const MalumaBrowser = include('connector/browsers/maluma-browser');
 const ICasasBrowser = include('connector/browsers/icasas-browser');
 const ICasasListingsBrowser = include('connector/browsers/icasas-listings-browser');
@@ -50,6 +51,7 @@ const SITE_BROWSERS = [
     new RemaxBrowser(),
     new RemaxListingsBrowser(),
     new LaGranInmobiliariaBrowser(),
+    new LaGranInmobiliariaListingsBrowser(),
     new MalumaBrowser(),
     new ICasasBrowser(),
     new ICasasListingsBrowser(),
