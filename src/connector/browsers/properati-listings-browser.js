@@ -35,7 +35,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "1"
+            EXPORT_VERSION: "2"
         };
 
         [...document.querySelectorAll("#property-list article.item")].forEach(item => {
@@ -56,6 +56,8 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
             Object.assign(extraData, JSON.parse(JSON.stringify(window.ninja_params.filter(extraData => extraData.ad_id === parseInt(id))[0])));
             // noinspection JSUnresolvedVariable
             delete extraData.trackEvent;
+            // noinspection JSUnresolvedVariable
+            delete extraData.ad_position;
 
             response[id] = {
                 url: url,
