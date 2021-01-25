@@ -119,9 +119,9 @@ Browser.prototype.fetchData = function (url) {
                 timeout: 5 * 60 * 1000,
                 referer: "https://www.google.com/"
             });
-        }).delay(6000).then(() => {
+        }).delay(12000).then(() => {
             return siteBrowser.extractData(page);
-        }).delay(2000).then(d => {
+        }).delay(1000).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
             data = d;
             return page.close();
