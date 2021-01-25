@@ -34,7 +34,7 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
                 logger.info(`Processing page ${pageNumber}. Url: ${pageUrl}`);
                 return browserPage.goto(pageUrl, {
                     waitUntil: 'load',
-                    timeout: 60 * 1000,
+                    timeout: 5 * 60 * 1000,
                     referer: listUrl,
                 });
             }).delay(8000).then(() => {
