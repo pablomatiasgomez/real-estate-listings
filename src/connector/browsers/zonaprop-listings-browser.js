@@ -54,8 +54,8 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             [0]
             .replace("let postingInfo = {", "var customPostingInfo = {"));
 
-        // noinspection JSUnresolvedVariable,JSHint
-        Object.entries(customPostingInfo).forEach(entry => {
+        // noinspection JSUnresolvedVariable
+        Object.entries(customPostingInfo).forEach(entry => { // jshint ignore:line
             let id = entry[0];
             let item = entry[1];
 

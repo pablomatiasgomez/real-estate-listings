@@ -28,13 +28,18 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         // noinspection JSUnresolvedVariable
         Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
+
         // noinspection JSUnresolvedVariable
-        delete response.seller;
+        delete response.seller.properties_count;
+
+        // noinspection JSUnresolvedVariable
+        response.features.sort((a, b) => a.category.localeCompare(b.category));
+        response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
 
         return response;
     });
