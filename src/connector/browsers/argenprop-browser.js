@@ -27,19 +27,13 @@ ArgenPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "0"
-        };
-
-        // Title
         let title = document.getElementById("ShareDescription").value;
-        response.title = title;
-
-        // Description
         let description = document.getElementById("text-responsive-ficha").innerText;
-        response.description = description;
+        let price = document.querySelector(".titlebar__price").innerText;
+        let address = document.querySelector(".titlebar__address").innerText;
 
         // Parse some private information from GA tag
+        let extraData = {};
         let gaElement = document.getElementById("ga-dimension-ficha");
         if (gaElement) {
             let ignoredAttributes = [
@@ -51,30 +45,33 @@ ArgenPropBrowser.prototype.extractData = function (browserPage) {
             for (let i = 0; i < attributes.length; i++) {
                 let key = attributes[i].nodeName;
                 if (key.startsWith("data-") && !ignoredAttributes.includes(key)) {
-                    response[key.slice(5)] = attributes[i].nodeValue;
+                    extraData[key.slice(5)] = attributes[i].nodeValue;
                 }
             }
         }
 
-        // Property features
+        let features = {};
         [...document.getElementsByClassName("property-features")].flatMap(ul => {
             return [...ul.getElementsByTagName("li")];
         }).forEach(li => {
             let keyValue = li.innerText.split(":").map(i => i.trim());
-            response[keyValue[0]] = keyValue[1] || true;
+            features[keyValue[0]] = keyValue[1] || true;
         });
 
-        // Pictures
         let pictureUrls = [...document.querySelectorAll("ul[data-carousel] img")].map(img => {
             return img.src || img.getAttribute("data-src");
         });
-        response.pictures = pictureUrls;
 
-        // Location
-        let address = document.querySelector(".titlebar__address").innerText;
-        response.address = address;
-
-        return response;
+        return {
+            EXPORT_VERSION: "1",
+            title: title,
+            description: description,
+            price: price,
+            address: address,
+            extraData: extraData,
+            features: features,
+            pictures: pictureUrls,
+        };
     });
 };
 
