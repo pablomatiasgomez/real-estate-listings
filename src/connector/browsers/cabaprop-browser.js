@@ -27,34 +27,25 @@ CabaPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "1"
-        };
-
-        // Location
         let address = document.querySelector(".pro-head h6").innerText;
-        response.address = address;
-
-        // Price
         let price = document.querySelector(".pro-head .price").innerText;
-        response.price = price;
-
-        // Description
         let description = document.querySelector(".pro-text").innerText;
-        response.description = description;
-
-        // Property features
-        [...document.querySelectorAll(".pro-details-item .features li")].forEach(li => {
+        let features = [...document.querySelectorAll(".pro-details-item .features li")].reduce((features, li) => {
             let keyValue = li.innerText.split(":").map(i => i.trim());
-            response[keyValue[0]] = keyValue[1] || true;
-        });
-
-        // Pictures
+            features[keyValue[0]] = keyValue[1] || true;
+            return features;
+        }, {});
         let pictureUrls = [...document.querySelectorAll(".slick-list .slick-slide:not(.slick-cloned) img")]
             .map(img => img.src);
-        response.pictures = pictureUrls;
 
-        return response;
+        return {
+            EXPORT_VERSION: "2",
+            address: address,
+            price: price,
+            description: description,
+            features: features,
+            pictures: pictureUrls,
+        };
     });
 };
 
