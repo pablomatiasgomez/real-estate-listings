@@ -37,8 +37,8 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
         // noinspection JSUnresolvedVariable
         delete response.seller.properties_count;
 
-        // noinspection JSUnresolvedVariable
         if (response.features) {
+            // noinspection JSUnresolvedVariable
             response.features.sort((a, b) => a.category.localeCompare(b.category));
             response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
         }
