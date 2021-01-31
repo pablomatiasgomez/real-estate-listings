@@ -40,7 +40,7 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
         };
 
         // Grab avisoInfo because JS is disabled.
-        eval([...document.scripts]
+        eval([...document.scripts] // jshint ignore:line
             .map(script => script.innerHTML)
             .filter(script => script.indexOf("avisoInfo") !== -1)
             [0]

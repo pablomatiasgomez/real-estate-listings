@@ -60,7 +60,7 @@ MalumaBrowser.prototype.extractData = function (browserPage) {
                 }
             });`;
 
-            eval(script);
+            eval(script); // jshint ignore:line
         });
     });
 };

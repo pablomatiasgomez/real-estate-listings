@@ -48,7 +48,7 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
         };
 
         // Grab postingInfo because JS is disabled.
-        eval([...document.scripts]
+        eval([...document.scripts] // jshint ignore:line
             .map(script => script.innerHTML)
             .filter(script => script.indexOf("postingInfo") !== -1)
             [0]
