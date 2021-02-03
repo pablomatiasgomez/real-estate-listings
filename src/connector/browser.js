@@ -32,6 +32,7 @@ const MenendezPropBrowser = include('connector/browsers/menendezprop-browser');
 const MenendezPropListingsBrowser = include('connector/browsers/menendezprop-listings-browser');
 const MeMudoYaBrowser = include('connector/browsers/memudoya-browser');
 const MeMudoYaListingsBrowser = include('connector/browsers/memudoya-listings-browser');
+const LiderPropListingsBrowser = include('connector/browsers/liderprop-listings-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -66,6 +67,7 @@ const SITE_BROWSERS = [
     new MenendezPropListingsBrowser(),
     new MeMudoYaBrowser(),
     new MeMudoYaListingsBrowser(),
+    new LiderPropListingsBrowser(),
 ];
 
 function Browser() {
