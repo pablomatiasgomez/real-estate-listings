@@ -27,6 +27,16 @@ MenendezPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
+        let EXPORT_VERSION = "0";
+
+        let titleH2 = document.querySelector(".fichatitu h2");
+        if (titleH2 && titleH2.innerText === "") {
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: "OFFLINE",
+            };
+        }
+
         let basicData = {};
         [...document.querySelectorAll(".colLEFT"), ...document.querySelectorAll(".colRIGHT")].forEach(col => {
             let splits = col.innerText.split("\n");
@@ -52,7 +62,7 @@ MenendezPropBrowser.prototype.extractData = function (browserPage) {
         let description = document.querySelector(".importantINFO").innerText.trim();
 
         return {
-            EXPORT_VERSION: "0",
+            EXPORT_VERSION: EXPORT_VERSION,
             basicData: basicData,
             features: features,
             description: description,
