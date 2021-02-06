@@ -35,7 +35,7 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         let remaxData = JSON.parse(document.querySelector("#serverApp-state").innerHTML.replace(/&q;/g, '"'));
@@ -54,7 +54,7 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
                 return feature.innerText.trim();
             });
 
-            response[data.internalId] = {
+            response[data.slug] = {
                 url: url,
                 id: id,
                 price: price,
