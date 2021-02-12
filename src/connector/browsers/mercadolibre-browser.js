@@ -41,11 +41,14 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
         let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
         let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
+        let agency = document.querySelector(".vip-section-seller-info #real_estate_agency");
+        let privateSeller = document.querySelector(".vip-section-seller-info .card-description");
+        let seller = agency ? agency.innerText.trim() : privateSeller.innerText.trim();
+
         let title = titleEl.innerText.trim();
         let description = document.querySelector("#description-includes").innerText.trim();
         let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
         let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
-        let seller = document.querySelector("#real_estate_agency").innerText.trim();
         let features = {};
         [...document.querySelectorAll(".specs-item")].forEach(li => {
             let keyValue = li.innerText.split("\n").map(i => i.trim());
