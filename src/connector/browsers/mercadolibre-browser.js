@@ -27,44 +27,43 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "0"
-        };
+        let EXPORT_VERSION = "1";
 
-        if (!document.getElementsByClassName("item-title__primary")[0]) {
-            // No data was found (probably got redirected and the house no longer exists?)
-            return response;
+        let titleEl = document.querySelector(".item-title__primary");
+        if (!titleEl) {
+            // No data was found (probably got redirected and the house no longer exists)
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: "OFFLINE",
+            };
         }
 
-        // Title
-        let title = document.getElementsByClassName("item-title__primary")[0].innerText;
-        response.title = title;
+        let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
+        let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-        // Description
-        let description = document.getElementById("description-includes").innerText;
-        response.description = description;
-
-        // Price
-        let price = document.getElementsByClassName("item-price")[0].innerText.replace("\n", " ");
-        response.price = price;
-
-        // Location
-        let address = document.getElementsByClassName("seller-location")[0].innerText.replace("\n", " ");
-        response.address = address;
-
-        // Property features
-        [...document.getElementsByClassName("specs-item")].forEach(li => {
+        let title = titleEl.innerText.trim();
+        let description = document.querySelector("#description-includes").innerText.trim();
+        let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
+        let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
+        let seller = document.querySelector("#real_estate_agency").innerText.trim();
+        let features = {};
+        [...document.querySelectorAll(".specs-item")].forEach(li => {
             let keyValue = li.innerText.split("\n").map(i => i.trim());
-            response[keyValue[0]] = keyValue[1] || true;
+            features[keyValue[0]] = keyValue[1] || true;
         });
+        let pictures = JSON.parse(document.querySelector("#gallery_dflt .gallery-content").getAttribute("data-full-images"));
 
-        // Pictures
-        let pictureUrls = [...document.querySelectorAll("#gallery_dflt img")].map(img => {
-            return img.src;
-        });
-        response.pictures = pictureUrls;
-
-        return response;
+        return {
+            EXPORT_VERSION: EXPORT_VERSION,
+            status: status,
+            title: title,
+            description: description,
+            price: price,
+            address: address,
+            seller: seller,
+            features: features,
+            pictures: pictures,
+        };
     });
 };
 
