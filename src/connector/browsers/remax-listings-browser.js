@@ -38,6 +38,12 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
             EXPORT_VERSION: "1"
         };
 
+        /**
+         * @namespace remaxData
+         * @property {Object} searchListingDomainKey
+         * @property {Array} searchListingDomainKey.data[]
+         * @property {number} searchListingDomainKey.totalPages
+         */
         let remaxData = JSON.parse(document.querySelector("#serverApp-state").innerHTML.replace(/&q;/g, '"'));
 
         [...document.querySelectorAll("#listing qr-card-prop")].forEach(item => {
@@ -46,6 +52,11 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
                 .map(clazz => clazz.replace("button-prev", ""))
                 .filter(clazz => !!clazz)
                 [0];
+
+            /**
+             * @namespace data
+             * @property {Object} slug
+             */
             let data = remaxData.searchListingDomainKey.data.filter(item => item.id === id)[0];
             let url = location.origin + "/listings/" + data.slug;
 

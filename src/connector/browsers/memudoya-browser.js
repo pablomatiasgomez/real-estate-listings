@@ -30,6 +30,13 @@ MeMudoYaBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
+        /**
+         * @namespace window
+         * @property {string} title
+         * @property {string} propAddress
+         * @property {string} operation
+         * @property {Object} PAGE
+         */
         let title = window.title;
         let address = window.propAddress;
         let operation = window.operation;
