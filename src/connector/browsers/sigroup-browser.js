@@ -27,27 +27,25 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "0"
-        };
+        let EXPORT_VERSION = "0";
 
-        // Many details as plain text..
-        let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")]
-            .map(i => i.innerText);
-        response.textDetails = textDetails;
-
-        // Price
         let price = [...document.querySelectorAll("[data-testid='linkElement']")]
             .map(el => el.innerText)
             .filter(text => text.indexOf("$") !== -1)[0];
-        response.price = price;
 
-        // Pictures
-        let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")]
-            .map(img => img.src);
-        response.pictures = pictureUrls;
+        // Consider the page broken as it may happen that it does not load sometimes..
+        if (!price) throw "Couldn't find price!";
 
-        return response;
+        // Many details as plain text..
+        let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")].map(i => i.innerText);
+        let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")].map(img => img.src);
+
+        return {
+            EXPORT_VERSION: EXPORT_VERSION,
+            price: price,
+            textDetails: textDetails,
+            pictures: pictureUrls,
+        };
     });
 };
 
