@@ -39,7 +39,6 @@ LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
         };
 
         [...document.querySelectorAll(".items .property-list")].forEach(item => {
-            console.log(item);
             if (item.classList.contains("priority-2")) {
                 let url = item.querySelector("a").href;
                 let id = url.split("/")[5];
