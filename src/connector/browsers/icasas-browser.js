@@ -31,6 +31,21 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
             EXPORT_VERSION: "0"
         };
 
+        // Status:
+        // let status = "ONLINE"
+        if (document.querySelector(".not-available-container")) {
+            // The listing is still visible but no longer available
+            response.status = "UNAVAILABLE";
+        } else if (document.querySelector(".listado .viviendas")) {
+            // The listing is nos longer visible nor available
+            response.status = "UNLISTED";
+
+            // Title
+            let title = document.querySelector(".listado .viviendas .titulo").innerText;
+            response.title = title;
+            return response;
+        }
+
         // Title
         let title = document.querySelector("#firstLine h1").innerText;
         response.title = title;
