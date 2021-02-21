@@ -69,7 +69,8 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
 
         let features = {};
         [...document.querySelectorAll(".list li")].forEach(li => {
-            features[li.innerText.trim()] = true;
+            let keyValue = li.innerText.split(":");
+            features[keyValue[0].trim()] = keyValue.length === 2 ? keyValue[1].trim() : true;
         });
         [...document.querySelectorAll(".details_list li")].forEach(li => {
             features[li.className.trim()] = li.innerText.trim();
