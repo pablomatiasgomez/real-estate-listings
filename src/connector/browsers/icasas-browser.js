@@ -27,61 +27,65 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "0"
-        };
+        let EXPORT_VERSION = "1";
 
-        // Status:
-        // let status = "ONLINE"
+        let status = "LISTED";
+
         if (document.querySelector(".not-available-container")) {
             // The listing is still visible but no longer available
-            response.status = "UNAVAILABLE";
+            status = "UNAVAILABLE";
         } else if (document.querySelector(".listado .viviendas")) {
             // The listing is nos longer visible nor available
-            response.status = "UNLISTED";
-
-            // Title
+            status = "UNLISTED";
             let title = document.querySelector(".listado .viviendas .titulo").innerText;
-            response.title = title;
-            return response;
+
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: status,
+                title: title,
+            };
         }
 
-        // Title
         let title = document.querySelector("#firstLine h1").innerText;
-        response.title = title;
         let subtitle = document.querySelector("#firstLine h2").innerText;
-        response.subtitle = subtitle;
-
-        // Description
-        let description = document.querySelector(".description").innerText;
-        response.description = description;
-
-        // Price
         let price = document.querySelector(".price").innerText;
-        response.price = price;
-
-        // Location
         let address = document.querySelector(".location_info").innerText;
-        response.address = address;
 
-        // Pictures
         let picturesSlider = document.querySelector(".slick-track");
+        let pictureUrls = [];
         if (picturesSlider) {
-            let pictureUrls = [...picturesSlider.querySelectorAll("img")].map(img => {
+            pictureUrls = [...picturesSlider.querySelectorAll("img")].map(img => {
                 return img.getAttribute("data-lazy") || img.src;
             });
-            response.pictures = pictureUrls;
         }
 
-        // Property features
+        let descriptionReadMoreEl = document.querySelector(".description .read_more");
+        if (descriptionReadMoreEl) {
+            // Remove show more and show the extra description.
+            descriptionReadMoreEl.remove();
+            document.querySelector(".more_text").style.display = "";
+        }
+        let description = document.querySelector(".description").innerText;
+
+        let features = {};
         [...document.querySelectorAll(".list li")].forEach(li => {
-            response[li.innerText.trim()] = true;
+            features[li.innerText.trim()] = true;
         });
         [...document.querySelectorAll(".details_list li")].forEach(li => {
-            response[li.className.trim()] = li.innerText.trim();
+            features[li.className.trim()] = li.innerText.trim();
         });
 
-        return response;
+        return {
+            EXPORT_VERSION: EXPORT_VERSION,
+            status: status,
+            title: title,
+            subtitle: subtitle,
+            price: price,
+            address: address,
+            description: description,
+            features: features,
+            pictureUrls: pictureUrls,
+        };
     });
 };
 
