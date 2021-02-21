@@ -37,7 +37,7 @@ Logger.prototype.getPrefixAsArray = function (type) {
 };
 
 Logger.prototype.getClazzWithSpaces = function () {
-    return `                           [${this.className}]`.slice(-Logger.prototype.maxClazzLength - 2);
+    return `                                        [${this.className}]`.slice(-Logger.prototype.maxClazzLength - 2);
 };
 
 module.exports = Logger;
