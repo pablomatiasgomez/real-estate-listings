@@ -38,6 +38,8 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
 
         // Many details as plain text..
         let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")].map(i => i.innerText);
+
+        // TODO Pictures currently not working becasue JS is disabled. But it was flaky (because they are loaded via js..)
         let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")].map(img => img.src);
 
         return {
