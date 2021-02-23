@@ -53,8 +53,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 [0]
                 .innerText;
             let pictures = JSON.parse(/items = (.*),\n/.exec(pictureUrlsScript)[1]);
-            let canonicalLink = document.querySelector("link[rel=canonical]").href;
-            let itemKey = /\/MLA-\d+-(.*)-_JM/.exec(canonicalLink)[1];
+            let itemKey = /\.com\/(.*)-D_NQ/.exec(JSON.parse(document.querySelector("script[type='application/ld+json']").innerText).image)[1];
             pictures.forEach(picture => picture.src = picture.src.replace("none", itemKey));
 
             return {
