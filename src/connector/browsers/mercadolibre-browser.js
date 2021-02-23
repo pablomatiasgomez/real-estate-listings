@@ -29,44 +29,86 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "1";
 
-        let titleEl = document.querySelector(".item-title__primary");
-        if (!titleEl) {
+        if (document.querySelector(".vip-section-product-info")) {
+            // This is the new version of MELI listings...
+
+            // TODO handle "Publicación finalizada" status.
+            let status = "ONLINE";
+
+            let fullAddress = document.querySelector(".vip-section-map h2").innerText.trim();
+
+            let title = fullAddress.substr(0, fullAddress.lastIndexOf(",")); // Legacy title didn't include last past of address...
+            let description = document.querySelector(".description-content .preformated-text").innerText.trim();
+            let price = document.querySelector(".vip-price").innerText.trim();
+            let address = fullAddress.replace(",", ""); // Legacy address didn't include the first ","
+            let seller = document.querySelector("#sellerContact .profile-info-name-data").innerText.trim();
+            let features = {};
+            [...document.querySelectorAll(".attribute-content .attribute-group li")].forEach(li => {
+                let keyValue = li.innerText.split(":").map(i => i.trim());
+                features[keyValue[0]] = keyValue[1] || true;
+            });
+
+            let pictureUrlsScript = [...document.getElementsByTagName("script")]
+                .filter(script => script.innerText.indexOf("items = [") !== -1)
+                [0]
+                .innerText;
+            let pictures = JSON.parse(/items = (.*),\n/.exec(pictureUrlsScript)[1]);
+            let canonicalLink = document.querySelector("link[rel=canonical]").href;
+            let itemKey = /\/MLA-\d+-(.*)-_JM/.exec(canonicalLink)[1];
+            pictures.forEach(picture => picture.src = picture.src.replace("none", itemKey));
+
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: status,
+                title: title,
+                description: description,
+                price: price,
+                address: address,
+                seller: seller,
+                features: features,
+                pictures: pictures,
+            };
+        } else if (document.querySelector(".item-title__primary")) {
+            // Legacy version of MELI listings....
+
+            let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
+            let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
+
+            let title = document.querySelector(".item-title__primary").innerText.trim();
+            let description = document.querySelector("#description-includes").innerText.trim();
+            let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
+            let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
+
+            let agency = document.querySelector(".vip-section-seller-info #real_estate_agency");
+            let privateSeller = document.querySelector(".vip-section-seller-info .card-description");
+            let seller = agency ? agency.innerText.trim() : privateSeller.innerText.trim();
+
+            let features = {};
+            [...document.querySelectorAll(".specs-item")].forEach(li => {
+                let keyValue = li.innerText.split("\n").map(i => i.trim());
+                features[keyValue[0]] = keyValue[1] || true;
+            });
+            let pictures = JSON.parse(document.querySelector("#gallery_dflt .gallery-content").getAttribute("data-full-images"));
+
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: status,
+                title: title,
+                description: description,
+                price: price,
+                address: address,
+                seller: seller,
+                features: features,
+                pictures: pictures,
+            };
+        } else {
+            // If none of the two versions are found, it means we were redirected to the home page..
             // No data was found (probably got redirected and the house no longer exists)
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
                 status: "OFFLINE",
             };
         }
-
-        let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
-        let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
-
-        let agency = document.querySelector(".vip-section-seller-info #real_estate_agency");
-        let privateSeller = document.querySelector(".vip-section-seller-info .card-description");
-        let seller = agency ? agency.innerText.trim() : privateSeller.innerText.trim();
-
-        let title = titleEl.innerText.trim();
-        let description = document.querySelector("#description-includes").innerText.trim();
-        let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
-        let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
-        let features = {};
-        [...document.querySelectorAll(".specs-item")].forEach(li => {
-            let keyValue = li.innerText.split("\n").map(i => i.trim());
-            features[keyValue[0]] = keyValue[1] || true;
-        });
-        let pictures = JSON.parse(document.querySelector("#gallery_dflt .gallery-content").getAttribute("data-full-images"));
-
-        return {
-            EXPORT_VERSION: EXPORT_VERSION,
-            status: status,
-            title: title,
-            description: description,
-            price: price,
-            address: address,
-            seller: seller,
-            features: features,
-            pictures: pictures,
-        };
     });
 };
 
