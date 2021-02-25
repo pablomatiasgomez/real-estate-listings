@@ -29,11 +29,19 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "1";
 
+        function findScript(strMatch) {
+            let scripts = [...document.getElementsByTagName("script")]
+                .filter(script => script.innerText.indexOf(strMatch) !== -1);
+
+            if (scripts.length !== 1) throw "Found " + scripts.length + " scripts! Expected 1!";
+            return scripts[0].innerText;
+        }
+
         if (document.querySelector(".vip-section-product-info")) {
             // This is the new version of MELI listings...
 
-            // TODO handle "Publicación finalizada" status.
-            let status = "ONLINE";
+            let statusEl = document.querySelector(".item-status-notification .item-status-title");
+            let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
             let fullAddress = document.querySelector(".vip-section-map h2").innerText.trim();
 
@@ -41,17 +49,18 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let description = document.querySelector(".description-content .preformated-text").innerText.trim();
             let price = document.querySelector(".vip-price").innerText.trim();
             let address = fullAddress.replace(",", ""); // Legacy address didn't include the first ","
-            let seller = document.querySelector("#sellerContact .profile-info-name-data").innerText.trim();
+
+            let gaScript = findScript("dimension120");
+            let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
+            seller = seller.charAt(0).toUpperCase() + seller.toLowerCase().slice(1);
+
             let features = {};
             [...document.querySelectorAll(".attribute-content .attribute-group li")].forEach(li => {
                 let keyValue = li.innerText.split(":").map(i => i.trim());
                 features[keyValue[0]] = keyValue[1] || true;
             });
 
-            let pictureUrlsScript = [...document.getElementsByTagName("script")]
-                .filter(script => script.innerText.indexOf("items = [") !== -1)
-                [0]
-                .innerText;
+            let pictureUrlsScript = findScript("items = [");
             let pictures = JSON.parse(/items = (.*),\n/.exec(pictureUrlsScript)[1]);
             let itemKey = /\.com\/(.*)-D_NQ/.exec(JSON.parse(document.querySelector("script[type='application/ld+json']").innerText).image)[1];
             pictures.forEach(picture => picture.src = picture.src.replace("none", itemKey));
