@@ -52,7 +52,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
 
             let gaScript = findScript("dimension120");
             let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
-            seller = seller.charAt(0).toUpperCase() + seller.toLowerCase().slice(1);
+            seller = seller.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
             let features = {};
             [...document.querySelectorAll(".attribute-content .attribute-group li")].forEach(li => {
