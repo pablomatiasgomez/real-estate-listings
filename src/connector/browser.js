@@ -143,7 +143,7 @@ Browser.prototype.fetchData = function (url) {
                 url: url,
                 data: data
             };
-        }).delay(30000).catch(e => {
+        }).delay(20000).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
         });
