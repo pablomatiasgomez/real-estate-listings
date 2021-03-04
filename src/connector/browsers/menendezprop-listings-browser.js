@@ -72,6 +72,8 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             .filter(el => el.offsetParent !== null) // Not hidden
             .map(el => parseInt(el.innerText))
             .filter(page => !isNaN(page));
+        if (!response.pages.length) response.pages = [1];
+
         return response;
     });
 };
