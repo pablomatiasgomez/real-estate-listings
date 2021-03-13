@@ -46,7 +46,19 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
         });
         return promise;
     }).then(() => {
-        return response;
+        // This could be handled differently if we change what all browsers return.. to be refactored.
+        let items = [];
+        Object.entries(response).forEach(entry => {
+            let id = entry[0];
+            let item = entry[1];
+            if (item.id) throw "Item already contains id property. Stopping to avoid replacing!";
+            if (!item.url) throw "Item does not contain url!";
+
+            item.id = id;
+            item.EXPORT_VERSION = response.EXPORT_VERSION;
+            items.push(item);
+        });
+        return items;
     });
 };
 

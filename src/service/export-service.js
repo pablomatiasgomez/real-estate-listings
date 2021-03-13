@@ -26,16 +26,19 @@ ExportService.prototype.exportData = function (urls) {
             let remainingMinutes = i === 0 ? "n/a" : Math.round((urls.length - i) * elapsedMinutes / i) + "m";
             logger.info(`[${i + 1}/${urls.length}] [ETA:${remainingMinutes}] Processing url ${url} ..`);
             return self.browser.fetchData(url);
-        }).then(response => {
-            if (!response) return; // Skip not handled urls.
-            response.id = sanitize(response.id);
+        }).then(responses => {
+            if (!responses) return; // Skip not handled urls.
 
-            Utils.createDirIfNotExists(self.getFileDir(response.id));
+            responses.forEach(response => {
+                response.id = sanitize(response.id);
 
-            // First we check for data changes and notify:
-            return self.verifyDataDifference(response.url, response.id, response.data).then(() => {
-                logger.info(`Going to save data exported for id ${response.id}`);
-                return self.createDataFile(response.id, response.data);
+                Utils.createDirIfNotExists(self.getFileDir(response.id));
+
+                // First we check for data changes and notify:
+                return self.verifyDataDifference(response.url, response.id, response.data).then(() => {
+                    logger.info(`Going to save data exported for id ${response.id}`);
+                    return self.createDataFile(response.id, response.data);
+                });
             });
         }).catch(e => {
             logger.error(`Failed to export data for url: ${url} `, e);

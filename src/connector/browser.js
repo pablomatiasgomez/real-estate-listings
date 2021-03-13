@@ -146,11 +146,24 @@ Browser.prototype.fetchData = function (url) {
             data = d;
             return page.close();
         }).then(() => {
-            return {
-                id: siteBrowser.name() + "-" + siteBrowser.getId(url),
-                url: url,
-                data: data
-            };
+            if (Array.isArray(data)) {
+                return data.map(item => {
+                    return {
+                        id: `${siteBrowser.name()}-${siteBrowser.getId(url)}-${item.id}`,
+                        url: item.url,
+                        parentUrl: url,
+                        data: item,
+                    };
+                });
+            } else {
+                return [
+                    {
+                        id: `${siteBrowser.name()}-${siteBrowser.getId(url)}`,
+                        url: url,
+                        data: data,
+                    }
+                ];
+            }
         }).delay(20000).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
