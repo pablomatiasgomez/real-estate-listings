@@ -85,7 +85,15 @@ Browser.prototype.init = function () {
     let browserOptions = {
         headless: !DEBUG,
         devtools: DEBUG,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--single-process',
+        ],
     };
 
     return Promise.resolve().then(() => {
