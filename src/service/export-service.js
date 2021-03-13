@@ -29,17 +29,19 @@ ExportService.prototype.exportData = function (urls) {
         }).then(responses => {
             if (!responses) return; // Skip not handled urls.
 
+            let promise = Promise.resolve();
             responses.forEach(response => {
                 response.id = sanitize(response.id);
-
                 Utils.createDirIfNotExists(self.getFileDir(response.id));
 
-                // First we check for data changes and notify:
-                return self.verifyDataDifference(response.url, response.id, response.data).then(() => {
+                promise = promise.then(() => {
+                    return self.verifyDataDifference(response.url, response.id, response.data);
+                }).then(() => {
                     logger.info(`Going to save data exported for id ${response.id}`);
                     return self.createDataFile(response.id, response.data);
                 });
             });
+            return promise;
         }).catch(e => {
             logger.error(`Failed to export data for url: ${url} `, e);
             // Log error to telegram and continue

@@ -148,6 +148,7 @@ Browser.prototype.fetchData = function (url) {
         }).then(() => {
             if (Array.isArray(data)) {
                 return data.map(item => {
+                    // TODO we are not handling new/removed items this way...
                     return {
                         id: `${siteBrowser.name()}-${siteBrowser.getId(url)}-${item.id}`,
                         url: item.url,
