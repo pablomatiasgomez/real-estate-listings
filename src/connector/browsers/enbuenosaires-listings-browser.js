@@ -35,7 +35,7 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         [...document.querySelectorAll(".snapproperty")].forEach(item => {
@@ -43,9 +43,10 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
             let urlSplit = url.split("-");
             let id = urlSplit[urlSplit.length - 1].slice(0, -5);
 
-            let title = item.querySelector(".titleproperty").innerText.trim();
+            let address = item.querySelector(".titleproperty").innerText.trim();
             let subtitle = item.querySelector(".descriptionproperty strong").innerText.trim();
-            let description = item.querySelector(".descriptionproperty p").innerText.trim();
+            let features = item.querySelector(".descriptionproperty p").innerText.split(",").map(i => i.trim()).sort();
+            let description = item.querySelector(".descriptionproperty p:nth-child(3)").innerText.split(" [# ")[0].trim();
             let seller = item.querySelector(".bottomproperty strong").innerText.trim();
             let pictureUrls = [...item.querySelectorAll(".gallery li img")].map(img => {
                 return img.getAttribute("data-src") || img.src;
@@ -55,8 +56,9 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
 
             response[id] = {
                 url: url,
-                title: title,
+                address: address,
                 subtitle: subtitle,
+                features: features,
                 description: description,
                 seller: seller,
                 pictureUrls: pictureUrls,
