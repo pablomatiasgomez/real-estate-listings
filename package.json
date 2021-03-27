@@ -19,7 +19,7 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "google-spreadsheet": "^3.1.15",
-    "json-diff": "^0.5.4",
+    "json-diff": "pablomatiasgomez/json-diff",
     "puppeteer": "^8.0.0",
     "puppeteer-extra": "^3.1.17",
     "puppeteer-extra-plugin-stealth": "^2.7.5",

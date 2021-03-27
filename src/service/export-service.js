@@ -65,9 +65,7 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
             logger.info(`Not checking data difference because version is different. Previous Version: ${previousData.EXPORT_VERSION} !== ${currentData.EXPORT_VERSION} Current Version.`);
             return false;
         }
-        let diff = jsonDiff.diffString(previousData, currentData, {
-            color: false
-        });
+        let diff = jsonDiff.diffString(previousData, currentData, {color: false}, {showKeys: ["url"]});
         if (diff) {
             logger.info(`Differences were found for ${id}\n`, diff);
             let message = `A difference was found for: \n` +
