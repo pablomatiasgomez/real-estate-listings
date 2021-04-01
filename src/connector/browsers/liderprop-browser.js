@@ -27,7 +27,19 @@ LiderPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let title = document.querySelector("header p").innerText.trim();
+        let EXPORT_VERSION = "0";
+
+        let titleEl = document.querySelector("header p");
+        if (!titleEl) {
+            // Page shows a 404 error html..
+            let status = "UNLISTED";
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: status,
+            };
+        }
+
+        let title = titleEl.innerText.trim();
         let description = document.querySelector(".panel-body p").innerText.trim();
         let price = document.querySelector(".price").innerText.trim();
         let seller = document.querySelector(".agency .panel-heading").innerText.trim();
@@ -48,7 +60,7 @@ LiderPropBrowser.prototype.extractData = function (browserPage) {
         });
 
         return {
-            EXPORT_VERSION: "0",
+            EXPORT_VERSION: EXPORT_VERSION,
             title: title,
             description: description,
             price: price,

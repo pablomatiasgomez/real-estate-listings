@@ -27,7 +27,19 @@ ArgenPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let title = document.getElementById("ShareDescription").value;
+        let EXPORT_VERSION = "0";
+
+        let titleEl = document.getElementById("ShareDescription");
+        if (!titleEl) {
+            // Page shows a 404 error html..
+            let status = "UNLISTED";
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: status,
+            };
+        }
+
+        let title = titleEl.value;
         let description = document.getElementById("text-responsive-ficha").innerText;
         let price = document.querySelector(".titlebar__price").innerText;
         let address = document.querySelector(".titlebar__address").innerText;
@@ -63,7 +75,7 @@ ArgenPropBrowser.prototype.extractData = function (browserPage) {
         });
 
         return {
-            EXPORT_VERSION: "1",
+            EXPORT_VERSION: EXPORT_VERSION,
             title: title,
             description: description,
             price: price,
