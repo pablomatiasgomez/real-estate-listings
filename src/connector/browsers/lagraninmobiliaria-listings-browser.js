@@ -48,7 +48,7 @@ LaGranInmobiliariaListingsBrowser.prototype.extractListPage = function (browserP
             response[listing.id] = listing;
         });
 
-        response.pages = Array.from(Array(queryState.pages.total + 1).keys()).slice(1);
+        response.pages = BrowserUtils.pageCountToPagesArray(queryState.pages.total);
 
         return response;
     });

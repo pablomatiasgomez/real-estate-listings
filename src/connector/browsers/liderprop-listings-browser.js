@@ -83,7 +83,7 @@ LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
         });
 
         let pageCount = parseInt(document.querySelector(".pagination p strong:nth-child(2)").innerText);
-        response.pages = Array.from(Array(pageCount + 1).keys()).slice(1);
+        response.pages = BrowserUtils.pageCountToPagesArray(pageCount);
 
         return response;
     });

@@ -6,7 +6,7 @@ const logger = include('utils/logger').newLogger('ProperatiListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/s\/((?:[\w:\-.]+\/){4})$/;
+const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/s\/([\w:\-\/]+)$/;
 
 function ProperatiListingsBrowser() {
 }
@@ -33,50 +33,40 @@ ProperatiListingsBrowser.prototype.extractData = function (browserPage) {
 ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
 
+
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "2"
+            EXPORT_VERSION: "3"
         };
 
-        [...document.querySelectorAll("#property-list article.item")].forEach(item => {
-            let id = item.getAttribute("data-id");
-            let url = item.querySelector(".link.item-url").getAttribute("href").split("#")[0];
+        let nextData = JSON.parse(document.querySelector("#__NEXT_DATA__").innerText);
 
-            let price = item.querySelector(".price").innerText.trim();
-            let address = item.querySelector(".address").innerText.trim();
-            let features = {};
-            [...item.querySelectorAll(".row-fluid div.span6 p")].forEach(feature => {
-                let key = feature.className.trim() || "seller";
-                let value = feature.innerText.trim();
-                features[key] = value;
+        // noinspection JSUnresolvedVariable
+        let results = nextData.props.pageProps.results;
+
+        results.data.forEach(item => {
+            item.pictureUrls = (item.images || []).map(image => {
+                // noinspection JSUnresolvedVariable
+                let pictureUrl = image.sizes["1080"].jpg;
+                if (!pictureUrl) throw "Couldn't find picture url!";
+                return pictureUrl;
             });
+            delete item.images;
 
-            let extraData = {};
-            // noinspection JSUnresolvedVariable
-            Object.assign(extraData, JSON.parse(JSON.stringify(window.ninja_params.filter(extraData => extraData.ad_id === parseInt(id))[0])));
-            // noinspection JSUnresolvedVariable
-            delete extraData.trackEvent;
-            // noinspection JSUnresolvedVariable
-            delete extraData.ad_position;
-
-            response[id] = {
-                url: url,
-                price: price,
-                address: address,
-                features: features,
-                extraData: extraData,
-            };
+            response[item.id] = item;
         });
 
-        response.pages = [...document.querySelectorAll(".pagination li a")]
-            .map(el => parseInt(el.innerText))
-            .filter(page => !isNaN(page));
+        let pageCount = Math.ceil(results.metadata.total / results.metadata.limit);
+        response.pages = BrowserUtils.pageCountToPagesArray(pageCount);
+
         return response;
     });
 };
 
 ProperatiListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
-    return `${listUrl}${pageNumber}/`;
+    if (listUrl.includes("page=")) throw "listUrl already contains pagination!";
+    let appendChar = listUrl.includes("?") ? "&" : "?";
+    return `${listUrl}${appendChar}page=${pageNumber}`;
 };
 
 // ---------

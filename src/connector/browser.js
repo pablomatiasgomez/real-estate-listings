@@ -6,6 +6,8 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const UserAgents = require('user-agents');
 
+const BrowserUtils = include('connector/browsers/browser-utils');
+
 const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
 const ZonaPropListingsBrowser = include('connector/browsers/zonaprop-listings-browser');
 const ArgenPropBrowser = include('connector/browsers/argenprop-browser');
@@ -140,6 +142,8 @@ Browser.prototype.fetchData = function (url) {
                 referer: "https://www.google.com/"
             });
         }).delay(18000).then(() => {
+            return BrowserUtils.addCommonFunctions(page);
+        }).then(() => {
             return siteBrowser.extractData(page);
         }).delay(1000).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);

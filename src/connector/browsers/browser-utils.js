@@ -37,7 +37,9 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
                     timeout: 5 * 60 * 1000,
                     referer: listUrl,
                 });
-            }).delay(8000).then(() => {
+            }).delay(18000).then(() => {
+                return BrowserUtils.addCommonFunctions(browserPage);
+            }).then(() => {
                 return siteBrowser.extractListPage(browserPage);
             }).then(pageResponse => {
                 logger.info(`Assigning ${Object.keys(pageResponse)} ...`);
@@ -49,5 +51,21 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
         return response;
     });
 };
+
+BrowserUtils.addCommonFunctions = function (browserPage) {
+    return browserPage.evaluate(() => {
+        window.BrowserUtils = {};
+        /**
+         * Converts an int that represents the number of pages, to an array with all page numbers.
+         * For example, 5 -> [1, 2, 3, 4, 5]
+         * @param pageCount the number of pages
+         * @returns {number[]}
+         */
+        window.BrowserUtils.pageCountToPagesArray = function (pageCount) {
+            return Array.from(Array(pageCount + 1).keys()).slice(1);
+        };
+    });
+};
+
 
 module.exports = BrowserUtils;

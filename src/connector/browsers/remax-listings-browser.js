@@ -74,7 +74,8 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
             };
         });
 
-        response.pages = Array.from(Array(remaxData.searchListingDomainKey.totalPages + 1).keys()).slice(1);
+        response.pages = BrowserUtils.pageCountToPagesArray(remaxData.searchListingDomainKey.totalPages);
+
         return response;
     });
 };
