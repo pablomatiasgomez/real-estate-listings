@@ -39,7 +39,7 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
             EXPORT_VERSION: "0"
         };
 
-        // Grab avisoInfo because JS is disabled.
+        // Grab and eval avisoInfo because JS is disabled.
         eval([...document.scripts] // jshint ignore:line
             .map(script => script.innerHTML)
             .filter(script => script.indexOf("avisoInfo") !== -1)
@@ -47,11 +47,13 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
             .replace("const avisoInfo = {", "var customAvisoInfo = {"));
 
         // noinspection JSUnresolvedVariable
-        Object.assign(response, JSON.parse(JSON.stringify(customAvisoInfo))); // jshint ignore:line
+        Object.assign(response, customAvisoInfo); // jshint ignore:line
         // noinspection JSUnresolvedVariable
         delete response.similarPostingsLink;
         // noinspection JSUnresolvedVariable
         delete response.similarPostingsLinkDescription;
+        // noinspection JSUnresolvedVariable
+        delete response.similarLink;
 
         return response;
     });

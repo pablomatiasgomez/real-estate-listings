@@ -79,7 +79,7 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
                 title: title,
                 description: description,
             };
-            Object.assign(response[id], JSON.parse(JSON.stringify(item)));
+            Object.assign(response[id], item);
         });
 
         response.pages = [...document.querySelectorAll(".paging li:not(.pag-go-prev):not(.pag-go-next) a")]
