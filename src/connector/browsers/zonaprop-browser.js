@@ -36,7 +36,7 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         // Grab and eval avisoInfo because JS is disabled.
@@ -54,6 +54,8 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
         delete response.similarPostingsLinkDescription;
         // noinspection JSUnresolvedVariable
         delete response.similarLink;
+        // noinspection JSUnresolvedVariable
+        delete response.urlBack;
 
         return response;
     });
