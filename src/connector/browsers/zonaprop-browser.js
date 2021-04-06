@@ -46,15 +46,10 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
             [0]
             .replace("const avisoInfo = {", "var customAvisoInfo = {"));
 
-        // noinspection JSUnresolvedVariable
         Object.assign(response, customAvisoInfo); // jshint ignore:line
-        // noinspection JSUnresolvedVariable
         delete response.similarPostingsLink;
-        // noinspection JSUnresolvedVariable
         delete response.similarPostingsLinkDescription;
-        // noinspection JSUnresolvedVariable
         delete response.similarLink;
-        // noinspection JSUnresolvedVariable
         delete response.urlBack;
 
         return response;

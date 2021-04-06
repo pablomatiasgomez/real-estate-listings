@@ -31,14 +31,11 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
             EXPORT_VERSION: "1"
         };
 
-        // noinspection JSUnresolvedVariable
         Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
 
-        // noinspection JSUnresolvedVariable
         delete response.seller.properties_count;
 
         if (response.features) {
-            // noinspection JSUnresolvedVariable
             response.features.sort((a, b) => a.category.localeCompare(b.category));
             response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
         }

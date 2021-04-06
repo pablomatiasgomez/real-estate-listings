@@ -42,7 +42,6 @@ LaGranInmobiliariaListingsBrowser.prototype.extractListPage = function (browserP
         if (Object.values(queryStates).length !== 1) throw "Do not know how to handle more than 1 elements!";
         let queryState = Object.values(queryStates)[0].body;
 
-        // noinspection JSUnresolvedVariable
         queryState.listings.forEach(listing => {
             listing.url = location.origin + "/" + listing.url;
             response[listing.id] = listing;
