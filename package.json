@@ -2,7 +2,7 @@
   "name": "real-estate-listings",
   "description": "Script that helps to keep track of the real estate listing changes.",
   "version": "1.0.0",
-  "main": "src/export.js",
+  "main": "src/main.js",
   "license": "UNLICENSED",
   "private": true,
   "url": "https://github.com/pablomatiasgomez/real-estate-listings",
@@ -32,6 +32,6 @@
   },
   "homepage": "https://github.com/pablomatiasgomez/real-estate-listings#readme",
   "scripts": {
-    "start": "src/export.js"
+    "start": "src/main.js"
   }
 }

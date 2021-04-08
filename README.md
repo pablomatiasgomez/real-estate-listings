@@ -112,7 +112,7 @@ Then you can run it using `./scripts/start.sh` which will run the app in backgro
 If you want o run the app periodically, you could set up a cron like this:
 
 ```
-10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/export.js >> /path/real-estate-listings/logs/stdout.log 2>&1
+10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js >> /path/real-estate-listings/logs/stdout.log 2>&1
 ```
 
 ## TODO list

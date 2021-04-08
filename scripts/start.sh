@@ -12,4 +12,4 @@ fi
 
 echo "Starting app!"
 mkdir -p logs
-nohup ./src/export.js >> ./logs/stdout.log 2>&1 &
+nohup ./src/main.js >> ./logs/stdout.log 2>&1 &
