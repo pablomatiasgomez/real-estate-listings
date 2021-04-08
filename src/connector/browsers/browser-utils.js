@@ -29,7 +29,7 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
 
         let promise = Promise.resolve();
         pages.slice(1).forEach(pageNumber => {
-            promise = promise.delay(20000).then(() => {
+            promise = promise.delay(8000).then(() => {
                 let pageUrl = siteBrowser.getListPageUrl(listUrl, pageNumber);
                 logger.info(`Processing page ${pageNumber}. Url: ${pageUrl}`);
                 return browserPage.goto(pageUrl, {
@@ -37,11 +37,11 @@ BrowserUtils.extractListingsPages = function (browserPage, siteBrowser) {
                     timeout: 5 * 60 * 1000,
                     referer: listUrl,
                 });
-            }).delay(18000).then(() => {
+            }).delay(12000).then(() => {
                 return BrowserUtils.addCommonFunctions(browserPage);
             }).then(() => {
                 return siteBrowser.extractListPage(browserPage);
-            }).then(pageResponse => {
+            }).delay(1000).then(pageResponse => {
                 logger.info(`Assigning ${Object.keys(pageResponse)} ...`);
                 Object.assign(response, pageResponse);
             });
