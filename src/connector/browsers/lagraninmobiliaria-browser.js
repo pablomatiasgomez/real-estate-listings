@@ -28,12 +28,18 @@ LaGranInmobiliariaBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "1"
+            EXPORT_VERSION: "2"
         };
 
         let id = location.href.split("-")[0].split("/")[3];
         let data = JSON.parse(document.querySelector("#euclides-lgi-state").innerHTML.replace(/&q;/g, '"'));
         Object.assign(response, data[`G.https://api.lagraninmobiliaria.com/api/getlisting/id/${id}?`].body);
+
+        response.pictureUrls = (response.photos || []).map(photo => {
+            if (!photo.hd) throw "Couldn't find picture url!";
+            return photo.hd;
+        });
+        delete response.photos;
 
         return response;
     });
