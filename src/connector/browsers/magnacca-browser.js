@@ -33,11 +33,11 @@ MagnaccaBrowser.prototype.extractData = function (browserPage) {
             let keyValue = feature.innerText.split(":");
             features[keyValue[0].trim()] = keyValue[1].trim();
         });
-        let description = document.querySelector(".lista-prop #descripcion").innerText.trim();
+        let description = document.querySelector(".lista-prop #descripcion").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
         let pictureUrls = [...document.querySelectorAll(".lista-prop .carousel .item img")].map(img => img.src);
 
         return {
-            EXPORT_VERSION: "0",
+            EXPORT_VERSION: "1",
             title: title,
             features: features,
             description: description,

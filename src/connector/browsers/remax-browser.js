@@ -28,53 +28,18 @@ RemaxBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
-        if (!document.getElementsByClassName("key-title").length) {
-            // The page is no longer available, probably the property was taken down.
-            return response;
-        }
 
-        // Title, price, address, id
-        let keysToLookup = [
-            "title",
-            "price",
-            "address",
-            "other",
-            "id",
-        ];
-        keysToLookup.forEach(key => {
-            let items = document.getElementsByClassName("key-" + key);
-            if (items.length === 1) {
-                response[key] = items[0].innerText.trim();
-            } else if (items.length > 1) {
-                for (let i = 0; i < items.length; i++) {
-                    response[key + i] = items[i].innerText.trim();
-                }
-            }
-        });
+        let remaxData = JSON.parse(document.querySelector("#serverApp-state").innerHTML.replace(/&q;/g, '"'));
 
-        // Description
-        let description = document.querySelector("div[itemprop='description']").innerText.trim();
-        response.description = description;
+        let listing = remaxData["listing-detail.listing"];
+        if (!listing) throw "Couldn't find listing data!";
+        Object.assign(response, listing);
 
-        // Features
-        [...document.querySelectorAll(".data-item-row")].forEach(row => {
-            let key = row.querySelector(".data-item-label").innerText.replace(":", "").trim();
-            let value = row.querySelector(".data-item-value").innerText.trim();
-            response[key] = value;
-        });
-        [...document.querySelectorAll(".feature-item")].forEach(item => {
-            let key = item.innerText.trim();
-            response[key] = true;
-        });
-
-
-        // Pictures
-        let pictureAlts = [...document.querySelectorAll(".gallery-map-images img.sp-image")].map(img => {
-            return img.getAttribute("alt");
-        });
-        response.pictures = pictureAlts;
+        response.description = response.description.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
+        response.pictureUrls = response.photos.map(photo => photo.value);
+        delete response.photos;
 
         return response;
     });

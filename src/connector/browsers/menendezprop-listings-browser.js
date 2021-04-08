@@ -35,7 +35,7 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         [...document.querySelectorAll(".resultado_datos")].forEach(itemData => {
@@ -50,7 +50,7 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             let features = {};
             [...item.querySelectorAll(".resultado_datos div")].forEach(descriptionEl => {
                 if (descriptionEl.className === "sub_resultado_datos") {
-                    description = descriptionEl.innerText.trim();
+                    description = descriptionEl.innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
                 } else if (descriptionEl.className.startsWith("sub_resultado_datos")) {
                     descriptionEl.innerText.split("\n").forEach(feature => {
                         let split = feature.split(":");

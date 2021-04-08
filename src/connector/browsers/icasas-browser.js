@@ -27,7 +27,7 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "1";
+        let EXPORT_VERSION = "2";
 
         let status = "LISTED";
 
@@ -65,7 +65,7 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
             descriptionReadMoreEl.remove();
             document.querySelector(".more_text").style.display = "";
         }
-        let description = document.querySelector(".description").innerText;
+        let description = document.querySelector(".description").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
 
         let features = {};
         [...document.querySelectorAll(".list li")].forEach(li => {

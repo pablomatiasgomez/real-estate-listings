@@ -35,7 +35,7 @@ ICasasListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         [...document.querySelectorAll(".listAds .ad:not(.similar)")].forEach(item => {
@@ -44,7 +44,7 @@ ICasasListingsBrowser.prototype.extractListPage = function (browserPage) {
 
             let title = item.querySelector(".title").innerText.trim();
             let price = item.querySelector(".price").innerText.trim();
-            let description = item.querySelector(".description").innerText.trim();
+            let description = item.querySelector(".description").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
 
             let iconPhoto = item.querySelector(".icon.photo");
             let picturesCount = iconPhoto ? parseInt(iconPhoto.innerText) : 0;

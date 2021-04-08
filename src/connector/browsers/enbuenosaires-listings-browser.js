@@ -35,7 +35,7 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "1"
+            EXPORT_VERSION: "2"
         };
 
         [...document.querySelectorAll(".snapproperty")].forEach(item => {
@@ -46,7 +46,7 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
             let address = item.querySelector(".titleproperty").innerText.trim();
             let subtitle = item.querySelector(".descriptionproperty strong").innerText.trim();
             let features = item.querySelector(".descriptionproperty p").innerText.split(",").map(i => i.trim()).sort();
-            let description = item.querySelector(".descriptionproperty p:nth-child(3)").innerText.split(" [# ")[0].trim();
+            let description = item.querySelector(".descriptionproperty p:nth-child(3)").innerText.split(" [# ")[0].split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let seller = item.querySelector(".bottomproperty strong").innerText.trim();
             let pictureUrls = [...item.querySelectorAll(".gallery li img")].map(img => {
                 return img.getAttribute("data-src") || img.src;

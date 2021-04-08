@@ -27,7 +27,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "1";
+        let EXPORT_VERSION = "2";
 
         function findScript(strMatch) {
             let scripts = [...document.getElementsByTagName("script")]
@@ -46,7 +46,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let fullAddress = document.querySelector(".vip-section-map h2").innerText.trim();
 
             let title = fullAddress.substr(0, fullAddress.lastIndexOf(",")); // Legacy title didn't include last past of address...
-            let description = document.querySelector(".description-content .preformated-text").innerText.trim();
+            let description = document.querySelector(".description-content .preformated-text").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".vip-price").innerText.trim();
             let address = fullAddress.replace(",", ""); // Legacy address didn't include the first ","
 
@@ -83,7 +83,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
             let title = document.querySelector(".item-title__primary").innerText.trim();
-            let description = document.querySelector("#description-includes").innerText.trim();
+            let description = document.querySelector("#description-includes").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
             let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
 

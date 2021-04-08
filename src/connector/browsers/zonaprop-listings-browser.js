@@ -68,7 +68,7 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
                 features[key] = value;
             });
             let title = document.querySelector(`[data-id='${id}'] .postingCardTitle`).innerText.trim();
-            let description = document.querySelector(`[data-id='${id}'] .postingCardDescription`).innerText.trim();
+            let description = document.querySelector(`[data-id='${id}'] .postingCardDescription`).innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
 
             response[id] = {
                 url: url,

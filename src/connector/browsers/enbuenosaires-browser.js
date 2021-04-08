@@ -27,20 +27,22 @@ EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "0"
-        };
+        let EXPORT_VERSION = "1";
 
-        if (!document.querySelector("h1:not(#main_header)")) {
+        let titleEl = document.querySelector(".container h1:not(#main_header)");
+
+        if (!titleEl) {
             // No data was found (probably got redirected and the house no longer exists?)
-            return response;
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+            };
         }
 
-        // Title
-        let title = document.querySelector("h1:not(#main_header)").innerText;
-        response.title = title;
+        let title = titleEl.innerText;
 
         // Description & features
+        let description = "";
+        let features = {};
         [...document.querySelectorAll(".clearfloats .row")].forEach(row => {
             let infoList = row.querySelector(".info_list");
             if (infoList) {
@@ -50,36 +52,37 @@ EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
                     throw "keys and values length differ!";
                 }
                 for (let i = 0; i < keys.length; i++) {
-                    response[keys[i].innerText.trim()] = values[i].innerText.trim();
+                    features[keys[i].innerText.trim()] = values[i].innerText.trim();
                 }
             }
 
             let isDescription = !!row.querySelector("p[itemprop='description']");
             if (isDescription) {
-                response.description = row.querySelectorAll("p")[1].innerText;
+                description = row.querySelectorAll("p")[1].innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             }
         });
 
-        // Pictures
         let pictureUrls = [...document.querySelectorAll(".gallery img")].map(img => {
             return img.getAttribute("data-lazy") || img.src;
         }).filter(pictureUrl => {
             return pictureUrl.indexOf("AbstractDefaultAjaxBehavior") === -1;
         });
-        response.pictures = pictureUrls;
 
-        // Price history
-        let priceHistory = document.querySelector("#stats");
-        if (priceHistory) {
-            response.priceHistory = [...priceHistory.querySelectorAll("li")].map(li => {
-                return {
-                    date: li.querySelector("span").innerText.trim(),
-                    price: li.querySelector("strong").innerText.trim()
-                };
-            });
-        }
+        let priceHistory = [...document.querySelectorAll("#stats li")].map(li => {
+            return {
+                date: li.querySelector("span").innerText.trim(),
+                price: li.querySelector("strong").innerText.trim()
+            };
+        });
 
-        return response;
+        return {
+            EXPORT_VERSION: EXPORT_VERSION,
+            title: title,
+            description: description,
+            features: features,
+            pictureUrls: pictureUrls,
+            priceHistory: priceHistory,
+        };
     });
 };
 

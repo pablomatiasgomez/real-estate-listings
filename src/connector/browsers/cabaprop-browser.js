@@ -29,7 +29,7 @@ CabaPropBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let address = document.querySelector(".pro-head h6").innerText;
         let price = document.querySelector(".pro-head .price").innerText;
-        let description = document.querySelector(".pro-text").innerText;
+        let description = document.querySelector(".pro-text").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
         let features = [...document.querySelectorAll(".pro-details-item .features li")].reduce((features, li) => {
             let keyValue = li.innerText.split(":").map(i => i.trim());
             features[keyValue[0]] = keyValue[1] || true;
@@ -39,7 +39,7 @@ CabaPropBrowser.prototype.extractData = function (browserPage) {
             .map(img => img.src);
 
         return {
-            EXPORT_VERSION: "2",
+            EXPORT_VERSION: "3",
             address: address,
             price: price,
             description: description,
