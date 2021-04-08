@@ -35,7 +35,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "5"
+            EXPORT_VERSION: "6"
         };
 
         let nextData = JSON.parse(document.querySelector("#__NEXT_DATA__").innerText);
@@ -47,7 +47,9 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
             item.pictureUrls = (item.images || []).map(image => {
                 let pictureUrl = image.sizes["1080"].jpg;
                 if (!pictureUrl) throw "Couldn't find picture url!";
-                return pictureUrl;
+                let match = /filters:strip_icc\(\)\/(.*)$/.exec(pictureUrl);
+                if (!match || match.length !== 2) throw "pictureUrl couldn't be parsed: " + pictureUrl;
+                return decodeURIComponent(match[1]);
             });
             delete item.images;
             delete item.score;
