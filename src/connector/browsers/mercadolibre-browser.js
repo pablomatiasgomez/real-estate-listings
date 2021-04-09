@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('MercadoLibreBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('MercadoLibreBrowser');
 const URL_REGEX = /^https?:\/\/.*.mercadolibre\.com\.ar\/MLA-(\d+)-.*$/;
 
 function MercadoLibreBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-MercadoLibreBrowser.prototype.name = function () {
-    return "MercadoLibre";
-};
-
-MercadoLibreBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-MercadoLibreBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(MercadoLibreBrowser, SiteBrowser);
 
 MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

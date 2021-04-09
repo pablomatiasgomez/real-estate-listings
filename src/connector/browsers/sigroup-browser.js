@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('SiGroupBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('SiGroupBrowser');
 const URL_REGEX = /^https:\/\/www\.sigroupinmobiliaria\.com\/(.+)$/;
 
 function SiGroupBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-SiGroupBrowser.prototype.name = function () {
-    return "SiGroup";
-};
-
-SiGroupBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-SiGroupBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(SiGroupBrowser, SiteBrowser);
 
 SiGroupBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

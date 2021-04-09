@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('MagnaccaBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('MagnaccaBrowser');
 const URL_REGEX = /^https:\/\/magnaccapatelli\.com\/detalle_propiedad\.php\?id=(\d+)$/;
 
 function MagnaccaBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-MagnaccaBrowser.prototype.name = function () {
-    return "Magnacca";
-};
-
-MagnaccaBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-MagnaccaBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(MagnaccaBrowser, SiteBrowser);
 
 MagnaccaBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

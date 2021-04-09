@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('MercadoLibreListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('MercadoLibreListingsBrowser');
 const URL_REGEX = /^https:\/\/inmuebles\.mercadolibre\.com\.ar\/([\w-\/]*?)(?:_NoIndex_True)?$/;
 
 function MercadoLibreListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-MercadoLibreListingsBrowser.prototype.name = function () {
-    return "MercadoLibreListings";
-};
-
-MercadoLibreListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-MercadoLibreListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-MercadoLibreListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(MercadoLibreListingsBrowser, ListingsSiteBrowser);
 
 MercadoLibreListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);

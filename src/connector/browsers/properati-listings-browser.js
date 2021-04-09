@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('ProperatiListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('ProperatiListingsBrowser');
 const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/s\/([\w:\-\/]+)$/;
 
 function ProperatiListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-ProperatiListingsBrowser.prototype.name = function () {
-    return "ProperatiListings";
-};
-
-ProperatiListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-ProperatiListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-ProperatiListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(ProperatiListingsBrowser, ListingsSiteBrowser);
 
 ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
@@ -58,7 +43,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
         });
 
         let pageCount = Math.ceil(results.metadata.total / results.metadata.limit);
-        response.pages = BrowserUtils.pageCountToPagesArray(pageCount);
+        response.pages = window.BrowserUtils.pageCountToPagesArray(pageCount);
 
         return response;
     });

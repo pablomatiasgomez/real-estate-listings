@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('ZonaPropListingsBrowser');
 
@@ -10,33 +11,17 @@ const logger = include('utils/logger').newLogger('ZonaPropListingsBrowser');
 const URL_REGEX = /^https:\/\/www\.zonaprop\.com\.ar\/([\w-]*orden[\w-]*[a-zA-Z]).html$/;
 
 function ZonaPropListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
+
+util.inherits(ZonaPropListingsBrowser, ListingsSiteBrowser);
 
 ZonaPropListingsBrowser.prototype.useStealthBrowser = function () {
     return true;
 };
 
-ZonaPropListingsBrowser.prototype.withJavascriptDisabled = function () {
-    return true;
-};
-
-ZonaPropListingsBrowser.prototype.name = function () {
-    return "ZonaPropListings";
-};
-
-ZonaPropListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-ZonaPropListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-ZonaPropListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
+ZonaPropListingsBrowser.prototype.withJavascriptEnabled = function () {
+    return false;
 };
 
 ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
@@ -64,8 +49,7 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             let features = {};
             [...document.querySelectorAll(`[data-id='${id}'] ul.postingCardMainFeatures li`)].forEach(li => {
                 let key = li.querySelector("i").className.replace("postingCardIconsFeatures icon", "").trim();
-                let value = li.innerText.trim();
-                features[key] = value;
+                features[key] = li.innerText.trim();
             });
             let title = document.querySelector(`[data-id='${id}'] .postingCardTitle`).innerText.trim();
             let description = document.querySelector(`[data-id='${id}'] .postingCardDescription`).innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);

@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('LiderPropListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('LiderPropListingsBrowser');
 const URL_REGEX = /^https:\/\/liderprop\.com\/es-ar\/propiedades\/venta\/([\w\-\/]*)\?.*$/;
 
 function LiderPropListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-LiderPropListingsBrowser.prototype.name = function () {
-    return "LiderPropListings";
-};
-
-LiderPropListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-LiderPropListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-LiderPropListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(LiderPropListingsBrowser, ListingsSiteBrowser);
 
 LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
@@ -62,8 +47,7 @@ LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
                 let seller = item.querySelector(".agency img") ? item.querySelector(".agency img").getAttribute("alt") : item.querySelector(".agency").innerText.trim();
                 let features = [...item.querySelectorAll("ul li")].reduce((features, li) => {
                     let key = li.childNodes[0].nodeValue.trim();
-                    let value = li.childNodes[1].innerText.trim();
-                    features[key] = value;
+                    features[key] = li.childNodes[1].innerText.trim();
                     return features;
                 }, {});
                 let picturesCount = parseInt(item.querySelector("figure .count")?.innerText) || 0; // jshint ignore:line
@@ -83,7 +67,7 @@ LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
         });
 
         let pageCount = parseInt(document.querySelector(".pagination p strong:nth-child(2)").innerText);
-        response.pages = BrowserUtils.pageCountToPagesArray(pageCount);
+        response.pages = window.BrowserUtils.pageCountToPagesArray(pageCount);
 
         return response;
     });

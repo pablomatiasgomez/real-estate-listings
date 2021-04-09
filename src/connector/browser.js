@@ -6,8 +6,6 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const UserAgents = require('user-agents');
 
-const BrowserUtils = include('connector/browsers/browser-utils');
-
 const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
 const ZonaPropListingsBrowser = include('connector/browsers/zonaprop-listings-browser');
 const ArgenPropBrowser = include('connector/browsers/argenprop-browser');
@@ -124,27 +122,19 @@ Browser.prototype.fetchData = function (url) {
 
     let siteBrowser = siteBrowsers[0];
     return Promise.resolve().then(() => {
-        let useStealthBrowser = siteBrowser.useStealthBrowser && siteBrowser.useStealthBrowser();
+        let useStealthBrowser = siteBrowser.useStealthBrowser();
         logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);
         return (useStealthBrowser ? self.stealthBrowser : self.normalBrowser).newPage();
     }).then(page => {
         let data;
         return Promise.resolve().then(() => {
-            let javascriptEnabled = !siteBrowser.withJavascriptDisabled || !siteBrowser.withJavascriptDisabled();
+            let javascriptEnabled = siteBrowser.withJavascriptEnabled();
             return page.setJavaScriptEnabled(javascriptEnabled);
         }).then(() => {
             // Randomize user agent
             return page.setUserAgent(self.userAgents.toString());
         }).then(() => {
-            return page.goto(url, {
-                waitUntil: 'load',
-                timeout: 5 * 60 * 1000,
-                referer: "https://www.google.com/"
-            });
-        }).delay(12000).then(() => {
-            return BrowserUtils.addCommonFunctions(page);
-        }).then(() => {
-            return siteBrowser.extractData(page);
+            return siteBrowser.extractUrlData(page, url);
         }).delay(1000).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
             data = d;

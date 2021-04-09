@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('MeMudoYaBrowser');
 
 //---------------
@@ -7,24 +10,13 @@ const logger = include('utils/logger').newLogger('MeMudoYaBrowser');
 const URL_REGEX = /^https:\/\/www\.memudoya\.com\/propiedad\/[a-zA-Z-]+([\d-]+)$/;
 
 function MeMudoYaBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
+
+util.inherits(MeMudoYaBrowser, SiteBrowser);
 
 // Exported to be used in the listings search..
 MeMudoYaBrowser.URL_REGEX = URL_REGEX;
-
-MeMudoYaBrowser.prototype.name = function () {
-    return "MeMudoYa";
-};
-
-MeMudoYaBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-MeMudoYaBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
 
 MeMudoYaBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

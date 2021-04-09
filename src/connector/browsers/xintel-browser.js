@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('XintelBrowser');
 
 //---------------
@@ -7,20 +10,11 @@ const logger = include('utils/logger').newLogger('XintelBrowser');
 /**
  * Generic browser for sites that were implemented by Xintel
  */
-function XintelBrowser() {
+function XintelBrowser(urlRegex) {
+    SiteBrowser.call(this, urlRegex);
 }
 
-XintelBrowser.prototype.name = function () {
-    throw "Method must be implemented!";
-};
-
-XintelBrowser.prototype.acceptsUrl = function (url) {
-    throw "Method must be implemented!";
-};
-
-XintelBrowser.prototype.getId = function (url) {
-    throw "Method must be implemented!";
-};
+util.inherits(XintelBrowser, SiteBrowser);
 
 XintelBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

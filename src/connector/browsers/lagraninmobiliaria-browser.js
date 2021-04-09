@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('LaGranInmobiliariaBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('LaGranInmobiliariaBrowser');
 const URL_REGEX = /^https:\/\/lagraninmobiliaria\.com\/(\d+)-.*$/;
 
 function LaGranInmobiliariaBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-LaGranInmobiliariaBrowser.prototype.name = function () {
-    return "LaGranInmobiliaria";
-};
-
-LaGranInmobiliariaBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-LaGranInmobiliariaBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(LaGranInmobiliariaBrowser, SiteBrowser);
 
 LaGranInmobiliariaBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

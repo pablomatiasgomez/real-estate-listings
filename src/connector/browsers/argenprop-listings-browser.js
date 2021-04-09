@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('ArgenPropListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('ArgenPropListingsBrowser');
 const URL_REGEX = /^https:\/\/www\.argenprop\.com\/([\w-]*[a-zA-Z])$/;
 
 function ArgenPropListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-ArgenPropListingsBrowser.prototype.name = function () {
-    return "ArgenPropListings";
-};
-
-ArgenPropListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-ArgenPropListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-ArgenPropListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(ArgenPropListingsBrowser, ListingsSiteBrowser);
 
 ArgenPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);

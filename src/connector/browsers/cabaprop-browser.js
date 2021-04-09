@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('CabaPropBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('CabaPropBrowser');
 const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/.+-id-(\d+)$/;
 
 function CabaPropBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-CabaPropBrowser.prototype.name = function () {
-    return "CabaProp";
-};
-
-CabaPropBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-CabaPropBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(CabaPropBrowser, SiteBrowser);
 
 CabaPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

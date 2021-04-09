@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('EnBuenosAiresBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('EnBuenosAiresBrowser');
 const URL_REGEX = /^https:\/\/www\.enbuenosaires\.com\/venta\/.*-(\d+).html$/;
 
 function EnBuenosAiresBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-EnBuenosAiresBrowser.prototype.name = function () {
-    return "EnBuenosAires";
-};
-
-EnBuenosAiresBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-EnBuenosAiresBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(EnBuenosAiresBrowser, SiteBrowser);
 
 EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

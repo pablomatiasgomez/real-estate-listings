@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('ICasasBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('ICasasBrowser');
 const URL_REGEX = /^https:\/\/www\.icasas\.com\.ar\/inmueble\/(\d+)$/;
 
 function ICasasBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-ICasasBrowser.prototype.name = function () {
-    return "ICasas";
-};
-
-ICasasBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-ICasasBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(ICasasBrowser, SiteBrowser);
 
 ICasasBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('ProperatiBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('ProperatiBrowser');
 const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/detalle\/(.+?)_.*$/;
 
 function ProperatiBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-ProperatiBrowser.prototype.name = function () {
-    return "Properati";
-};
-
-ProperatiBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-ProperatiBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(ProperatiBrowser, SiteBrowser);
 
 ProperatiBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('MenendezPropBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('MenendezPropBrowser');
 const URL_REGEX = /^https?:\/\/www\.menendezprop\.com\.ar\/Ficha\.aspx\?fichanro=(\d+).*$/;
 
 function MenendezPropBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-MenendezPropBrowser.prototype.name = function () {
-    return "MenendezProp";
-};
-
-MenendezPropBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-MenendezPropBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(MenendezPropBrowser, SiteBrowser);
 
 MenendezPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);

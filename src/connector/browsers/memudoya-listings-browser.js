@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 const MeMudoYaBrowser = include('connector/browsers/memudoya-browser');
 
 const logger = include('utils/logger').newLogger('MeMudoYaListingsBrowser');
@@ -10,26 +11,10 @@ const logger = include('utils/logger').newLogger('MeMudoYaListingsBrowser');
 const URL_REGEX = /^https:\/\/www\.memudoya\.com\/buscar\/([\w-\/]+)\/origin_filter$/;
 
 function MeMudoYaListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-MeMudoYaListingsBrowser.prototype.name = function () {
-    return "MeMudoYaListings";
-};
-
-MeMudoYaListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-MeMudoYaListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-MeMudoYaListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(MeMudoYaListingsBrowser, ListingsSiteBrowser);
 
 MeMudoYaListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);

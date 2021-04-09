@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('MenendezPropListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('MenendezPropListingsBrowser');
 const URL_REGEX = /^https?:\/\/www\.menendezprop\.com\.ar\/resultado\.aspx\?(.*)$/;
 
 function MenendezPropListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-MenendezPropListingsBrowser.prototype.name = function () {
-    return "MenendezPropListings";
-};
-
-MenendezPropListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-MenendezPropListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-MenendezPropListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(MenendezPropListingsBrowser, ListingsSiteBrowser);
 
 MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
@@ -79,7 +64,7 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 };
 
 MenendezPropListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
-    // TODO pagination not supported for MenendezProp, as it is handled via ajax
+    // TODO pagination not supported for MenendezProp, (cannot be done via url change, only via ajax)
     throw "Not supported yet!";
 };
 

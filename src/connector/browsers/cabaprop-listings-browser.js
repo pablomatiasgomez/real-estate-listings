@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('CabaPropListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('CabaPropListingsBrowser');
 const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\.php\?(.+pagina=0.*)$/;
 
 function CabaPropListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-CabaPropListingsBrowser.prototype.name = function () {
-    return "CabaPropListings";
-};
-
-CabaPropListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-CabaPropListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-CabaPropListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(CabaPropListingsBrowser, ListingsSiteBrowser);
 
 CabaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);

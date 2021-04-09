@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('EnBuenosAiresListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('EnBuenosAiresListingsBrowser')
 const URL_REGEX = /^https:\/\/www\.enbuenosaires\.com\/\w+-ventas\.html#(.*)$/;
 
 function EnBuenosAiresListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-EnBuenosAiresListingsBrowser.prototype.name = function () {
-    return "EnBuenosAiresListings";
-};
-
-EnBuenosAiresListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-EnBuenosAiresListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-EnBuenosAiresListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(EnBuenosAiresListingsBrowser, ListingsSiteBrowser);
 
 EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);

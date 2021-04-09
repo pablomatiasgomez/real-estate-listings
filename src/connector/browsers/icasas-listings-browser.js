@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('ICasasListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('ICasasListingsBrowser');
 const URL_REGEX = /^https:\/\/www\.icasas\.com\.ar\/venta\/(.+)$/;
 
 function ICasasListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-ICasasListingsBrowser.prototype.name = function () {
-    return "ICasasListings";
-};
-
-ICasasListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-ICasasListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-ICasasListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(ICasasListingsBrowser, ListingsSiteBrowser);
 
 ICasasListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
@@ -52,8 +37,7 @@ ICasasListingsBrowser.prototype.extractListPage = function (browserPage) {
             let features = {};
             [...item.querySelectorAll(".adCharacteristics .numbers span")].forEach(feature => {
                 let key = feature.className.trim();
-                let value = feature.innerText.trim();
-                features[key] = value;
+                features[key] = feature.innerText.trim();
             });
 
             response[id] = {

@@ -1,6 +1,7 @@
 'use strict';
 
-const BrowserUtils = include('connector/browsers/browser-utils');
+const util = require('util');
+const ListingsSiteBrowser = include('connector/listings-site-browser');
 
 const logger = include('utils/logger').newLogger('LaGranInmobiliariaListingsBrowser');
 
@@ -9,26 +10,10 @@ const logger = include('utils/logger').newLogger('LaGranInmobiliariaListingsBrow
 const URL_REGEX = /^https:\/\/lagraninmobiliaria\.com\/venta\/([\w\-\/]+)(?<!\d-p)$/; // jshint ignore:line
 
 function LaGranInmobiliariaListingsBrowser() {
+    ListingsSiteBrowser.call(this, URL_REGEX);
 }
 
-LaGranInmobiliariaListingsBrowser.prototype.name = function () {
-    return "LaGranInmobiliariaListings";
-};
-
-LaGranInmobiliariaListingsBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-LaGranInmobiliariaListingsBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
-
-LaGranInmobiliariaListingsBrowser.prototype.extractData = function (browserPage) {
-    let self = this;
-    return BrowserUtils.extractListingsPages(browserPage, self);
-};
+util.inherits(LaGranInmobiliariaListingsBrowser, ListingsSiteBrowser);
 
 LaGranInmobiliariaListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
@@ -53,7 +38,7 @@ LaGranInmobiliariaListingsBrowser.prototype.extractListPage = function (browserP
             response[item.id] = item;
         });
 
-        response.pages = BrowserUtils.pageCountToPagesArray(queryState.pages.total);
+        response.pages = window.BrowserUtils.pageCountToPagesArray(queryState.pages.total);
 
         return response;
     });

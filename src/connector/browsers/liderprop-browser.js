@@ -1,5 +1,8 @@
 'use strict';
 
+const util = require('util');
+const SiteBrowser = include('connector/site-browser');
+
 const logger = include('utils/logger').newLogger('LiderPropBrowser');
 
 //---------------
@@ -7,21 +10,10 @@ const logger = include('utils/logger').newLogger('LiderPropBrowser');
 const URL_REGEX = /^https:\/\/liderprop\.com\/es-ar\/propiedades\/(\d+)\/[\w\-]*\/$/;
 
 function LiderPropBrowser() {
+    SiteBrowser.call(this, URL_REGEX);
 }
 
-LiderPropBrowser.prototype.name = function () {
-    return "LiderProp";
-};
-
-LiderPropBrowser.prototype.acceptsUrl = function (url) {
-    return URL_REGEX.test(url);
-};
-
-LiderPropBrowser.prototype.getId = function (url) {
-    let match = URL_REGEX.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
-    return match[1];
-};
+util.inherits(LiderPropBrowser, SiteBrowser);
 
 LiderPropBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
@@ -51,8 +43,7 @@ LiderPropBrowser.prototype.extractData = function (browserPage) {
             ...document.querySelectorAll(".panel-body ul.type-1 li"),
         ].forEach(li => {
             let key = li.childNodes[0].nodeValue.trim();
-            let value = li.childNodes[1].innerText.trim();
-            features[key] = value;
+            features[key] = li.childNodes[1].innerText.trim();
         });
         [...document.querySelectorAll(".panel-body ul.type-2 li")].forEach(li => {
             let key = li.innerText.trim();
