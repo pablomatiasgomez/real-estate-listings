@@ -27,7 +27,7 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "0";
+        let EXPORT_VERSION = "1";
 
         let price = [...document.querySelectorAll("[data-testid='linkElement']")]
             .map(el => el.innerText)
@@ -37,16 +37,18 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
         if (!price) throw "Couldn't find price!";
 
         // Many details as plain text..
-        let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")].map(i => i.innerText);
+        let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")]
+            .flatMap(i => i.innerText.split(/(?:\n|\. )+/))
+            .map(l => l.trim())
+            .filter(l => !!l);
 
         // TODO Pictures currently not working becasue JS is disabled. But it was flaky (because they are loaded via js..)
-        let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")].map(img => img.src);
+        // let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")].map(img => img.src);
 
         return {
             EXPORT_VERSION: EXPORT_VERSION,
             price: price,
             textDetails: textDetails,
-            pictures: pictureUrls,
         };
     });
 };
