@@ -29,7 +29,7 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "0"
+            EXPORT_VERSION: "1"
         };
 
         // Grab postingInfo because JS is disabled.
@@ -43,26 +43,25 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             let id = entry[0];
             let item = entry[1];
 
-            let url = document.querySelector(`[data-id='${id}'] a.go-to-posting`).href.trim();
-            let address = document.querySelector(`[data-id='${id}'] .postingCardLocationTitle`).innerText.trim();
-            let location = document.querySelector(`[data-id='${id}'] .postingCardLocation`).innerText.trim();
-            let features = {};
-            [...document.querySelectorAll(`[data-id='${id}'] ul.postingCardMainFeatures li`)].forEach(li => {
+            let location = "";
+            let loc = item.location;
+            while (loc) {
+                location += loc.name + ", ";
+                loc = loc.parent;
+            }
+            item.location = location.slice(0, -2);
+
+            item.url = document.querySelector(`[data-id='${id}'] a.go-to-posting`).href.trim();
+            item.address = document.querySelector(`[data-id='${id}'] .postingCardLocationTitle`).innerText.trim();
+            item.features = [...document.querySelectorAll(`[data-id='${id}'] ul.postingCardMainFeatures li`)].reduce((features, li) => {
                 let key = li.querySelector("i").className.replace("postingCardIconsFeatures icon", "").trim();
                 features[key] = li.innerText.trim();
-            });
-            let title = document.querySelector(`[data-id='${id}'] .postingCardTitle`).innerText.trim();
-            let description = document.querySelector(`[data-id='${id}'] .postingCardDescription`).innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
+                return features;
+            }, {});
+            item.title = document.querySelector(`[data-id='${id}'] .postingCardTitle`).innerText.trim();
+            item.description = document.querySelector(`[data-id='${id}'] .postingCardDescription`).innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
 
-            response[id] = {
-                url: url,
-                address: address,
-                location: location,
-                features: features,
-                title: title,
-                description: description,
-            };
-            Object.assign(response[id], item);
+            response[id] = item;
         });
 
         response.pages = [...document.querySelectorAll(".paging li:not(.pag-go-prev):not(.pag-go-next) a")]
