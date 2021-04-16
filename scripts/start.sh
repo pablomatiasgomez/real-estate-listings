@@ -4,7 +4,7 @@
 PROJECT_ROOT="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )/.."
 cd "$PROJECT_ROOT"
 
-PID=$(pgrep -f "export.js")
+PID=$(pgrep -f "main.js")
 if [[ $PID ]]; then
 	echo "App is already running on PID $PID"
 	exit 1;
