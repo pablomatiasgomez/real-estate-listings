@@ -19,7 +19,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "2";
+        let EXPORT_VERSION = "3";
 
         function findScript(strMatch) {
             let scripts = [...document.getElementsByTagName("script")]
@@ -52,10 +52,10 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 features[keyValue[0]] = keyValue[1] || true;
             });
 
-            let pictureUrlsScript = findScript("items = [");
-            let pictures = JSON.parse(/items = (.*),\n/.exec(pictureUrlsScript)[1]);
             let itemKey = /\.com\/(.*)-D_NQ/.exec(JSON.parse(document.querySelector("script[type='application/ld+json']").innerText).image)[1];
-            pictures.forEach(picture => picture.src = picture.src.replace("none", itemKey));
+            let pictureUrlsScript = findScript("items = [");
+            let pictureUrls = JSON.parse(/items = (.*),\n/.exec(pictureUrlsScript)[1])
+                .map(picture => picture.src.replace("none", itemKey));
 
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
@@ -66,7 +66,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 address: address,
                 seller: seller,
                 features: features,
-                pictures: pictures,
+                pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".item-title__primary")) {
             // Legacy version of MELI listings....
@@ -88,7 +88,8 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 let keyValue = li.innerText.split("\n").map(i => i.trim());
                 features[keyValue[0]] = keyValue[1] || true;
             });
-            let pictures = JSON.parse(document.querySelector("#gallery_dflt .gallery-content").getAttribute("data-full-images"));
+            let pictureUrls = JSON.parse(document.querySelector("#gallery_dflt .gallery-content").getAttribute("data-full-images"))
+                .map(picture => picture.src);
 
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
@@ -99,7 +100,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 address: address,
                 seller: seller,
                 features: features,
-                pictures: pictures,
+                pictureUrls: pictureUrls,
             };
         } else {
             // If none of the two versions are found, it means we were redirected to the home page..
