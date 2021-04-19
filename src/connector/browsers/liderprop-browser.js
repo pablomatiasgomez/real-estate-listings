@@ -21,8 +21,8 @@ LiderPropBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "0";
 
-        let titleEl = document.querySelector("header p");
-        if (!titleEl) {
+        let errorButton = document.querySelector("div.page.error-page .container .btn-primary");
+        if (errorButton && errorButton.innerText.trim() === "Ir a la home") {
             // Page shows a 404 error html..
             let status = "UNLISTED";
             return {
@@ -31,7 +31,7 @@ LiderPropBrowser.prototype.extractData = function (browserPage) {
             };
         }
 
-        let title = titleEl.innerText.trim();
+        let title = document.querySelector("header p").innerText.trim();
         let description = document.querySelector(".panel-body p").innerText.trim();
         let price = document.querySelector(".price").innerText.trim();
         let seller = document.querySelector(".agency .panel-heading").innerText.trim();
