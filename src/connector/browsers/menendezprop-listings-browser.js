@@ -23,7 +23,19 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             EXPORT_VERSION: "1"
         };
 
-        [...document.querySelectorAll(".resultado_datos")].forEach(itemData => {
+        let items;
+        let noResultsH1 = document.querySelector("h1.bread");
+        if (noResultsH1 && noResultsH1.innerText.trim() === "No hay resultados. Por favor realice una nueva búsqueda.") {
+            // No results
+            items = [];
+        } else {
+            items = [...document.querySelectorAll(".resultado_datos")];
+            // Sometimes the page may not load correctly so we need to validate it this way:
+            // We either receive a "no results" error, or we have results. Otherwise, the page was not fully loaded.
+            if (!items.length) throw "Something wrong happened, no error and no results!";
+        }
+
+        items.forEach(itemData => {
             let item = itemData.parentNode;
             let id = item.querySelector(".resultado_iinfo").getAttribute("onclick").split("'")[1];
 
