@@ -68,13 +68,13 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 features: features,
                 pictureUrls: pictureUrls,
             };
-        } else if (document.querySelector(".item-title__primary")) {
+        } else if (document.querySelector(".item-title")) {
             // Legacy version of MELI listings....
 
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-            let title = document.querySelector(".item-title__primary").innerText.trim();
+            let title = document.querySelector(".item-title").innerText.trim();
             let description = document.querySelector("#description-includes").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
             let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
