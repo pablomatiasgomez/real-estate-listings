@@ -74,7 +74,8 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-            let title = document.querySelector(".item-title").innerText.trim();
+            // The title changed and previously was just the address (we can probably change this sometime..)
+            let title = document.querySelector(".map-address").innerText.trim() + ", " + document.querySelector(".map-location").innerText.split(",")[0].trim();
             let description = document.querySelector("#description-includes").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
             let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
