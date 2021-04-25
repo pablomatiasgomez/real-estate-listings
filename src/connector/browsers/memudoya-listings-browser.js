@@ -10,6 +10,9 @@ const logger = include('utils/logger').newLogger('MeMudoYaListingsBrowser');
 
 const URL_REGEX = /^https:\/\/www\.memudoya\.com\/buscar\/([\w-\/]+)\/origin_filter$/;
 
+/**
+ * @constructor
+ */
 function MeMudoYaListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

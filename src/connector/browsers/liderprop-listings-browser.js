@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('LiderPropListingsBrowser');
 
 const URL_REGEX = /^https:\/\/liderprop\.com\/es-ar\/propiedades\/venta\/([\w\-\/]*)\?.*$/;
 
+/**
+ * @constructor
+ */
 function LiderPropListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

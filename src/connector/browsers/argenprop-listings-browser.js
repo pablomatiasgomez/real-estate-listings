@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('ArgenPropListingsBrowser');
 
 const URL_REGEX = /^https:\/\/www\.argenprop\.com\/([\w-]*[a-zA-Z])$/;
 
+/**
+ * @constructor
+ */
 function ArgenPropListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

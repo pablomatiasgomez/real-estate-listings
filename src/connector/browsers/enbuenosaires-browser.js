@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('EnBuenosAiresBrowser');
 
 const URL_REGEX = /^https:\/\/www\.enbuenosaires\.com\/venta\/.*-(\d+).html$/;
 
+/**
+ * @constructor
+ */
 function EnBuenosAiresBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

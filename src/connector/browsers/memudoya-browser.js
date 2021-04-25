@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('MeMudoYaBrowser');
 
 const URL_REGEX = /^https:\/\/www\.memudoya\.com\/propiedad\/[a-zA-Z-]+([\d-]+)$/;
 
+/**
+ * @constructor
+ */
 function MeMudoYaBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

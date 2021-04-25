@@ -8,6 +8,9 @@ const XintelBrowser = include('connector/browsers/xintel-browser');
 
 const URL_REGEX = /^https?:\/\/(?:www\.)?maluma\.com\.ar\/.*MLM(\d+).*$/i;
 
+/**
+ * @constructor
+ */
 function MalumaBrowser() {
     XintelBrowser.call(this, URL_REGEX);
 }

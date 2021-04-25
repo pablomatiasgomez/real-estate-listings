@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('ProperatiListingsBrowser');
 
 const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/s\/([\w:\-\/]+)$/;
 
+/**
+ * @constructor
+ */
 function ProperatiListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

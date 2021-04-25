@@ -1,4 +1,4 @@
-// noinspection JSVoidFunctionReturnValueUsed
+// noinspection JSUnusedLocalSymbols
 
 'use strict';
 

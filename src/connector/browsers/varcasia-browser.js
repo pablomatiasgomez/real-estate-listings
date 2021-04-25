@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('VarcasiaBrowser');
 
 const URL_REGEX = /^https:\/\/varcasiapropiedades\.com\.ar\/propiedades\/(.+)\/$/;
 
+/**
+ * @constructor
+ */
 function VarcasiaBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

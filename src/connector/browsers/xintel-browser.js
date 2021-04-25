@@ -9,6 +9,7 @@ const logger = include('utils/logger').newLogger('XintelBrowser');
 
 /**
  * Generic browser for sites that were implemented by Xintel
+ * @constructor
  */
 function XintelBrowser(urlRegex) {
     SiteBrowser.call(this, urlRegex);

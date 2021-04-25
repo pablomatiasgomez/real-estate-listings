@@ -53,12 +53,12 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
         logger.info(`Checking data changes... for ${id}`);
         if (!previousData) {
             logger.info(`There was no previous data for ${id} .. skipping difference check.`);
-            return false;
+            return;
         }
         previousData.EXPORT_VERSION = previousData.EXPORT_VERSION || "0";
         if (previousData.EXPORT_VERSION !== currentData.EXPORT_VERSION) {
             logger.info(`Not checking data difference because version is different. Previous Version: ${previousData.EXPORT_VERSION} !== ${currentData.EXPORT_VERSION} Current Version.`);
-            return false;
+            return;
         }
         let diff = jsonDiff.diffString(previousData, currentData, {color: false}, {showKeys: ["url"]});
         if (diff) {

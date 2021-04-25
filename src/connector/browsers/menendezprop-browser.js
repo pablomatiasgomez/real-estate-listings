@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('MenendezPropBrowser');
 
 const URL_REGEX = /^https?:\/\/www\.menendezprop\.com\.ar\/Ficha\.aspx\?fichanro=(\d+).*$/;
 
+/**
+ * @constructor
+ */
 function MenendezPropBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

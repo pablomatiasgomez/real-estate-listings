@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('MercadoLibreBrowser');
 
 const URL_REGEX = /^https?:\/\/.*.mercadolibre\.com\.ar\/MLA-(\d+)-.*$/;
 
+/**
+ * @constructor
+ */
 function MercadoLibreBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('ICasasListingsBrowser');
 
 const URL_REGEX = /^https:\/\/www\.icasas\.com\.ar\/venta\/(.+)$/;
 
+/**
+ * @constructor
+ */
 function ICasasListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

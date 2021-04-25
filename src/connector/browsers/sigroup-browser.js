@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('SiGroupBrowser');
 
 const URL_REGEX = /^https:\/\/www\.sigroupinmobiliaria\.com\/(.+)$/;
 
+/**
+ * @constructor
+ */
 function SiGroupBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

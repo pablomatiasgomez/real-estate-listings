@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('MercadoLibreListingsBrowser');
 
 const URL_REGEX = /^https:\/\/inmuebles\.mercadolibre\.com\.ar\/([\w-\/]*?)(?:_NoIndex_True)?$/;
 
+/**
+ * @constructor
+ */
 function MercadoLibreListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

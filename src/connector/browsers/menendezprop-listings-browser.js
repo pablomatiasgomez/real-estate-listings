@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('MenendezPropListingsBrowser');
 
 const URL_REGEX = /^https?:\/\/www\.menendezprop\.com\.ar\/resultado\.aspx\?(.*)$/;
 
+/**
+ * @constructor
+ */
 function MenendezPropListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

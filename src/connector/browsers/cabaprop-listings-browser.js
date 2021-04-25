@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('CabaPropListingsBrowser');
 
 const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\.php\?(.+pagina=0.*)$/;
 
+/**
+ * @constructor
+ */
 function CabaPropListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

@@ -10,6 +10,9 @@ const logger = include('utils/logger').newLogger('ZonaPropListingsBrowser');
 // ZonaProp needs to have a sorting because otherwise the returned results are inconsistent across pages.
 const URL_REGEX = /^https:\/\/www\.zonaprop\.com\.ar\/([\w-]*orden[\w-]*[a-zA-Z]).html$/;
 
+/**
+ * @constructor
+ */
 function ZonaPropListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

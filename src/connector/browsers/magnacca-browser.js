@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('MagnaccaBrowser');
 
 const URL_REGEX = /^https:\/\/magnaccapatelli\.com\/detalle_propiedad\.php\?id=(\d+)$/;
 
+/**
+ * @constructor
+ */
 function MagnaccaBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

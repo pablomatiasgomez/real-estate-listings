@@ -74,6 +74,9 @@ const SITE_BROWSERS = [
     new SaadCenturionBrowser(),
 ];
 
+/**
+ * @constructor
+ */
 function Browser() {
     this.browser = null;
 }

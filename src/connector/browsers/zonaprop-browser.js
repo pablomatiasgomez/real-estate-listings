@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('ZonaPropBrowser');
 
 const URL_REGEX = /^https:\/\/www\.zonaprop\.com\.ar\/propiedades\/.*-(\d+).html$/;
 
+/**
+ * @constructor
+ */
 function ZonaPropBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }

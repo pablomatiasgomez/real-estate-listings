@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('LaGranInmobiliariaListingsBrow
 
 const URL_REGEX = /^https:\/\/lagraninmobiliaria\.com\/venta\/([\w\-\/]+)(?<!\d-p)$/; // jshint ignore:line
 
+/**
+ * @constructor
+ */
 function LaGranInmobiliariaListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

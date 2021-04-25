@@ -8,6 +8,9 @@ const XintelBrowser = include('connector/browsers/xintel-browser');
 
 const URL_REGEX = /^https?:\/\/(?:www\.)?saadcenturion\.com\.ar\/.*SAA(\d+).*$/i;
 
+/**
+ * @constructor
+ */
 function SaadCenturionBrowser() {
     XintelBrowser.call(this, URL_REGEX);
 }

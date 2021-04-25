@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('RemaxListingsBrowser');
 
 const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar\/listings\/buy\?(.+)$/;
 
+/**
+ * @constructor
+ */
 function RemaxListingsBrowser() {
     ListingsSiteBrowser.call(this, URL_REGEX);
 }

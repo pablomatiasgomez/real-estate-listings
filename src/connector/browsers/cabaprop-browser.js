@@ -9,6 +9,9 @@ const logger = include('utils/logger').newLogger('CabaPropBrowser');
 
 const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/.+-id-(\d+)$/;
 
+/**
+ * @constructor
+ */
 function CabaPropBrowser() {
     SiteBrowser.call(this, URL_REGEX);
 }
