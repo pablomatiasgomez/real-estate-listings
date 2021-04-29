@@ -20,12 +20,12 @@
     "bluebird": "^3.7.2",
     "google-spreadsheet": "^3.1.15",
     "json-diff": "pablomatiasgomez/json-diff",
-    "puppeteer": "^8.0.0",
-    "puppeteer-extra": "^3.1.17",
-    "puppeteer-extra-plugin-stealth": "^2.7.5",
+    "puppeteer": "^9.0.0",
+    "puppeteer-extra": "^3.1.18",
+    "puppeteer-extra-plugin-stealth": "^2.7.8",
     "sanitize-filename": "^1.6.3",
     "telegram-bot-api": "^2.0.1",
-    "user-agents": "^1.0.588"
+    "user-agents": "^1.0.636"
   },
   "bugs": {
     "url": "https://github.com/pablomatiasgomez/real-estate-listings/issues"
