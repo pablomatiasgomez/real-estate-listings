@@ -33,8 +33,8 @@ The currently supported websites are the following:
 
 ## Prerequisites
 
-Before you begin, you need to have chrome installed in your machine, if you don't have it or you experience errors
-running `npm install` when installing puppeteer, try running the following to install a working google chrome version:
+Before you begin, you need to have chrome installed in your machine, if you don't have it, or you experience errors
+running `npm install` when installing puppeteer, try running the following to install a working Google Chrome version:
 
 ```
 # Versions
@@ -109,7 +109,7 @@ Where:
 
 Then you can run it using `./scripts/start.sh` which will run the app in background and notify of any change.
 
-If you want o run the app periodically, you could set up a cron like this:
+If you want to run the app periodically, you could set up a cron like this:
 
 ```
 10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js >> /path/real-estate-listings/logs/stdout.log 2>&1
@@ -118,4 +118,3 @@ If you want o run the app periodically, you could set up a cron like this:
 ## TODO list
 
 * Split listings difference into multiple differences, one by each item.
-* Reduce payload for some of the agencies that cause differences to be difficult to read.
