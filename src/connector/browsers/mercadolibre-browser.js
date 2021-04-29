@@ -22,7 +22,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "3";
+        let EXPORT_VERSION = "4";
 
         function findScript(strMatch) {
             let scripts = [...document.getElementsByTagName("script")]
@@ -38,12 +38,11 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let statusEl = document.querySelector(".item-status-notification .item-status-title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-            let fullAddress = document.querySelector(".vip-section-map h2").innerText.trim();
-
-            let title = fullAddress.substr(0, fullAddress.lastIndexOf(",")); // Legacy title didn't include last past of address...
+            throw "TODO: handle title element.";
+            let title = "TODO!"; // jshint ignore:line
             let description = document.querySelector(".description-content .preformated-text").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".vip-price").innerText.trim();
-            let address = fullAddress.replace(",", ""); // Legacy address didn't include the first ","
+            let address = document.querySelector(".vip-section-map h2").innerText.trim();
 
             let gaScript = findScript("dimension120");
             let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
@@ -77,11 +76,10 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-            // The title changed and previously was just the address (we can probably change this sometime..)
-            let title = document.querySelector(".map-address").innerText.trim() + ", " + document.querySelector(".map-location").innerText.split(",")[0].trim();
+            let title = document.querySelector(".item-title").innerText.trim();
             let description = document.querySelector("#description-includes").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
-            let address = document.querySelector(".seller-location").innerText.replace("\n", " ").trim();
+            let address = document.querySelector(".seller-location").innerText.replace("\n", ", ").trim();
 
             let agency = document.querySelector(".vip-section-seller-info #real_estate_agency");
             let privateSeller = document.querySelector(".vip-section-seller-info .card-description");
