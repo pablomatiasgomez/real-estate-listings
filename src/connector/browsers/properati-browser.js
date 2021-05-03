@@ -23,7 +23,7 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "1"
+            EXPORT_VERSION: "2"
         };
 
         Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
@@ -34,6 +34,17 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
             response.features.sort((a, b) => a.category.localeCompare(b.category));
             response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
         }
+
+        response.place = response.place.parent_names.join(", ");
+
+        response.pictureUrls = (response.images || []).map(image => {
+            let pictureUrl = image.sizes["1080"].jpg;
+            if (!pictureUrl) throw "Couldn't find picture url!";
+            let match = /filters:strip_icc\(\)\/(.*)$/.exec(pictureUrl);
+            if (!match || match.length !== 2) throw "pictureUrl couldn't be parsed: " + pictureUrl;
+            return decodeURIComponent(match[1]);
+        });
+        delete response.images;
 
         return response;
     });

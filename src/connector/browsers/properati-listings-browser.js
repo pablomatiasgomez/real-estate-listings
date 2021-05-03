@@ -23,7 +23,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "6"
+            EXPORT_VERSION: "7"
         };
 
         let nextData = JSON.parse(document.querySelector("#__NEXT_DATA__").innerText);
@@ -32,16 +32,10 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
         results.data.forEach(item => {
             item.url = location.origin + "/detalle/" + item.url_name;
-            item.pictureUrls = (item.images || []).map(image => {
-                let pictureUrl = image.sizes["1080"].jpg;
-                if (!pictureUrl) throw "Couldn't find picture url!";
-                let match = /filters:strip_icc\(\)\/(.*)$/.exec(pictureUrl);
-                if (!match || match.length !== 2) throw "pictureUrl couldn't be parsed: " + pictureUrl;
-                return decodeURIComponent(match[1]);
-            });
+            item.place = item.place.parent_names.join(", ");
+            item.picturesCount = (item.images || []).length;
             delete item.images;
             delete item.score;
-
             response[item.id] = item;
         });
 
