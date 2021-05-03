@@ -29,7 +29,11 @@ RemaxBrowser.prototype.extractData = function (browserPage) {
         let remaxData = JSON.parse(document.querySelector("#serverApp-state").innerHTML.replace(/&q;/g, '"'));
 
         let listing = remaxData["listing-detail.listing"];
-        if (!listing) throw "Couldn't find listing data!";
+        if (!listing) {
+            response.status = "UNLISTED";
+            return response;
+        }
+
         Object.assign(response, listing);
 
         response.description = response.description.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
