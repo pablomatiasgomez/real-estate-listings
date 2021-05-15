@@ -105,7 +105,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else {
-            throw document.getElementsByTagName("body")[0].innerHTML;
+            throw document.getElementsByTagName("html")[0].innerHTML;
             // If none of the two versions are found, it means we were redirected to the home page..
             // No data was found (probably got redirected and the house no longer exists)
             return {
