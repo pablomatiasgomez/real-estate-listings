@@ -55,7 +55,7 @@ SiteBrowser.prototype.loadUrl = function (browserPage, url, referer = "https://w
             timeout: 5 * 60 * 1000,
             referer: referer,
         });
-    }).delay(12000).then(() => {
+    }).delay(8000).then(() => {
         self.addCommonFunctions(browserPage);
     });
 };

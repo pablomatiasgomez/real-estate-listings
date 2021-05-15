@@ -47,7 +47,8 @@ const SITE_BROWSERS = [
     new ZonaPropListingsBrowser(),
     new ArgenPropBrowser(),
     new ArgenPropListingsBrowser(),
-    new MercadoLibreBrowser(),
+ // TODO Disabled until meli removes AB testing..
+    //   new MercadoLibreBrowser(),
     new MercadoLibreListingsBrowser(),
     new ProperatiBrowser(),
     new ProperatiListingsBrowser(),
@@ -148,7 +149,7 @@ Browser.prototype.fetchData = function (url) {
                 url: url,
                 data: data
             };
-        }).delay(8000).catch(e => {
+        }).delay(5000).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
         });

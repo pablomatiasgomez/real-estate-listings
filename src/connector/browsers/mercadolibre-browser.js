@@ -117,13 +117,8 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let price = document.querySelector(".ui-pdp-container--pdp .price-tag-amount").innerText.replace("\n", " ").trim();
             let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
 
+            // TODO this is not the same as previous version, but impossible to map.
             let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
-            // TODO Remove this replacements once legacy view is removed..
-            let sellerReplacements = {
-                "Nani Propiedades": "Nanipropiedades",
-                "Adrian": "Marino Propiedades", // TODO grab from dimension120? (add extra content once legacy version removed)..
-            };
-            seller = sellerReplacements[seller] || seller;
 
             let features = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-specs__table table tr")].reduce((features, tr) => {
                 features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
