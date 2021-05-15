@@ -121,6 +121,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             // TODO Remove this replacements once legacy view is removed..
             let sellerReplacements = {
                 "Nani Propiedades": "Nanipropiedades",
+                "Adrian": "Marino Propiedades", // TODO grab from dimension120? (add extra content once legacy version removed)..
             };
             seller = sellerReplacements[seller] || seller;
 
