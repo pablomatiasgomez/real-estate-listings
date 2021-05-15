@@ -117,9 +117,12 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let price = document.querySelector(".ui-pdp-container--pdp .price-tag-amount").innerText.replace("\n", " ").trim();
             let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
 
+            let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
             // TODO Remove this replacements once legacy view is removed..
-            let seller = document.querySelector(".ui-vip-profile-info h3").innerText.replace(" ", "").trim();
-            seller = seller.charAt(0).toUpperCase() + seller.slice(1).toLowerCase();
+            let sellerReplacements = {
+                "Nani Propiedades": "Nanipropiedades",
+            };
+            seller = sellerReplacements[seller] || seller;
 
             let features = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-specs__table table tr")].reduce((features, tr) => {
                 features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
