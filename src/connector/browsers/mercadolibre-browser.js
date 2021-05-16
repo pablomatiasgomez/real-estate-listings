@@ -33,6 +33,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
         }
 
         if (document.querySelector(".vip-section-product-info")) {
+            throw "MELI: NewVersion";
             // This is the new version of MELI listings...
 
             let statusEl = document.querySelector(".item-status-notification .item-status-title");
@@ -73,6 +74,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".item-title")) {
+            throw "MELI: LegacyVersion";
             // Legacy version of MELI listings....
 
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
@@ -107,6 +109,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".ui-pdp-title")) {
+            throw "MELI: LegacyUpdatedVersion";
             // Legacy, but updated version of MELI listings....
 
             let statusEl = document.querySelector(".ui-pdp-container--pdp .ui-pdp-message");
@@ -143,6 +146,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".ui-search-main")) {
+            throw "MELI: SearchView";
             // Redirected to search view.
             // No data was found (probably got redirected and the house no longer exists)
             return {

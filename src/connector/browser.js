@@ -47,8 +47,7 @@ const SITE_BROWSERS = [
     new ZonaPropListingsBrowser(),
     new ArgenPropBrowser(),
     new ArgenPropListingsBrowser(),
- // TODO Disabled until meli removes AB testing..
-    //   new MercadoLibreBrowser(),
+    new MercadoLibreBrowser(),
     new MercadoLibreListingsBrowser(),
     new ProperatiBrowser(),
     new ProperatiListingsBrowser(),
