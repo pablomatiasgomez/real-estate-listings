@@ -23,12 +23,13 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "2"
+            EXPORT_VERSION: "3"
         };
 
         Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
 
         delete response.seller.properties_count;
+        delete response.published_on;
 
         if (response.features) {
             response.features.sort((a, b) => a.category.localeCompare(b.category));
