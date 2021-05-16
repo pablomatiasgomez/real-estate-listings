@@ -33,7 +33,6 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
         }
 
         if (document.querySelector(".vip-section-product-info")) {
-            throw "MELI: NewVersion";
             // This is the new version of MELI listings...
 
             let statusEl = document.querySelector(".item-status-notification .item-status-title");
@@ -47,8 +46,6 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
 
             let gaScript = findScript("dimension120");
             let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
-            // TODO this could be removed if other versions removed.
-            seller = seller.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
             let features = {};
             [...document.querySelectorAll(".attribute-content .attribute-group li")].forEach(li => {
@@ -74,7 +71,6 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".item-title")) {
-            throw "MELI: LegacyVersion";
             // Legacy version of MELI listings....
 
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
@@ -85,9 +81,13 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
             let address = document.querySelector(".seller-location").innerText.replace("\n", ", ").trim();
 
+            /*
             let agency = document.querySelector(".vip-section-seller-info #real_estate_agency");
             let privateSeller = document.querySelector(".vip-section-seller-info .card-description");
             let seller = agency ? agency.innerText.trim() : privateSeller.innerText.trim();
+            */
+            let gaScript = findScript("dimension120");
+            let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
 
             let features = {};
             [...document.querySelectorAll(".specs-item")].forEach(li => {
@@ -109,7 +109,6 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".ui-pdp-title")) {
-            throw "MELI: LegacyUpdatedVersion";
             // Legacy, but updated version of MELI listings....
 
             let statusEl = document.querySelector(".ui-pdp-container--pdp .ui-pdp-message");
@@ -121,7 +120,9 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
 
             // TODO this is not the same as previous version, but impossible to map.
-            let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
+            // let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
+            let gaScript = findScript("dimension120");
+            let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
 
             let features = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-specs__table table tr")].reduce((features, tr) => {
                 features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
@@ -146,7 +147,6 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".ui-search-main")) {
-            throw "MELI: SearchView";
             // Redirected to search view.
             // No data was found (probably got redirected and the house no longer exists)
             return {
