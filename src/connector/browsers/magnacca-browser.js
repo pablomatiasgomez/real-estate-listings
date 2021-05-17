@@ -22,7 +22,16 @@ MagnaccaBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
+        let EXPORT_VERSION = "1";
+
         let title = document.querySelector(".lista-prop h2").innerText.trim();
+        if (title === "") {
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: "UNLISTED",
+            };
+        }
+
         let features = {};
         [...document.querySelectorAll(".lista-prop #datos_prop p")].forEach(feature => {
             let keyValue = feature.innerText.split(":");
@@ -32,7 +41,7 @@ MagnaccaBrowser.prototype.extractData = function (browserPage) {
         let pictureUrls = [...document.querySelectorAll(".lista-prop .carousel .item img")].map(img => img.src);
 
         return {
-            EXPORT_VERSION: "1",
+            EXPORT_VERSION: EXPORT_VERSION,
             title: title,
             features: features,
             description: description,
