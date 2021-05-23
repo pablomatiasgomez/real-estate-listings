@@ -114,7 +114,3 @@ If you want to run the app periodically, you could set up a cron like this:
 ```
 10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js >> /path/real-estate-listings/logs/stdout.log 2>&1
 ```
-
-## TODO list
-
-* Split listings difference into multiple differences, one by each item.

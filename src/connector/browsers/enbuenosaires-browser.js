@@ -22,7 +22,7 @@ EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "1";
+        let EXPORT_VERSION = "2";
 
         let titleEl = document.querySelector(".container h1:not(#main_header)");
 
@@ -56,6 +56,7 @@ EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
                 description = row.querySelectorAll("p")[1].innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             }
         });
+        delete features["Última Act."];
 
         let pictureUrls = [...document.querySelectorAll(".gallery img")].map(img => {
             return img.getAttribute("data-lazy") || img.src;
