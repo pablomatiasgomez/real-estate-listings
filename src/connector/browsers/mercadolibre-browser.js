@@ -22,7 +22,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "4";
+        let EXPORT_VERSION = "5";
 
         function findScript(strMatch) {
             let scripts = [...document.getElementsByTagName("script")]
@@ -53,11 +53,9 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 features[keyValue[0]] = keyValue[1] || true;
             });
 
-            // TODO item key could be removed if other versions removed.
-            let itemKey = /\.com\/(.*)-D_NQ/.exec(JSON.parse(document.querySelector("script[type='application/ld+json']").innerText).image)[1];
             let pictureUrlsScript = findScript("items = [");
             let pictureUrls = JSON.parse(/items = (.*),\n/.exec(pictureUrlsScript)[1])
-                .map(picture => picture.src.replace("none", itemKey));
+                .map(picture => picture.src.replace("none", ""));
 
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
@@ -95,7 +93,13 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 features[keyValue[0]] = keyValue[1] || true;
             });
             let pictureUrls = JSON.parse(document.querySelector("#gallery_dflt .gallery-content").getAttribute("data-full-images"))
-                .map(picture => picture.src);
+                .map(picture => picture.src)
+                .map(pictureUrl => {
+                    let match = pictureUrl.match(/https:\/\/http2.mlstatic\.com\/(.*)D_NQ_NP_/);
+                    if (match.length !== 2) throw "Invalid picture url! " + pictureUrl;
+                    let perfix = "https://http2.mlstatic.com/";
+                    return perfix + pictureUrl.substr(perfix.length + match[1].length, pictureUrl.length);
+                });
 
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
@@ -128,12 +132,8 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
                 return features;
             }, {});
-
-            // TODO item key could be removed when legacy vervion removed..
-            let itemKey = /MLA-\d+-(.*)_JM/.exec(document.querySelector("meta[property='og:url']").getAttribute('content'))[1];
             let pictureUrls = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-gallery .ui-pdp-gallery__column img.ui-pdp-image.ui-pdp-gallery__figure__image")]
-                .map(i => i.getAttribute("data-zoom"))
-                .map(url => url.replace("mlstatic.com/D", `mlstatic.com/${itemKey}D`));
+                .map(i => i.getAttribute("data-zoom"));
 
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
