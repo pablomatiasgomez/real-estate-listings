@@ -59,7 +59,7 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
         }
         response.location = location.slice(0, -2);
 
-        response.pictureUrls = response.pictures.map(picture => {
+        response.pictureUrls = (response.pictures || []).map(picture => {
             let url = picture.url1200x1200;
             if (!url) throw "Couldn't find picture url!";
             return url;
