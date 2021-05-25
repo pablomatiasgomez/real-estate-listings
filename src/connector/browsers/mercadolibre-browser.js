@@ -70,6 +70,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             };
         } else if (document.querySelector(".item-title")) {
             // Legacy version of MELI listings....
+            throw "Legacy version still used?!";
 
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
