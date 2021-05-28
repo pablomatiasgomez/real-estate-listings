@@ -24,15 +24,15 @@ VarcasiaBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "1";
 
-        let titleEl = document.querySelector(".mh-top-title__heading");
-        if (!titleEl) {
+        if (document.querySelector(".mh-404")) {
+            // Got not found page, property unlisted
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
                 status: "UNLISTED"
             };
         }
 
-        let title = titleEl.innerText.trim();
+        let title = document.querySelector(".mh-top-title__heading").innerText.trim();
         let price = document.querySelector(".mh-estate__details__price__single").innerText;
         let features = {};
         [...document.querySelectorAll(".mh-estate__list li")].map(li => {
