@@ -28,7 +28,7 @@ MercadoLibreListingsBrowser.prototype.extractListPage = function (browserPage) {
 
         [...document.querySelectorAll(".ui-search-layout__item")].forEach(item => {
             let id = item.querySelector("input[name='itemId']").value;
-            let price = item.querySelector(".ui-search-item__group--price").innerText.replace("\n", " ").trim();
+            let price = item.querySelector(".ui-search-item__group--price .price-tag-amount").innerText.replace("\n", " ").trim();
             let features = [...item.querySelectorAll(".ui-search-item__group--attributes li")].map(li => li.innerText.trim());
             let title = item.querySelector(".ui-search-item__group--title .ui-search-item__title").innerText.trim();
             let address = item.querySelector(".ui-search-item__group--location").innerText.trim();
