@@ -29,6 +29,7 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
         Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
 
         delete response.seller.properties_count;
+        delete response.seller.type;
         delete response.seller.iseller;
         delete response.seller.image;
         delete response.seller.search_link;
