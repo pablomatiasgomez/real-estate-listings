@@ -23,13 +23,20 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "3"
+            EXPORT_VERSION: "4"
         };
 
         Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
 
         delete response.seller.properties_count;
+        delete response.seller.iseller;
+        delete response.seller.image;
+        delete response.seller.search_link;
+        delete response.seller.translatedUrl;
+        delete response.seller.url_name;
+
         delete response.published_on;
+        delete response.whatsapp_url;
 
         if (response.features) {
             response.features.sort((a, b) => a.category.localeCompare(b.category));
