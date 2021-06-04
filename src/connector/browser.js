@@ -100,9 +100,9 @@ Browser.prototype.init = function () {
     };
 
     return Promise.resolve().then(() => {
-       // TODO  return puppeteer.launch(browserOptions);
+        return puppeteer.launch(browserOptions);
     }).then(normalBrowser => {
-       // TODO self.normalBrowser = normalBrowser;
+        self.normalBrowser = normalBrowser;
     }).then(() => {
         puppeteerExtra.use(StealthPlugin());
         return puppeteerExtra.launch(browserOptions);
@@ -126,7 +126,6 @@ Browser.prototype.fetchData = function (url) {
     let siteBrowser = siteBrowsers[0];
     return Promise.resolve().then(() => {
         let useStealthBrowser = siteBrowser.useStealthBrowser();
-        useStealthBrowser = true; // TODO, testing.
         logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);
         return (useStealthBrowser ? self.stealthBrowser : self.normalBrowser).newPage();
     }).then(page => {
@@ -143,13 +142,13 @@ Browser.prototype.fetchData = function (url) {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
             data = d;
             return page.close();
-        }).then(() => {
+        }).delay(1000).then(() => {
             return {
                 id: siteBrowser.name() + "-" + siteBrowser.getId(url),
                 url: url,
                 data: data
             };
-        }).delay(10000).catch(e => {
+        }).delay(9000).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
         });
