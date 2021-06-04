@@ -126,6 +126,7 @@ Browser.prototype.fetchData = function (url) {
     let siteBrowser = siteBrowsers[0];
     return Promise.resolve().then(() => {
         let useStealthBrowser = siteBrowser.useStealthBrowser();
+        useStealthBrowser = true; // TODO, testing.
         logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);
         return (useStealthBrowser ? self.stealthBrowser : self.normalBrowser).newPage();
     }).then(page => {
@@ -148,7 +149,7 @@ Browser.prototype.fetchData = function (url) {
                 url: url,
                 data: data
             };
-        }).delay(12000).catch(e => {
+        }).delay(10000).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
         });
