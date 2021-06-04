@@ -24,8 +24,7 @@ ArgenPropBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "1";
 
-        let titleEl = document.getElementById("ShareDescription");
-        if (!titleEl) {
+        if (document.querySelector(".error-404-bg")) {
             // Page shows a 404 error html..
             let status = "UNLISTED";
             return {
@@ -34,7 +33,7 @@ ArgenPropBrowser.prototype.extractData = function (browserPage) {
             };
         }
 
-        let title = titleEl.value;
+        let title = document.getElementById("ShareDescription").value;
         let description = document.getElementById("text-responsive-ficha").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
         let price = document.querySelector(".titlebar__price").innerText;
         let address = document.querySelector(".titlebar__address").innerText;
