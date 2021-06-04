@@ -100,9 +100,9 @@ Browser.prototype.init = function () {
     };
 
     return Promise.resolve().then(() => {
-        return puppeteer.launch(browserOptions);
+       // TODO  return puppeteer.launch(browserOptions);
     }).then(normalBrowser => {
-        self.normalBrowser = normalBrowser;
+       // TODO self.normalBrowser = normalBrowser;
     }).then(() => {
         puppeteerExtra.use(StealthPlugin());
         return puppeteerExtra.launch(browserOptions);
