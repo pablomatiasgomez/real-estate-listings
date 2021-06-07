@@ -24,7 +24,7 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "1";
 
-        let price = [...document.querySelectorAll("[data-testid='linkElement']")]
+        let price = [...document.querySelector("main .txtNew").parentNode.childNodes]
             .map(el => el.innerText)
             .filter(text => text.indexOf("$") !== -1)[0];
 
@@ -32,7 +32,7 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
         if (!price) throw "Couldn't find price!";
 
         // Many details as plain text..
-        let textDetails = [...document.querySelectorAll("#SITE_PAGES [data-testid='richTextElement']")]
+        let textDetails = [...document.querySelectorAll("main .txtNew")]
             .flatMap(i => i.innerText.split(/(?:\n|\. )+/))
             .map(l => l.trim())
             .filter(l => !!l);
