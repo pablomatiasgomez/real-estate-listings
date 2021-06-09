@@ -35,6 +35,8 @@ const MeMudoYaListingsBrowser = include('connector/browsers/memudoya-listings-br
 const LiderPropBrowser = include('connector/browsers/liderprop-browser');
 const LiderPropListingsBrowser = include('connector/browsers/liderprop-listings-browser');
 const SaadCenturionBrowser = include('connector/browsers/saadcenturion-browser');
+const GrupoMegaBrowser = include('connector/browsers/grupomega-browser');
+const GrupoMegaListingsBrowser = include('connector/browsers/grupomega-listings-browser');
 
 const logger = include('utils/logger').newLogger('Browser');
 
@@ -72,6 +74,8 @@ const SITE_BROWSERS = [
     new LiderPropBrowser(),
     new LiderPropListingsBrowser(),
     new SaadCenturionBrowser(),
+    new GrupoMegaBrowser(),
+    new GrupoMegaListingsBrowser(),
 ];
 
 /**

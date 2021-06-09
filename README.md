@@ -30,6 +30,7 @@ The currently supported websites are the following:
 | [Magnacca](https://magnaccapatelli.com/)              | ✅ |    |
 | [MenendezProp](http://www.menendezprop.com.ar/)       | ✅ | ✅ |
 | [SaadCenturion](https://www.saadcenturion.com.ar/)    | ✅ |    |
+| [GrupoMega](https://www.grupomega.com.ar/index.php)   | ✅ | ✅ |
 
 ## Prerequisites
 
