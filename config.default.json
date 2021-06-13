@@ -10,6 +10,10 @@
             "files": []
         }
     },
+    "browser": {
+        "maxOldSpaceSizeMb": 420,
+        "timeBetweenPageFetchesMs": 16000
+    },
     "telegram": {
         "token": null,
         "chatId": null

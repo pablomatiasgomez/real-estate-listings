@@ -93,7 +93,7 @@ Browser.prototype.init = function () {
         headless: !DEBUG,
         devtools: DEBUG,
         args: [
-            `--js-flags="--max-old-space-size=${Math.floor(config.browser.maxOldspaceSizeMb / 2)}"`,
+            `--js-flags="--max-old-space-size=${Math.floor(config.browser.maxOldSpaceSizeMb / 2)}"`,
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
