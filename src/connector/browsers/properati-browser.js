@@ -23,7 +23,7 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "4"
+            EXPORT_VERSION: "5"
         };
 
         Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
@@ -43,6 +43,8 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
             response.features.sort((a, b) => a.category.localeCompare(b.category));
             response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
         }
+
+        response.tags = (response.tags || []).map(tag => tag.name);
 
         response.place = response.place.parent_names.join(", ");
 
