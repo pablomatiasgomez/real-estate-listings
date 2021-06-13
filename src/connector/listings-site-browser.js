@@ -58,13 +58,13 @@ ListingsSiteBrowser.prototype.extractData = function (browserPage) {
 
         let promise = Promise.resolve();
         pages.slice(1).forEach(pageNumber => {
-            promise = promise.delay(8000).then(() => {
+            promise = promise.then(() => {
                 let pageUrl = self.getListPageUrl(listUrl, pageNumber);
                 logger.info(`Processing page ${pageNumber}. Url: ${pageUrl}`);
                 return self.loadUrl(browserPage, pageUrl, listUrl);
             }).then(() => {
                 return self.extractListPage(browserPage);
-            }).delay(1000).then(pageResponse => {
+            }).delay(2000).then(pageResponse => {
                 logger.info(`Assigning ${Object.keys(pageResponse)} ...`);
                 Object.assign(response, pageResponse);
             });

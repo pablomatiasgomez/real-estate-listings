@@ -93,6 +93,7 @@ Browser.prototype.init = function () {
         headless: !DEBUG,
         devtools: DEBUG,
         args: [
+            `--js-flags="--max-old-space-size=${Math.floor(config.browser.maxOldspaceSizeMb / 2)}"`,
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
@@ -142,17 +143,17 @@ Browser.prototype.fetchData = function (url) {
             return page.setUserAgent(self.userAgents.toString());
         }).then(() => {
             return siteBrowser.extractUrlData(page, url);
-        }).delay(1000).then(d => {
+        }).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
             data = d;
             return page.close();
-        }).delay(1000).then(() => {
+        }).then(() => {
             return {
                 id: siteBrowser.name() + "-" + siteBrowser.getId(url),
                 url: url,
                 data: data
             };
-        }).delay(9000).catch(e => {
+        }).catch(e => {
             logger.error(`Failed to fetch data for url ${url} `, e);
             throw e;
         });

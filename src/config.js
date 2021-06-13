@@ -15,6 +15,10 @@ let Config = {
             "files": []
         }
     },
+    "browser": {
+        "maxOldspaceSizeMb": 420,
+        "timeBetweenPageFetchesMs": 16000,
+    },
     "telegram": {
         "token": null,
         // Can be retrieved using https://api.telegram.org/bot{TOKEN}/getUpdates

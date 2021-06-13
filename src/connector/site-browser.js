@@ -44,7 +44,7 @@ SiteBrowser.prototype.extractUrlData = function (browserPage, url) {
     let self = this;
     return self.loadUrl(browserPage, url).then(() => {
         return self.extractData(browserPage);
-    });
+    }).delay(2000);
 };
 
 SiteBrowser.prototype.loadUrl = function (browserPage, url, referer = "https://www.google.com/") {
@@ -55,7 +55,7 @@ SiteBrowser.prototype.loadUrl = function (browserPage, url, referer = "https://w
             timeout: 5 * 60 * 1000,
             referer: referer,
         });
-    }).delay(9000).then(() => {
+    }).delay(config.browser.timeBetweenPageFetchesMs).then(() => {
         self.addCommonFunctions(browserPage);
     });
 };
