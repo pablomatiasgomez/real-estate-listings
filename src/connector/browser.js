@@ -93,7 +93,7 @@ Browser.prototype.init = function () {
         headless: !DEBUG,
         devtools: DEBUG,
         args: [
-            `--js-flags="--max-old-space-size=${Math.floor(config.browser.maxOldSpaceSizeMb / 2)}"`,
+            // TODO! `--js-flags="--max-old-space-size=${Math.floor(config.browser.maxOldSpaceSizeMb / 2)}"`,
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
@@ -108,11 +108,17 @@ Browser.prototype.init = function () {
         return puppeteer.launch(browserOptions);
     }).then(normalBrowser => {
         self.normalBrowser = normalBrowser;
-    }).then(() => {
+        return self.normalBrowser.newPage();
+    }).then(normalBrowserPage => {
+        self.normalBrowserPage = normalBrowserPage;
+        //---
         puppeteerExtra.use(StealthPlugin());
         return puppeteerExtra.launch(browserOptions);
     }).then(stealthBrowser => {
         self.stealthBrowser = stealthBrowser;
+        return self.stealthBrowser.newPage();
+    }).then(stealthBrowserPage => {
+        self.stealthBrowserPage = stealthBrowserPage;
     });
 };
 
@@ -132,7 +138,7 @@ Browser.prototype.fetchData = function (url) {
     return Promise.resolve().then(() => {
         let useStealthBrowser = siteBrowser.useStealthBrowser();
         logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);
-        return (useStealthBrowser ? self.stealthBrowser : self.normalBrowser).newPage();
+        return useStealthBrowser ? self.stealthBrowserPage : self.normalBrowserPage;
     }).then(page => {
         let data;
         return Promise.resolve().then(() => {
@@ -146,7 +152,7 @@ Browser.prototype.fetchData = function (url) {
         }).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
             data = d;
-            return page.close();
+            // TODO! return page.close();
         }).then(() => {
             return {
                 id: siteBrowser.name() + "-" + siteBrowser.getId(url),
@@ -164,15 +170,17 @@ Browser.prototype.dispose = function () {
     logger.info(`Shutting down connector ..`);
 
     let self = this;
-    return Promise.resolve().then(() => {
-        if (self.normalBrowser) {
-            return self.normalBrowser.close();
-        }
-    }).then(() => {
-        if (self.stealthBrowser) {
-            return self.stealthBrowser.close();
-        }
+    let closeables = [
+        self.normalBrowserPage,
+        self.normalBrowser,
+        self.stealthBrowserPage,
+        self.stealthBrowser,
+    ];
+    let promise = Promise.resolve();
+    closeables.filter(closeable => !!closeable).forEach(closeable => {
+        promise = promise.then(() => closeable.close());
     });
+    return promise;
 };
 
 // ---------
