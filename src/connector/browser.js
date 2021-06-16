@@ -123,7 +123,7 @@ Browser.prototype.getBrowserPage = function (browserKind) {
 
     // First we close the previous browser. We want to only keep one browser open at a time to reduce memory usage.
     // We also reuse the open browser page as we experienced chrome memory leaks if closing and reopening a new one every time.
-    return self.closeCurrentBrowser().then(() => {
+    return self.closeCurrentBrowser().delay(1000).then(() => {
         self.currentBrowserKind = browserKind;
         let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
         logger.info(`Opening a new brower for kind ${browserKind} ...`);
