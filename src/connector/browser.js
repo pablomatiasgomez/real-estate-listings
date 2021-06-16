@@ -85,11 +85,16 @@ function Browser() {
     this.browser = null;
 }
 
+Browser.BROWSER_KINDS = {
+    "NORMAL": "NORMAL",
+    "STEALTH": "STEALTH",
+};
+
 Browser.prototype.init = function () {
     let self = this;
 
     self.userAgents = new UserAgents();
-    let browserOptions = {
+    self.browserOptions = {
         headless: !DEBUG,
         devtools: DEBUG,
         args: [
@@ -103,22 +108,31 @@ Browser.prototype.init = function () {
             '--single-process',
         ],
     };
+    self.currentBrowserKind = null;
+    self.currentBrowser = null;
+    self.currentBrowserPage = null;
+    puppeteerExtra.use(StealthPlugin());
+};
 
-    return Promise.resolve().then(() => {
-        return puppeteer.launch(browserOptions);
-    }).then(normalBrowser => {
-        self.normalBrowser = normalBrowser;
-        return self.normalBrowser.newPage();
-    }).then(normalBrowserPage => {
-        self.normalBrowserPage = normalBrowserPage;
-        //---
-        puppeteerExtra.use(StealthPlugin());
-        return puppeteerExtra.launch(browserOptions);
-    }).then(stealthBrowser => {
-        self.stealthBrowser = stealthBrowser;
-        return self.stealthBrowser.newPage();
-    }).then(stealthBrowserPage => {
-        self.stealthBrowserPage = stealthBrowserPage;
+Browser.prototype.getBrowserPage = function (browserKind) {
+    let self = this;
+    if (browserKind === self.currentBrowserKind) {
+        logger.info(`Reusing browser page for kind ${browserKind}..`);
+        return Promise.resolve(self.currentBrowserPage);
+    }
+
+    // First we close the previous browser. We want to only keep one browser open at a time to reduce memory usage.
+    // We also reuse the open browser page as we experienced chrome memory leaks if closing and reopening a new one every time.
+    return self.closeCurrentBrowser().then(() => {
+        self.currentBrowserKind = browserKind;
+        let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
+        return launcher.launch(self.browserOptions);
+    }).then(browser => {
+        self.currentBrowser = browser;
+        return self.currentBrowser.newPage();
+    }).then(page => {
+        self.currentBrowserPage = page;
+        return self.currentBrowserPage;
     });
 };
 
@@ -136,9 +150,9 @@ Browser.prototype.fetchData = function (url) {
 
     let siteBrowser = siteBrowsers[0];
     return Promise.resolve().then(() => {
-        let useStealthBrowser = siteBrowser.useStealthBrowser();
-        logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);
-        return useStealthBrowser ? self.stealthBrowserPage : self.normalBrowserPage;
+        let browserKind = siteBrowser.useStealthBrowser() ? Browser.BROWSER_KINDS.STEALTH : Browser.BROWSER_KINDS.NORMAL;
+        logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
+        return self.getBrowserPage(browserKind);
     }).then(page => {
         let data;
         return Promise.resolve().then(() => {
@@ -152,7 +166,6 @@ Browser.prototype.fetchData = function (url) {
         }).then(d => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
             data = d;
-            // TODO! return page.close();
         }).then(() => {
             return {
                 id: siteBrowser.name() + "-" + siteBrowser.getId(url),
@@ -167,14 +180,18 @@ Browser.prototype.fetchData = function (url) {
 };
 
 Browser.prototype.dispose = function () {
-    logger.info(`Shutting down connector ..`);
-
     let self = this;
+    logger.info(`Shutting down connector ..`);
+    return self.closeCurrentBrowser();
+};
+
+Browser.prototype.closeCurrentBrowser = function () {
+    let self = this;
+    logger.info(`Closing current ${self.currentBrowserKind} browser...`);
+
     let closeables = [
-        self.normalBrowserPage,
-        self.normalBrowser,
-        self.stealthBrowserPage,
-        self.stealthBrowser,
+        self.currentBrowserPage,
+        self.currentBrowser,
     ];
     let promise = Promise.resolve();
     closeables.filter(closeable => !!closeable).forEach(closeable => {
