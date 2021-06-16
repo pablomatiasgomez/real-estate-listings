@@ -117,7 +117,7 @@ Browser.prototype.init = function () {
 Browser.prototype.getBrowserPage = function (browserKind) {
     let self = this;
     if (browserKind === self.currentBrowserKind) {
-        logger.info(`Reusing browser page for kind ${browserKind}..`);
+        logger.info(`Reusing browser page for kind ${browserKind} ...`);
         return Promise.resolve(self.currentBrowserPage);
     }
 
@@ -126,6 +126,7 @@ Browser.prototype.getBrowserPage = function (browserKind) {
     return self.closeCurrentBrowser().then(() => {
         self.currentBrowserKind = browserKind;
         let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
+        logger.info(`Opening a new brower for kind ${browserKind} ...`);
         return launcher.launch(self.browserOptions);
     }).then(browser => {
         self.currentBrowser = browser;
