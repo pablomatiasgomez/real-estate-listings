@@ -70,7 +70,8 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             };
         } else if (document.querySelector(".item-title")) {
             // Legacy version of MELI listings....
-            throw "Legacy version still used?!";
+            // TODO Deprecate once no longer used...
+            // throw "Legacy version still used?!";
 
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
@@ -147,7 +148,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 features: features,
                 pictureUrls: pictureUrls,
             };
-        } else if (document.querySelector(".ui-search-main")) {
+        } else if (document.querySelector(".ui-search")) {
             // Redirected to search view.
             // No data was found (probably got redirected and the house no longer exists)
             return {
