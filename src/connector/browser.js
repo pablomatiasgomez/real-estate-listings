@@ -85,15 +85,19 @@ function Browser() {
     this.browser = null;
 }
 
+Browser.BROWSER_KINDS = {
+    "NORMAL": "NORMAL",
+    "STEALTH": "STEALTH",
+};
+
 Browser.prototype.init = function () {
     let self = this;
 
     self.userAgents = new UserAgents();
-    let browserOptions = {
+    self.browserOptions = {
         headless: !DEBUG,
         devtools: DEBUG,
         args: [
-            `--js-flags="--max-old-space-size=${Math.floor(config.browser.maxOldSpaceSizeMb / 2)}"`,
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
@@ -103,16 +107,33 @@ Browser.prototype.init = function () {
             '--single-process',
         ],
     };
+    self.currentBrowserKind = null;
+    self.currentBrowser = null;
+    self.currentBrowserPage = null;
+    puppeteerExtra.use(StealthPlugin());
+};
 
-    return Promise.resolve().then(() => {
-        return puppeteer.launch(browserOptions);
-    }).then(normalBrowser => {
-        self.normalBrowser = normalBrowser;
-    }).then(() => {
-        puppeteerExtra.use(StealthPlugin());
-        return puppeteerExtra.launch(browserOptions);
-    }).then(stealthBrowser => {
-        self.stealthBrowser = stealthBrowser;
+Browser.prototype.getBrowserPage = function (browserKind) {
+    let self = this;
+    if (browserKind === self.currentBrowserKind) {
+        logger.info(`Reusing browser page for kind ${browserKind} ...`);
+        return Promise.resolve(self.currentBrowserPage);
+    }
+
+    // There are 2 memory usage improvements being done here:
+    // - Close the previous browser and open the new one in order to only have one open at a time.
+    // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
+    return self.closeCurrentBrowser().delay(1000).then(() => {
+        self.currentBrowserKind = browserKind;
+        let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
+        logger.info(`Opening a new brower for kind ${browserKind} ...`);
+        return launcher.launch(self.browserOptions);
+    }).then(browser => {
+        self.currentBrowser = browser;
+        return self.currentBrowser.newPage();
+    }).then(page => {
+        self.currentBrowserPage = page;
+        return self.currentBrowserPage;
     });
 };
 
@@ -130,11 +151,10 @@ Browser.prototype.fetchData = function (url) {
 
     let siteBrowser = siteBrowsers[0];
     return Promise.resolve().then(() => {
-        let useStealthBrowser = siteBrowser.useStealthBrowser();
-        logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${useStealthBrowser ? 'stealth' : 'normal'} browser..`);
-        return (useStealthBrowser ? self.stealthBrowser : self.normalBrowser).newPage();
+        let browserKind = siteBrowser.useStealthBrowser() ? Browser.BROWSER_KINDS.STEALTH : Browser.BROWSER_KINDS.NORMAL;
+        logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
+        return self.getBrowserPage(browserKind);
     }).then(page => {
-        let data;
         return Promise.resolve().then(() => {
             let javascriptEnabled = siteBrowser.withJavascriptEnabled();
             return page.setJavaScriptEnabled(javascriptEnabled);
@@ -143,11 +163,8 @@ Browser.prototype.fetchData = function (url) {
             return page.setUserAgent(self.userAgents.toString());
         }).then(() => {
             return siteBrowser.extractUrlData(page, url);
-        }).then(d => {
-            logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
-            data = d;
-            return page.close();
-        }).then(() => {
+        }).then(data => {
+            logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
             return {
                 id: siteBrowser.name() + "-" + siteBrowser.getId(url),
                 url: url,
@@ -161,18 +178,24 @@ Browser.prototype.fetchData = function (url) {
 };
 
 Browser.prototype.dispose = function () {
-    logger.info(`Shutting down connector ..`);
-
     let self = this;
-    return Promise.resolve().then(() => {
-        if (self.normalBrowser) {
-            return self.normalBrowser.close();
-        }
-    }).then(() => {
-        if (self.stealthBrowser) {
-            return self.stealthBrowser.close();
-        }
+    logger.info(`Shutting down connector ..`);
+    return self.closeCurrentBrowser();
+};
+
+Browser.prototype.closeCurrentBrowser = function () {
+    let self = this;
+    logger.info(`Closing current ${self.currentBrowserKind} browser...`);
+
+    let closeables = [
+        self.currentBrowserPage,
+        self.currentBrowser,
+    ];
+    let promise = Promise.resolve();
+    closeables.filter(closeable => !!closeable).forEach(closeable => {
+        promise = promise.then(() => closeable.close());
     });
+    return promise;
 };
 
 // ---------

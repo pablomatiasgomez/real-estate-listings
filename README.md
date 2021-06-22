@@ -90,7 +90,6 @@ cp config.default.json config.json
     }
   },
   "browser": {
-    "maxOldSpaceSizeMb": 420,
     "timeBetweenPageFetchesMs": 16000
   },
   "telegram": {
@@ -108,7 +107,6 @@ Where:
     * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
       start with "//" or are empty.
 * `broser` - configures how the browser will run and fetch the pages
-    * `maxOldSpaceSizeMb` - Option passed to the Chrome browser in order to set the max JS heap space
     * `timeBetweenPageFetchesMs` - Time to wait between each page fetch
 * `telegram` - Telegram configuration used to notify the changes:
     * `token` - bot token, provided when you create the bot
