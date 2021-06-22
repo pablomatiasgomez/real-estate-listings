@@ -16,7 +16,6 @@ let Config = {
         }
     },
     "browser": {
-        "maxOldSpaceSizeMb": 420,
         "timeBetweenPageFetchesMs": 16000
     },
     "telegram": {

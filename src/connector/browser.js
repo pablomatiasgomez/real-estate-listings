@@ -98,7 +98,6 @@ Browser.prototype.init = function () {
         headless: !DEBUG,
         devtools: DEBUG,
         args: [
-            // TODO! `--js-flags="--max-old-space-size=${Math.floor(config.browser.maxOldSpaceSizeMb / 2)}"`,
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
@@ -121,8 +120,9 @@ Browser.prototype.getBrowserPage = function (browserKind) {
         return Promise.resolve(self.currentBrowserPage);
     }
 
-    // First we close the previous browser. We want to only keep one browser open at a time to reduce memory usage.
-    // We also reuse the open browser page as we experienced chrome memory leaks if closing and reopening a new one every time.
+    // There are 2 memory usage improvements being done here:
+    // - Close the previous browser and open the new one in order to only have one open at a time.
+    // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
     return self.closeCurrentBrowser().delay(1000).then(() => {
         self.currentBrowserKind = browserKind;
         let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
