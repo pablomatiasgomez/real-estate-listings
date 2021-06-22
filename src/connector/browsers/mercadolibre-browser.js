@@ -115,39 +115,43 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 pictureUrls: pictureUrls,
             };
         } else if (document.querySelector(".ui-pdp-title")) {
-            // Legacy, but updated version of MELI listings....
+            try {
+                // Legacy, but updated version of MELI listings....
 
-            let statusEl = document.querySelector(".ui-pdp-container--pdp .ui-pdp-message");
-            let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
+                let statusEl = document.querySelector(".ui-pdp-container--pdp .ui-pdp-message");
+                let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-            let title = document.querySelector(".ui-pdp-container--pdp .ui-pdp-title").innerText.trim();
-            let description = document.querySelector(".ui-pdp-container--pdp .ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
-            let price = document.querySelector(".ui-pdp-container--pdp .price-tag-amount").innerText.replace("\n", " ").trim();
-            let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
+                let title = document.querySelector(".ui-pdp-container--pdp .ui-pdp-title").innerText.trim();
+                let description = document.querySelector(".ui-pdp-container--pdp .ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
+                let price = document.querySelector(".ui-pdp-container--pdp .price-tag-amount").innerText.replace("\n", " ").trim();
+                let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
 
-            // TODO this is not the same as previous version, but impossible to map.
-            // let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
-            let gaScript = findScript("dimension120");
-            let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
+                // TODO this is not the same as previous version, but impossible to map.
+                // let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
+                let gaScript = findScript("dimension120");
+                let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
 
-            let features = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-specs__table table tr")].reduce((features, tr) => {
-                features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
-                return features;
-            }, {});
-            let pictureUrls = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-gallery .ui-pdp-gallery__column img.ui-pdp-image.ui-pdp-gallery__figure__image")]
-                .map(i => i.getAttribute("data-zoom"));
+                let features = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-specs__table table tr")].reduce((features, tr) => {
+                    features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
+                    return features;
+                }, {});
+                let pictureUrls = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-gallery .ui-pdp-gallery__column img.ui-pdp-image.ui-pdp-gallery__figure__image")]
+                    .map(i => i.getAttribute("data-zoom"));
 
-            return {
-                EXPORT_VERSION: EXPORT_VERSION,
-                status: status,
-                title: title,
-                description: description,
-                price: price,
-                address: address,
-                seller: seller,
-                features: features,
-                pictureUrls: pictureUrls,
-            };
+                return {
+                    EXPORT_VERSION: EXPORT_VERSION,
+                    status: status,
+                    title: title,
+                    description: description,
+                    price: price,
+                    address: address,
+                    seller: seller,
+                    features: features,
+                    pictureUrls: pictureUrls,
+                };
+            } catch (e) {
+                throw "Fail: \n " + document.getElementsByTagName("html")[0].innerHTML;
+            }
         } else if (document.querySelector(".ui-search")) {
             // Redirected to search view.
             // No data was found (probably got redirected and the house no longer exists)
