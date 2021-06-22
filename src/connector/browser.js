@@ -155,7 +155,6 @@ Browser.prototype.fetchData = function (url) {
         logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
         return self.getBrowserPage(browserKind);
     }).then(page => {
-        let data;
         return Promise.resolve().then(() => {
             let javascriptEnabled = siteBrowser.withJavascriptEnabled();
             return page.setJavaScriptEnabled(javascriptEnabled);
@@ -164,10 +163,8 @@ Browser.prototype.fetchData = function (url) {
             return page.setUserAgent(self.userAgents.toString());
         }).then(() => {
             return siteBrowser.extractUrlData(page, url);
-        }).then(d => {
-            logger.info(`Data fetched from url ${url} : `, JSON.stringify(d).length);
-            data = d;
-        }).then(() => {
+        }).then(data => {
+            logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
             return {
                 id: siteBrowser.name() + "-" + siteBrowser.getId(url),
                 url: url,
