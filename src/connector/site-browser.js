@@ -1,5 +1,9 @@
 'use strict';
 
+const Utils = include('utils/utils');
+
+const logger = include('utils/logger').newLogger('SiteBrowser');
+
 //---------------
 
 /**
@@ -30,6 +34,10 @@ SiteBrowser.prototype.acceptsUrl = function (url) {
     return this.urlRegex.test(url);
 };
 
+SiteBrowser.prototype.logHtmlOnError = function () {
+    return false;
+};
+
 SiteBrowser.prototype.getId = function (url) {
     let match = this.urlRegex.exec(url);
     if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
@@ -43,7 +51,20 @@ SiteBrowser.prototype.extractData = function (browserPage) {
 SiteBrowser.prototype.extractUrlData = function (browserPage, url) {
     let self = this;
     return self.loadUrl(browserPage, url).then(() => {
-        return self.extractData(browserPage);
+        return self.extractData(browserPage).catch(e => {
+            if (self.logHtmlOnError()) {
+                return browserPage.evaluate(() => {
+                    return document.getElementsByTagName("html")[0].innerHTML;
+                }).catch(htmlExtractError => {
+                    // If fails to retrieve HTML, return the original error.
+                    logger.error(`Failed to extract HTML from page.`, htmlExtractError);
+                    throw e;
+                }).then(html => {
+                    throw Utils.wrapError(`Error while extracting page data. HTML:\n------------------------------\n\n${html}\n\n------------------------------\n`, e);
+                });
+            }
+            throw e;
+        });
     }).delay(2000);
 };
 

@@ -13,10 +13,14 @@ Utils.CURRENT_BUILD = {
     branch: childProcess.execSync(`git -C ${__project_dir} rev-parse --abbrev-ref HEAD`).toString().trim()
 };
 
-Utils.stringifyError = function (error) {
-    if (error instanceof Error) return error.toString() + "\n" + error.stack;
-    if (typeof error === 'object') return JSON.stringify(error);
-    return error;
+Utils.wrapError = function (message, error) {
+    let newError = new Error(message);
+    // Remove this function (wrapError) call from the stack..
+    let newStack = newError.stack.split("\n");
+    newStack.splice(1, 1);
+    newStack = newStack.join("\n");
+    newError.stack = `${newStack}\nCaused by: ${error.stack}`;
+    return newError;
 };
 
 Utils.createDirIfNotExists = function (dir) {

@@ -170,9 +170,6 @@ Browser.prototype.fetchData = function (url) {
                 url: url,
                 data: data
             };
-        }).catch(e => {
-            logger.error(`Failed to fetch data for url ${url} `, e);
-            throw e;
         });
     });
 };
