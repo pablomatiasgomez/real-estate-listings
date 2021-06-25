@@ -24,6 +24,14 @@ SiGroupBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "1";
 
+        if (document.querySelector(".error-404-non-branded")) {
+            // Not found, the listing was removed.
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: "UNLISTED",
+            };
+        }
+
         let price = [...document.querySelector("main .txtNew").parentNode.childNodes]
             .map(el => el.innerText)
             .filter(text => text.indexOf("$") !== -1)[0];
