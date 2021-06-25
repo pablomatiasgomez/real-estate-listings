@@ -26,8 +26,6 @@ LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             EXPORT_VERSION: "0"
         };
 
-        throw `LiderProp Fix - Elements: ${document.querySelector(".results-count strong").innerText}`;
-
         [...document.querySelectorAll(".items .property-list")].forEach(item => {
             if (item.classList.contains("priority-2")) {
                 let url = item.querySelector("a").href;
