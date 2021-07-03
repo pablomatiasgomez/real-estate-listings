@@ -53,7 +53,7 @@ LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
                     features[key] = li.childNodes[1].innerText.trim();
                     return features;
                 }, {});
-                let picturesCount = parseInt(item.querySelector("figure .count")?.innerText) || 0; // jshint ignore:line
+                let picturesCount = parseInt(item.querySelector("figure .count")?.innerText) || 0;
 
                 response[id] = {
                     url: url,

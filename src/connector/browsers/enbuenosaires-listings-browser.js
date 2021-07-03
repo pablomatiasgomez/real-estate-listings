@@ -27,10 +27,16 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
         };
 
         [...document.querySelectorAll(".snapproperty")].forEach(item => {
-            let url = item.querySelector(".viewadvertlink").href;
+            let listingLink = item.querySelector(".viewadvertlink");
+            // sometimes the "viewadvertlink" is not shown, so we try to grab the link from the left buttons.
+            if (!listingLink) listingLink = item.querySelector(".pseudolink a");
+            let url = listingLink.href.split("?")[0];
+
             let urlSplit = url.split("-");
             let id = urlSplit[urlSplit.length - 1].slice(0, -5);
 
+            let status = item.querySelector(".corner-ribbon")?.innerText.trim();
+            //let status = statusEl ? statusEl.innerText.trim() : undefined;
             let address = item.querySelector(".titleproperty").innerText.trim();
             let subtitle = item.querySelector(".descriptionproperty strong").innerText.trim();
             let features = item.querySelector(".descriptionproperty p").innerText.split(",").map(i => i.trim()).sort();
@@ -44,6 +50,7 @@ EnBuenosAiresListingsBrowser.prototype.extractListPage = function (browserPage) 
 
             response[id] = {
                 url: url,
+                status: status,
                 address: address,
                 subtitle: subtitle,
                 features: features,
