@@ -23,7 +23,7 @@ ArgenPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "1"
+            EXPORT_VERSION: "2"
         };
 
         [...document.querySelectorAll(".listing__item")].filter(item => {
@@ -37,7 +37,6 @@ ArgenPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             let address = item.querySelector(".card__address").innerText.trim();
             let title = item.querySelector(".card__title").innerText.trim();
             let features = [...item.querySelectorAll(".card__common-data span")].map(i => i.innerText.trim());
-            let description = item.querySelector(".card__info").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
 
             response[id] = {
                 url: url,
@@ -45,7 +44,6 @@ ArgenPropListingsBrowser.prototype.extractListPage = function (browserPage) {
                 address: address,
                 title: title,
                 features: features,
-                description: description
             };
         });
 
