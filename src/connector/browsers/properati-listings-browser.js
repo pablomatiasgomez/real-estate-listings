@@ -23,7 +23,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "8"
+            EXPORT_VERSION: "9"
         };
 
         let nextData = JSON.parse(document.querySelector("#__NEXT_DATA__").innerText);
@@ -37,6 +37,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
             delete item.images;
             delete item.score;
             delete item.published_on;
+            delete item.highlighted;
             response[item.id] = item;
         });
 
