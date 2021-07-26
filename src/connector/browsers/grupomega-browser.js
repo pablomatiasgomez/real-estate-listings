@@ -24,6 +24,14 @@ GrupoMegaBrowser.prototype.extractData = function (browserPage) {
     return browserPage.evaluate(() => {
         let EXPORT_VERSION = "0";
 
+        if (document.querySelector(".breadcrumb-area h1").innerText.trim() === "PROPIEDAD NO DISPONIBLE") {
+            let status = "UNLISTED";
+            return {
+                EXPORT_VERSION: EXPORT_VERSION,
+                status: status,
+            };
+        }
+
         let address = document.querySelector(".heading-properties-3 h1").innerText.trim();
         let price = document.querySelector(".property-price").innerText.trim();
         let operation = document.querySelector(".rent").innerText.trim();
