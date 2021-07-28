@@ -35,7 +35,7 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             items = [...document.querySelectorAll(".resultado_datos")];
             // Sometimes the page may not load correctly so we need to validate it this way:
             // We either receive a "no results" error, or we have results. Otherwise, the page was not fully loaded.
-            if (!items.length) throw "Something wrong happened, no error and no results!";
+            if (!items.length) throw new Error("Something wrong happened, no error and no results!");
         }
 
         items.forEach(itemData => {
@@ -80,7 +80,7 @@ MenendezPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 
 MenendezPropListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
     // TODO pagination not supported for MenendezProp, (cannot be done via url change, only via ajax)
-    throw "Not supported yet!";
+    throw new Error("Not supported yet!");
 };
 
 // ---------

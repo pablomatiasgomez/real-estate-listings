@@ -142,7 +142,7 @@ Browser.prototype.fetchData = function (url) {
 
     let siteBrowsers = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url));
     if (siteBrowsers.length > 1) {
-        throw "More than one siteBrowsers match the same url: " + siteBrowsers.map(siteBrowser => siteBrowser.name());
+        throw new Error(`More than one siteBrowsers match the same url: ${siteBrowsers.map(siteBrowser => siteBrowser.name())}`);
     }
     if (!siteBrowsers.length) {
         logger.info(`No site browser matches url ${url}`);

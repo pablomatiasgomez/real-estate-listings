@@ -27,13 +27,13 @@ LaGranInmobiliariaListingsBrowser.prototype.extractListPage = function (browserP
         };
 
         let queryStates = JSON.parse(document.querySelector("#euclides-lgi-state").innerHTML.replace(/&q;/g, '"'));
-        if (Object.values(queryStates).length !== 1) throw "Do not know how to handle more than 1 elements!";
+        if (Object.values(queryStates).length !== 1) throw new Error("Do not know how to handle more than 1 elements!");
         let queryState = Object.values(queryStates)[0].body;
 
         queryState.listings.forEach(item => {
             item.url = location.origin + "/" + item.url;
             item.pictureUrls = (item.photos || []).map(photo => {
-                if (!photo.hd) throw "Couldn't find picture url!";
+                if (!photo.hd) throw new Error("Couldn't find picture url!");
                 return photo.hd;
             });
             delete item.photos;

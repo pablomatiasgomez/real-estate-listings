@@ -32,7 +32,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let scripts = [...document.getElementsByTagName("script")]
                 .filter(script => script.innerText.indexOf(strMatch) !== -1);
 
-            if (scripts.length !== 1) throw "Found " + scripts.length + " scripts! Expected 1!";
+            if (scripts.length !== 1) throw new Error("Found " + scripts.length + " scripts! Expected 1!");
             return scripts[0].innerText;
         }
 
@@ -42,7 +42,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let statusEl = document.querySelector(".item-status-notification .item-status-title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-            throw "TODO: handle title element.";
+            throw new Error("TODO: handle title element.");
             let title = "TODO!"; // jshint ignore:line
             let description = document.querySelector(".description-content .preformated-text").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".vip-price").innerText.trim();
@@ -75,7 +75,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
         } else if (document.querySelector(".item-title")) {
             // Legacy version of MELI listings....
             // TODO Deprecate once no longer used...
-            // throw "Legacy version still used?!";
+            // throw new Error("Legacy version still used?!");
 
             let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
@@ -102,7 +102,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 .map(picture => picture.src)
                 .map(pictureUrl => {
                     let match = pictureUrl.match(/https:\/\/http2.mlstatic\.com\/(.*)D_NQ_NP_/);
-                    if (match.length !== 2) throw "Invalid picture url! " + pictureUrl;
+                    if (match.length !== 2) throw new Error(`Invalid picture url! ${pictureUrl}`);
                     let perfix = "https://http2.mlstatic.com/";
                     return perfix + pictureUrl.substr(perfix.length + match[1].length, pictureUrl.length);
                 });
@@ -160,7 +160,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
                 status: "OFFLINE",
             };
         } else {
-            throw "Couldn't find any valid element!";
+            throw new Error("Couldn't find any valid element!");
         }
     });
 };

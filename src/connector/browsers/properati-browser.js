@@ -50,9 +50,9 @@ ProperatiBrowser.prototype.extractData = function (browserPage) {
 
         response.pictureUrls = (response.images || []).map(image => {
             let pictureUrl = image.sizes["1080"].jpg;
-            if (!pictureUrl) throw "Couldn't find picture url!";
+            if (!pictureUrl) throw new Error("Couldn't find picture url!");
             let match = /filters:strip_icc\(\)\/(.*)$/.exec(pictureUrl);
-            if (!match || match.length !== 2) throw "pictureUrl couldn't be parsed: " + pictureUrl;
+            if (!match || match.length !== 2) throw new Error("pictureUrl couldn't be parsed: " + pictureUrl);
             return decodeURIComponent(match[1]);
         });
         delete response.images;

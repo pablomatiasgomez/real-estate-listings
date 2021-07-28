@@ -63,7 +63,7 @@ ZonaPropBrowser.prototype.extractData = function (browserPage) {
 
         response.pictureUrls = (response.pictures || []).map(picture => {
             let url = picture.url1200x1200;
-            if (!url) throw "Couldn't find picture url!";
+            if (!url) throw new Error("Couldn't find picture url!");
             return url;
         });
         delete response.pictures;

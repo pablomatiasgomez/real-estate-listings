@@ -59,7 +59,7 @@ MercadoLibreListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNu
 
     let insertIndex = listUrl.lastIndexOf("/") + 1;
     if (listUrl.substring(insertIndex, insertIndex + 7) === "_Desde_") {
-        throw "Original url already contained page filter!";
+        throw new Error("Original url already contained page filter!");
     }
     return listUrl.substring(0, insertIndex) + filter + listUrl.substring(insertIndex);
 };

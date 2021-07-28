@@ -12,9 +12,9 @@ const logger = include('utils/logger').newLogger('SiteBrowser');
  * @constructor
  */
 function SiteBrowser(urlRegex) {
-    if (!urlRegex) throw "No urlRegex provided!";
+    if (!urlRegex) throw new Error("No urlRegex provided!");
     this.urlRegex = urlRegex;
-    if (!this.constructor.name.endsWith("Browser")) throw "Invalid browser name " + this.constructor.name;
+    if (!this.constructor.name.endsWith("Browser")) throw new Error(`Invalid browser name ${this.constructor.name}`);
     this.browserName = this.constructor.name.slice(0, -7);
 }
 
@@ -40,12 +40,12 @@ SiteBrowser.prototype.logHtmlOnError = function () {
 
 SiteBrowser.prototype.getId = function (url) {
     let match = this.urlRegex.exec(url);
-    if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
+    if (!match || match.length !== 2) throw new Error(`Url couldn't be parsed: ${url}`);
     return match[1];
 };
 
 SiteBrowser.prototype.extractData = function (browserPage) {
-    throw "Method must be implemented!";
+    throw new Error("Method must be implemented!");
 };
 
 SiteBrowser.prototype.extractUrlData = function (browserPage, url) {

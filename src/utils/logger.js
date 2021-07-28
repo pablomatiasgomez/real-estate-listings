@@ -3,7 +3,7 @@
 const TerminalFont = include('utils/terminal-font');
 
 function Logger(className) {
-    if (!className) throw 'Logger must have className!';
+    if (!className) throw new Error("Logger must have className!");
 
     this.timeZoneOffset = (new Date()).getTimezoneOffset() * 60000; // offset in milliseconds
     this.className = className;

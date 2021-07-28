@@ -38,7 +38,7 @@ MenendezPropBrowser.prototype.extractData = function (browserPage) {
             for (let i = 0; i < splits.length; i += 2) {
                 let key = splits[i].trim();
                 let value = splits[i + 1].trim();
-                if (key[key.length - 1] !== ":") throw "Key doesn't have semicolon.";
+                if (key[key.length - 1] !== ":") throw new Error("Key doesn't have semicolon.");
 
                 key = key.replace(":", "");
                 basicData[key] = value;

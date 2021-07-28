@@ -77,7 +77,7 @@ LiderPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 };
 
 LiderPropListingsBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
-    if (listUrl.includes("page=")) throw "listUrl already contains pagination!";
+    if (listUrl.includes("page=")) throw new Error("listUrl already contains pagination!");
     let appendChar = listUrl.includes("?") ? "&" : "?";
     return `${listUrl}${appendChar}page=${pageNumber}`;
 };

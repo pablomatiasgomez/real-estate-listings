@@ -33,7 +33,7 @@ MeMudoYaListingsBrowser.prototype.extractListPage = function (browserPage) {
             let url = item.querySelector("a.media-left").href;
 
             let match = URL_REGEX.exec(url);
-            if (!match || match.length !== 2) throw "Url couldn't be parsed: " + url;
+            if (!match || match.length !== 2) throw new Error(`Url couldn't be parsed: ${url}`);
             let id = match[1];
 
             let price = item.querySelector(".media-heading strong").innerText.trim();

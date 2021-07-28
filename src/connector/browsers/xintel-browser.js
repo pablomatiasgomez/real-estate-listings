@@ -33,7 +33,7 @@ XintelBrowser.prototype.extractData = function (browserPage) {
 
             let successFnStr = "success:function(response){";
             let startingFunctionIndex = script.indexOf(successFnStr);
-            if (startingFunctionIndex === -1) throw "Couldn't find success fn!";
+            if (startingFunctionIndex === -1) throw new Error("Couldn't find success fn!");
             script = script.substring(0, startingFunctionIndex + successFnStr.length);
 
             /**

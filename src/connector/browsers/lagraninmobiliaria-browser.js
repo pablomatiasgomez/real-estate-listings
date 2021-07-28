@@ -31,7 +31,7 @@ LaGranInmobiliariaBrowser.prototype.extractData = function (browserPage) {
         Object.assign(response, data[`G.https://api.lagraninmobiliaria.com/api/getlisting/id/${id}?`].body);
 
         response.pictureUrls = (response.photos || []).map(photo => {
-            if (!photo.hd) throw "Couldn't find picture url!";
+            if (!photo.hd) throw new Error("Couldn't find picture url!");
             return photo.hd;
         });
         delete response.photos;

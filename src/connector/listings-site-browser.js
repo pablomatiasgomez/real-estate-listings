@@ -25,7 +25,7 @@ util.inherits(ListingsSiteBrowser, SiteBrowser);
  * @param browserPage the puppeteer browser with the current page already loaded.
  */
 ListingsSiteBrowser.prototype.extractListPage = function (browserPage) {
-    throw "Method must be implemented!";
+    throw new Error("Method must be implemented!");
 };
 
 /**
@@ -34,7 +34,7 @@ ListingsSiteBrowser.prototype.extractListPage = function (browserPage) {
  * @param pageNumber the page number to be used to build the new url
  */
 ListingsSiteBrowser.prototype.getListPageUrl = function (listUrl, pageNumber) {
-    throw "Method must be implemented!";
+    throw new Error("Method must be implemented!");
 };
 
 /**

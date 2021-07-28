@@ -78,7 +78,7 @@ ExportService.prototype.getLastDataFile = function (id) {
 
     return Utils.readLastFileSortedByName(self.getFileDir(id)).then(content => {
         if (!content) return content;
-        if (typeof content !== "string") throw `cannot handle content type ${typeof content}`;
+        if (typeof content !== "string") throw new Error(`cannot handle content type ${typeof content}`);
         return JSON.parse(content);
     });
 };

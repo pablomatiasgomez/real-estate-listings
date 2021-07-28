@@ -44,7 +44,7 @@ EnBuenosAiresBrowser.prototype.extractData = function (browserPage) {
                 let keys = infoList.querySelectorAll("dt");
                 let values = infoList.querySelectorAll("dd");
                 if (keys.length !== values.length) {
-                    throw "keys and values length differ!";
+                    throw new Error("keys and values length differ!");
                 }
                 for (let i = 0; i < keys.length; i++) {
                     features[keys[i].innerText.trim()] = values[i].innerText.trim();
