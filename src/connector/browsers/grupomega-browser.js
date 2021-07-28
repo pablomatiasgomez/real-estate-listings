@@ -18,6 +18,10 @@ function GrupoMegaBrowser() {
 
 util.inherits(GrupoMegaBrowser, SiteBrowser);
 
+GrupoMegaBrowser.prototype.logHtmlOnError = function () {
+    return true;
+};
+
 GrupoMegaBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
