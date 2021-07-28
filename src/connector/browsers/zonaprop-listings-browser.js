@@ -32,7 +32,7 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "2"
+            EXPORT_VERSION: "3"
         };
 
         // Grab postingInfo because JS is disabled.
@@ -48,6 +48,8 @@ ZonaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
 
             delete item.publisher.url;
             delete item.publisher.urlLogo;
+            delete item.partialPhone;
+            delete item.whatsApp;
 
             let location = "";
             let loc = item.location;
