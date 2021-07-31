@@ -18,6 +18,10 @@ function CabaPropListingsBrowser() {
 
 util.inherits(CabaPropListingsBrowser, ListingsSiteBrowser);
 
+CabaPropListingsBrowser.prototype.logHtmlOnError = function () {
+    return true;
+};
+
 CabaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
     logger.info(`Extracting list data for ${browserPage.url()}...`);
 
@@ -26,7 +30,10 @@ CabaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             EXPORT_VERSION: "0"
         };
 
-        [...document.querySelectorAll(".house-wrapper")].forEach(item => {
+        let items = document.querySelectorAll(".house-wrapper");
+        if (!items.length) throw new Error("Invalid number of items"); // Log html to understand why this is happening from time to time.
+
+        [...items].forEach(item => {
             let url = item.querySelector("a").href;
             let id = url.split("id-")[1];
 
