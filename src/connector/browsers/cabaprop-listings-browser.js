@@ -30,10 +30,8 @@ CabaPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             EXPORT_VERSION: "0"
         };
 
-        let items = document.querySelectorAll(".house-wrapper");
-        if (!items.length) throw new Error("Invalid number of items"); // Log html to understand why this is happening from time to time.
-
-        [...items].forEach(item => {
+        // Always first query the container and then the items, so that if the page loads incorrectly, we get an error instead of no results.
+        [...document.querySelector(".house-listing .container").querySelectorAll(".house-wrapper")].forEach(item => {
             let url = item.querySelector("a").href;
             let id = url.split("id-")[1];
 

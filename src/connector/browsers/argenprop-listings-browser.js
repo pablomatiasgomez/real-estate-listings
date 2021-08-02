@@ -26,7 +26,8 @@ ArgenPropListingsBrowser.prototype.extractListPage = function (browserPage) {
             EXPORT_VERSION: "2"
         };
 
-        [...document.querySelectorAll(".listing__item")].filter(item => {
+        // Always first query the container and then the items, so that if the page loads incorrectly, we get an error instead of no results.
+        [...document.querySelector(".listing__items").querySelectorAll(".listing__item")].filter(item => {
             // Some items do not have link, and other info, so we discard them..
             return !!item.querySelector("a.card");
         }).forEach(item => {
