@@ -17,9 +17,12 @@
     "url": "https://www.pablomatiasgomez.com.ar"
   },
   "dependencies": {
+    "async": "^3.2.0",
     "bluebird": "^3.7.2",
+    "express": "^4.17.1",
     "google-spreadsheet": "^3.1.15",
     "json-diff": "pablomatiasgomez/json-diff",
+    "node-cache": "^5.1.2",
     "puppeteer": "^10.1.0",
     "puppeteer-extra": "^3.1.18",
     "puppeteer-extra-plugin-stealth": "^2.7.8",

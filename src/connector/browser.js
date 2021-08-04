@@ -82,19 +82,10 @@ const SITE_BROWSERS = [
  * @constructor
  */
 function Browser() {
-    this.browser = null;
-}
+    puppeteerExtra.use(StealthPlugin());
+    this.userAgents = new UserAgents();
 
-Browser.BROWSER_KINDS = {
-    "NORMAL": "NORMAL",
-    "STEALTH": "STEALTH",
-};
-
-Browser.prototype.init = function () {
-    let self = this;
-
-    self.userAgents = new UserAgents();
-    self.browserOptions = {
+    this.browserOptions = {
         headless: !DEBUG,
         devtools: DEBUG,
         args: [
@@ -107,34 +98,14 @@ Browser.prototype.init = function () {
             '--single-process',
         ],
     };
-    self.currentBrowserKind = null;
-    self.currentBrowser = null;
-    self.currentBrowserPage = null;
-    puppeteerExtra.use(StealthPlugin());
-};
+    this.currentBrowserKind = null;
+    this.currentBrowser = null;
+    this.currentBrowserPage = null;
+}
 
-Browser.prototype.getBrowserPage = function (browserKind) {
-    let self = this;
-    if (browserKind === self.currentBrowserKind) {
-        logger.info(`Reusing browser page for kind ${browserKind} ...`);
-        return Promise.resolve(self.currentBrowserPage);
-    }
-
-    // There are 2 memory usage improvements being done here:
-    // - Close the previous browser and open the new one in order to only have one open at a time.
-    // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
-    return self.closeCurrentBrowser().delay(1000).then(() => {
-        self.currentBrowserKind = browserKind;
-        let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
-        logger.info(`Opening a new brower for kind ${browserKind} ...`);
-        return launcher.launch(self.browserOptions);
-    }).then(browser => {
-        self.currentBrowser = browser;
-        return self.currentBrowser.newPage();
-    }).then(page => {
-        self.currentBrowserPage = page;
-        return self.currentBrowserPage;
-    });
+Browser.BROWSER_KINDS = {
+    "NORMAL": "NORMAL",
+    "STEALTH": "STEALTH",
 };
 
 Browser.prototype.fetchData = function (url) {
@@ -174,7 +145,31 @@ Browser.prototype.fetchData = function (url) {
     });
 };
 
-Browser.prototype.dispose = function () {
+Browser.prototype.getBrowserPage = function (browserKind) {
+    let self = this;
+    if (browserKind === self.currentBrowserKind) {
+        logger.info(`Reusing browser page for kind ${browserKind} ...`);
+        return Promise.resolve(self.currentBrowserPage);
+    }
+
+    // There are 2 memory usage improvements being done here:
+    // - Close the previous browser and open the new one in order to only have one open at a time.
+    // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
+    return self.closeCurrentBrowser().delay(1000).then(() => {
+        self.currentBrowserKind = browserKind;
+        let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
+        logger.info(`Opening a new brower for kind ${browserKind} ...`);
+        return launcher.launch(self.browserOptions);
+    }).then(browser => {
+        self.currentBrowser = browser;
+        return self.currentBrowser.newPage();
+    }).then(page => {
+        self.currentBrowserPage = page;
+        return self.currentBrowserPage;
+    });
+};
+
+Browser.prototype.close = function () {
     let self = this;
     logger.info(`Shutting down connector ..`);
     return self.closeCurrentBrowser();
@@ -192,7 +187,11 @@ Browser.prototype.closeCurrentBrowser = function () {
     closeables.filter(closeable => !!closeable).forEach(closeable => {
         promise = promise.then(() => closeable.close());
     });
-    return promise;
+    return promise.then(() => {
+        this.currentBrowserKind = null;
+        this.currentBrowser = null;
+        this.currentBrowserPage = null;
+    });
 };
 
 // ---------

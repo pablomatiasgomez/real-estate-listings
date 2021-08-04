@@ -12,6 +12,7 @@ const Utils = include('utils/utils');
 
 const Browser = include('connector/browser');
 
+const WebApiController = include('controller/web-api-controller');
 const DifferenceNotifierService = include('service/difference-notifier-service');
 const NotifierService = include('service/notifier-service');
 const GoogleSheetsService = include('service/googlesheets-service');
@@ -22,10 +23,6 @@ const FileReaderService = include('service/filereader-service');
 const logger = include('utils/logger').newLogger('Main');
 
 //----------------------
-
-Array.prototype.flatMap = function (lambda) {
-    return Array.prototype.concat.apply([], this.map(lambda));
-};
 
 Array.prototype.shuffle = function () {
     for (let i = this.length - 1; i > 0; i--) {
@@ -68,22 +65,38 @@ function initServicesAndExecute() {
     logger.info('');
 
     let browser;
+    let notifierService;
+    let webApiController;
+    let differenceNotifierService;
+
+    const ACTIONS = {
+        "--diff-check": () => getUrls().then(urls => differenceNotifierService.exportData(urls)),
+        "--web-api": () => {
+            webApiController.listen(8200);
+            return new Promise(resolve => {
+                process.on("SIGTERM", () => webApiController.close(resolve));
+                process.on("SIGINT", () => webApiController.close(resolve));
+            });
+        }
+    };
+
+    let action = ACTIONS[process.argv.slice(2)[0]];
+    if (!action) {
+        logger.error(`Invalid action: ${process.argv.slice(2)[0]}. Valid actions are: ${Object.keys(ACTIONS).join(", ")}`);
+        return;
+    }
 
     return Promise.resolve().then(() => {
         browser = new Browser();
-        return browser.init();
-    }).then(() => {
-        return getUrls();
-    }).then(urls => {
-        let notifierService = new NotifierService();
-        let differenceNotifierService = new DifferenceNotifierService(browser, notifierService);
-        return differenceNotifierService.exportData(urls);
+        notifierService = new NotifierService();
+        webApiController = new WebApiController(browser);
+        differenceNotifierService = new DifferenceNotifierService(browser, notifierService);
+    }).then(action).catch(e => {
+        return logger.error(e);
     }).finally(() => {
         logger.info(`Shutting down the browser..`);
-        return browser.dispose();
+        return browser.close();
     });
 }
 
-let promise = initServicesAndExecute();
-
-module.exports = promise;
+initServicesAndExecute();

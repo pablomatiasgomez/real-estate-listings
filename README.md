@@ -113,12 +113,20 @@ Where:
     * `chatId` - chat in which you want to receive the notifications. You can retrieve the bot's chats by getting the
       latest messages, using https://api.telegram.org/bot{TOKEN}/getUpdates
 
+### Running in background
+
 Then you can run it using `./scripts/start.sh` which will run the app in background and notify of any change.
+
+### Running in foregraund
+
+Simply run `./src/main.js --diff-check`
+
+### Run the app periodically
 
 If you want to run the app periodically, you could set up a cron like this:
 
 ```
-10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js >> /path/real-estate-listings/logs/stdout.log 2>&1
+10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js --diff-check >> /path/real-estate-listings/logs/stdout.log 2>&1
 ```
 
 ## TODO list
@@ -126,4 +134,3 @@ If you want to run the app periodically, you could set up a cron like this:
 * Standarize (create a schema) the output of listing and listings browsers
 * Better handling of new export versions to avoid loosing notifications
 * Allow ignoring some ids from the listings search
-* Expose an API that returns the listing data for a given url?
