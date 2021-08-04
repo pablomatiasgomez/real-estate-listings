@@ -12,7 +12,7 @@ const Utils = include('utils/utils');
 
 const Browser = include('connector/browser');
 
-const ExportService = include('service/export-service');
+const DifferenceNotifierService = include('service/difference-notifier-service');
 const NotifierService = include('service/notifier-service');
 const GoogleSheetsService = include('service/googlesheets-service');
 const FileReaderService = include('service/filereader-service');
@@ -76,8 +76,8 @@ function initServicesAndExecute() {
         return getUrls();
     }).then(urls => {
         let notifierService = new NotifierService();
-        let exportService = new ExportService(browser, notifierService);
-        return exportService.exportData(urls);
+        let differenceNotifierService = new DifferenceNotifierService(browser, notifierService);
+        return differenceNotifierService.exportData(urls);
     }).finally(() => {
         logger.info(`Shutting down the browser..`);
         return browser.dispose();

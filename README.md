@@ -120,3 +120,10 @@ If you want to run the app periodically, you could set up a cron like this:
 ```
 10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js >> /path/real-estate-listings/logs/stdout.log 2>&1
 ```
+
+## TODO list
+
+* Standarize (create a schema) the output of listing and listings browsers
+* Better handling of new export versions to avoid loosing notifications
+* Allow ignoring some ids from the listings search
+* Expose an API that returns the listing data for a given url?

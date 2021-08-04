@@ -5,16 +5,21 @@ const sanitize = require("sanitize-filename");
 
 const Utils = include('utils/utils');
 
-const logger = include('utils/logger').newLogger('ExportService');
+const logger = include('utils/logger').newLogger('DifferenceNotifierService');
 
 //----------------------
 
-function ExportService(browser, notifierService) {
+/**
+ * Service that exports all the given urls and compares the data against the previous exported version.
+ * If any difference is found, it notifies using the notifierService
+ * @constructor
+ */
+function DifferenceNotifierService(browser, notifierService) {
     this.browser = browser;
     this.notifierService = notifierService;
 }
 
-ExportService.prototype.exportData = function (urls) {
+DifferenceNotifierService.prototype.exportData = function (urls) {
     let self = this;
     logger.info(`Exporting ${urls.length} urls..`);
 
@@ -38,15 +43,14 @@ ExportService.prototype.exportData = function (urls) {
                 return self.createDataFile(response.id, response.data);
             });
         }).catch(e => {
+            // Log error and continue
             logger.error(`Failed to export data for url: ${url} `, e);
-            // Log error to telegram and continue
-            // self.notifierService.notify(`Failed to export data for url ${url}`);
         });
     });
     return promise;
 };
 
-ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
+DifferenceNotifierService.prototype.verifyDataDifference = function (url, id, currentData) {
     let self = this;
 
     return self.getLastDataFile(id).then(previousData => {
@@ -73,7 +77,7 @@ ExportService.prototype.verifyDataDifference = function (url, id, currentData) {
     });
 };
 
-ExportService.prototype.getLastDataFile = function (id) {
+DifferenceNotifierService.prototype.getLastDataFile = function (id) {
     let self = this;
 
     return Utils.readLastFileSortedByName(self.getFileDir(id)).then(content => {
@@ -83,19 +87,19 @@ ExportService.prototype.getLastDataFile = function (id) {
     });
 };
 
-ExportService.prototype.createDataFile = function (id, data) {
+DifferenceNotifierService.prototype.createDataFile = function (id, data) {
     let self = this;
     return Utils.createFile(self.getFilePath(id), JSON.stringify(data));
 };
 
-ExportService.prototype.getFilePath = function (id) {
+DifferenceNotifierService.prototype.getFilePath = function (id) {
     let self = this;
     return `${self.getFileDir(id)}/${new Date().toISOString().split(".")[0]}.json`;
 };
 
-ExportService.prototype.getFileDir = function (id) {
+DifferenceNotifierService.prototype.getFileDir = function (id) {
     return `${__project_dir}/exports/${id}`;
 };
 
-module.exports = ExportService;
+module.exports = DifferenceNotifierService;
 
