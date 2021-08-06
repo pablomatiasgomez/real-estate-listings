@@ -10,13 +10,13 @@ global.Promise = require('bluebird');
 const TerminalFont = include('utils/terminal-font');
 const Utils = include('utils/utils');
 
-const Browser = include('connector/browser');
-
 const WebApiController = include('controller/web-api-controller');
 const DifferenceNotifierService = include('service/difference-notifier-service');
 const NotifierService = include('service/notifier-service');
 const GoogleSheetsService = include('service/googlesheets-service');
 const FileReaderService = include('service/filereader-service');
+const FileDataRepository = include('repository/file-data-repository');
+const Browser = include('connector/browser');
 
 //----------------------
 
@@ -65,9 +65,10 @@ function initServicesAndExecute() {
     logger.info('');
 
     let browser;
+    let fileDataRepository;
     let notifierService;
-    let webApiController;
     let differenceNotifierService;
+    let webApiController;
 
     const ACTIONS = {
         "--diff-check": () => getUrls().then(urls => differenceNotifierService.exportData(urls)),
@@ -87,10 +88,11 @@ function initServicesAndExecute() {
     }
 
     return Promise.resolve().then(() => {
+        fileDataRepository = new FileDataRepository();
         browser = new Browser();
         notifierService = new NotifierService();
-        webApiController = new WebApiController(browser);
-        differenceNotifierService = new DifferenceNotifierService(browser, notifierService);
+        differenceNotifierService = new DifferenceNotifierService(fileDataRepository, browser, notifierService);
+        webApiController = new WebApiController(fileDataRepository, browser);
     }).then(action).catch(e => {
         return logger.error(e);
     }).finally(() => {

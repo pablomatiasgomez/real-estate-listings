@@ -8,7 +8,8 @@ const logger = include('utils/logger').newLogger('WebApiController');
 
 //----------------------
 
-function WebApiController(browser) {
+function WebApiController(fileDataRepository, browser) {
+    this.fileDataRepository = fileDataRepository;
     this.browser = browser;
     this.cache = new NodeCache({
         stdTTL: 12 * 60 * 60, // 12hs
@@ -30,14 +31,38 @@ WebApiController.prototype.createQueue = function () {
         }
 
         logger.info(`Getting listing data for url ${url}`);
-        // TODO handle browser closing after the page is fetched
-        self.browser.fetchData(url).then(response => {
-            self.cache.set(url, response);
-            resolve(null, response);
+        self.getLastSavedData(url).then(lastSavedData => {
+            if (!lastSavedData) {
+                logger.info(`Couldn't find lastSavedData, going to fetch live data..`);
+                return self.getLiveData(url);
+            }
+            return lastSavedData;
+        }).then(data => {
+            self.cache.set(url, data);
+            resolve(null, data);
         }).catch(e => {
             resolve(e, null);
         });
     }, 1);
+};
+
+WebApiController.prototype.getLiveData = function (url) {
+    let self = this;
+    // TODO handle browser closing after the page is fetched
+    return self.browser.fetchData(url).then(response => {
+        if (!response) return null;
+        return response.data;
+    });
+};
+
+WebApiController.prototype.getLastSavedData = function (url) {
+    let self = this;
+    return Promise.resolve().then(() => {
+        return self.browser.getUrlId(url);
+    }).then(id => {
+        if (!id) return null;
+        return self.fileDataRepository.getLastDataFile(id);
+    });
 };
 
 WebApiController.prototype.listen = function (port) {
@@ -62,9 +87,9 @@ WebApiController.prototype.listen = function (port) {
                 logger.error(error);
                 return res.status(500).send(error.message);
             } else if (!response) {
-                return res.status(404).send(`Cannot get data for url ${url}`);
+                return res.status(404);
             } else {
-                return res.send(response.data);
+                return res.send(response);
             }
         });
     });

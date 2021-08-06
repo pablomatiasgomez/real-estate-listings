@@ -1,9 +1,6 @@
 'use strict';
 
 const jsonDiff = require('json-diff');
-const sanitize = require("sanitize-filename");
-
-const Utils = include('utils/utils');
 
 const logger = include('utils/logger').newLogger('DifferenceNotifierService');
 
@@ -14,7 +11,8 @@ const logger = include('utils/logger').newLogger('DifferenceNotifierService');
  * If any difference is found, it notifies using the notifierService
  * @constructor
  */
-function DifferenceNotifierService(browser, notifierService) {
+function DifferenceNotifierService(fileDataRepository, browser, notifierService) {
+    this.fileDataRepository = fileDataRepository;
     this.browser = browser;
     this.notifierService = notifierService;
 }
@@ -33,14 +31,11 @@ DifferenceNotifierService.prototype.exportData = function (urls) {
             return self.browser.fetchData(url);
         }).then(response => {
             if (!response) return; // Skip not handled urls.
-            response.id = sanitize(response.id);
-
-            Utils.createDirIfNotExists(self.getFileDir(response.id));
 
             // First we check for data changes and notify:
             return self.verifyDataDifference(response.url, response.id, response.data).then(() => {
                 logger.info(`Going to save data exported for id ${response.id}`);
-                return self.createDataFile(response.id, response.data);
+                return self.fileDataRepository.createNewDataFile(response.id, response.data);
             });
         }).catch(e => {
             // Log error and continue
@@ -53,7 +48,7 @@ DifferenceNotifierService.prototype.exportData = function (urls) {
 DifferenceNotifierService.prototype.verifyDataDifference = function (url, id, currentData) {
     let self = this;
 
-    return self.getLastDataFile(id).then(previousData => {
+    return self.fileDataRepository.getLastDataFile(id).then(previousData => {
         logger.info(`Checking data changes... for ${id}`);
         if (!previousData) {
             logger.info(`There was no previous data for ${id} .. skipping difference check.`);
@@ -75,30 +70,6 @@ DifferenceNotifierService.prototype.verifyDataDifference = function (url, id, cu
         }
         logger.info("No difference was found!");
     });
-};
-
-DifferenceNotifierService.prototype.getLastDataFile = function (id) {
-    let self = this;
-
-    return Utils.readLastFileSortedByName(self.getFileDir(id)).then(content => {
-        if (!content) return content;
-        if (typeof content !== "string") throw new Error(`cannot handle content type ${typeof content}`);
-        return JSON.parse(content);
-    });
-};
-
-DifferenceNotifierService.prototype.createDataFile = function (id, data) {
-    let self = this;
-    return Utils.createFile(self.getFilePath(id), JSON.stringify(data));
-};
-
-DifferenceNotifierService.prototype.getFilePath = function (id) {
-    let self = this;
-    return `${self.getFileDir(id)}/${new Date().toISOString().split(".")[0]}.json`;
-};
-
-DifferenceNotifierService.prototype.getFileDir = function (id) {
-    return `${__project_dir}/exports/${id}`;
 };
 
 module.exports = DifferenceNotifierService;

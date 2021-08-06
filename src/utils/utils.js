@@ -25,6 +25,7 @@ Utils.wrapError = function (message, error) {
 
 Utils.createDirIfNotExists = function (dir) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, {recursive: true});
+    return dir;
 };
 
 Utils.createFile = function (filePath, contents) {

@@ -111,16 +111,12 @@ Browser.BROWSER_KINDS = {
 Browser.prototype.fetchData = function (url) {
     let self = this;
 
-    let siteBrowsers = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url));
-    if (siteBrowsers.length > 1) {
-        throw new Error(`More than one siteBrowsers match the same url: ${siteBrowsers.map(siteBrowser => siteBrowser.name())}`);
-    }
-    if (!siteBrowsers.length) {
+    let siteBrowser = self.getSiteBrowserForUrl(url);
+    if (!siteBrowser) {
         logger.info(`No site browser matches url ${url}`);
         return Promise.resolve(null);
     }
 
-    let siteBrowser = siteBrowsers[0];
     return Promise.resolve().then(() => {
         let browserKind = siteBrowser.useStealthBrowser() ? Browser.BROWSER_KINDS.STEALTH : Browser.BROWSER_KINDS.NORMAL;
         logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
@@ -137,12 +133,39 @@ Browser.prototype.fetchData = function (url) {
         }).then(data => {
             logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
             return {
-                id: siteBrowser.name() + "-" + siteBrowser.getId(url),
+                id: self.getUrlIdWithSiteBrowser(url, siteBrowser),
                 url: url,
                 data: data
             };
         });
     });
+};
+
+/**
+ * Public method exposed to retrieve the id without getting the url data
+ * @param url
+ * @returns {string|null}
+ */
+Browser.prototype.getUrlId = function (url) {
+    let self = this;
+    let siteBrowser = self.getSiteBrowserForUrl(url);
+    if (!siteBrowser) {
+        logger.info(`No site browser matches url ${url}`);
+        return null;
+    }
+    return self.getUrlIdWithSiteBrowser(url, siteBrowser);
+};
+
+Browser.prototype.getUrlIdWithSiteBrowser = function (url, siteBrowser) {
+    return siteBrowser.name() + "-" + siteBrowser.getId(url);
+};
+
+Browser.prototype.getSiteBrowserForUrl = function (url) {
+    let siteBrowsers = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url));
+    if (siteBrowsers.length > 1) {
+        throw new Error(`More than one siteBrowsers match the same url: ${siteBrowsers.map(siteBrowser => siteBrowser.name())}`);
+    }
+    return siteBrowsers[0];
 };
 
 Browser.prototype.getBrowserPage = function (browserKind) {
