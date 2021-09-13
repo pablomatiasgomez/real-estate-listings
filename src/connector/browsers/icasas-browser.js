@@ -22,7 +22,7 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "2";
+        let EXPORT_VERSION = "3";
 
         let status = "LISTED";
 
@@ -45,14 +45,6 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
         let subtitle = document.querySelector("#firstLine h2").innerText;
         let price = document.querySelector(".price").innerText;
         let address = document.querySelector(".location_info").innerText;
-
-        let picturesSlider = document.querySelector(".slick-track");
-        let pictureUrls = [];
-        if (picturesSlider) {
-            pictureUrls = [...picturesSlider.querySelectorAll("img")].map(img => {
-                return img.getAttribute("data-lazy") || img.src;
-            });
-        }
 
         let descriptionReadMoreEl = document.querySelector(".description .read_more");
         if (descriptionReadMoreEl) {
@@ -80,7 +72,6 @@ ICasasBrowser.prototype.extractData = function (browserPage) {
             address: address,
             description: description,
             features: features,
-            pictureUrls: pictureUrls,
         };
     });
 };
