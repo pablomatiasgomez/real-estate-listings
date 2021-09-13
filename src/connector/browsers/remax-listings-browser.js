@@ -23,7 +23,7 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "2"
+            EXPORT_VERSION: "3"
         };
 
         /**
@@ -52,8 +52,6 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
             let features = [...item.querySelectorAll(".features-item p")].map(feature => {
                 return feature.innerText.trim();
             });
-            let pictureUrls = data.photos.map(photo => photo.value);
-
             delete data.photos;
 
             response[data.slug] = {
@@ -61,7 +59,6 @@ RemaxListingsBrowser.prototype.extractListPage = function (browserPage) {
                 id: id,
                 price: price,
                 features: features,
-                pictureUrls: pictureUrls,
                 data: data,
             };
         });
