@@ -23,7 +23,7 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
 
     return browserPage.evaluate(() => {
         let response = {
-            EXPORT_VERSION: "10"
+            EXPORT_VERSION: "11"
         };
 
         let nextData = JSON.parse(document.querySelector("#__NEXT_DATA__").innerText);
@@ -39,6 +39,11 @@ ProperatiListingsBrowser.prototype.extractListPage = function (browserPage) {
             delete item.created_on;
             delete item.published_on;
             delete item.highlighted;
+
+            // These fields are returning flaky results although they shouldn't..
+            delete item.maintenance_fees;
+            delete item.surface;
+
             response[item.id] = item;
         });
 
