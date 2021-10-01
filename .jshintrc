@@ -88,9 +88,9 @@
 
     // Custom Globals
     "globals"       : {         // additional predefined global variables
-        "include": true,
         "__project_dir": true,
         "__src_dir": true,
+        "newLogger": true,
         "angular": true,
         "config": true
     }

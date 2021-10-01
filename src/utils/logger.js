@@ -1,43 +1,46 @@
 'use strict';
 
-const TerminalFont = include('utils/terminal-font');
+const TerminalFont = require('../utils/terminal-font.js');
 
-function Logger(className) {
-    if (!className) throw new Error("Logger must have className!");
+class Logger {
+    static newLogger(className) {
+        return new Logger(className);
+    }
 
-    this.timeZoneOffset = (new Date()).getTimezoneOffset() * 60000; // offset in milliseconds
-    this.className = className;
+    constructor(className) {
+        if (!className) throw new Error("Logger must have className!");
 
-    Logger.prototype.maxClazzLength = Math.max(this.className.length, Logger.prototype.maxClazzLength);
+        this.timeZoneOffset = (new Date()).getTimezoneOffset() * 60000; // offset in milliseconds
+        this.className = className;
+
+        Logger.maxClazzNameLength = Math.max(this.className.length, Logger.maxClazzNameLength);
+    }
+
+    info() {
+        let args = Array.prototype.slice.call(arguments);
+        args = this.getPrefixAsArray('[INF]').concat(args);
+        console.log.apply(this, args);
+    }
+
+    error() {
+        let args = Array.prototype.slice.call(arguments);
+        args = this.getPrefixAsArray('[ERR]').concat(args);
+        args = [TerminalFont.FgRed, ...args, TerminalFont.Reset];
+        console.error.apply(this, args);
+    }
+
+    getPrefixAsArray(type) {
+        let localISOTime = (new Date(Date.now() - this.timeZoneOffset)).toISOString().slice(0, -1);
+        let clazz = this.getClazzWithSpaces();
+        return [localISOTime, clazz, type].filter(i => !!i);
+    }
+
+    getClazzWithSpaces() {
+        return `                                                     [${this.className}]`.slice(-Logger.maxClazzNameLength - 2);
+    }
+
 }
 
-Logger.newLogger = function (className) {
-    return new Logger(className);
-};
-
-Logger.prototype.maxClazzLength = 0;
-
-Logger.prototype.info = function () {
-    let args = Array.prototype.slice.call(arguments);
-    args = this.getPrefixAsArray('[INF]').concat(args);
-    console.log.apply(this, args);
-};
-
-Logger.prototype.error = function () {
-    let args = Array.prototype.slice.call(arguments);
-    args = this.getPrefixAsArray('[ERR]').concat(args);
-    args = [TerminalFont.FgRed, ...args, TerminalFont.Reset];
-    console.error.apply(this, args);
-};
-
-Logger.prototype.getPrefixAsArray = function (type) {
-    let localISOTime = (new Date(Date.now() - this.timeZoneOffset)).toISOString().slice(0, -1);
-    let clazz = this.getClazzWithSpaces();
-    return [localISOTime, clazz, type].filter(i => !!i);
-};
-
-Logger.prototype.getClazzWithSpaces = function () {
-    return `                                        [${this.className}]`.slice(-Logger.prototype.maxClazzLength - 2);
-};
+Logger.maxClazzNameLength = 0;
 
 module.exports = Logger;

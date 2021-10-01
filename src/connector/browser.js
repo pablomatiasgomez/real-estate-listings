@@ -6,39 +6,39 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const UserAgents = require('user-agents');
 
-const ZonaPropBrowser = include('connector/browsers/zonaprop-browser');
-const ZonaPropListingsBrowser = include('connector/browsers/zonaprop-listings-browser');
-const ArgenPropBrowser = include('connector/browsers/argenprop-browser');
-const ArgenPropListingsBrowser = include('connector/browsers/argenprop-listings-browser');
-const MercadoLibreBrowser = include('connector/browsers/mercadolibre-browser');
-const MercadoLibreListingsBrowser = include('connector/browsers/mercadolibre-listings-browser');
-const ProperatiBrowser = include('connector/browsers/properati-browser');
-const ProperatiListingsBrowser = include('connector/browsers/properati-listings-browser');
-const EnBuenosAiresBrowser = include('connector/browsers/enbuenosaires-browser');
-const EnBuenosAiresListingsBrowser = include('connector/browsers/enbuenosaires-listings-browser');
-const RemaxBrowser = include('connector/browsers/remax-browser');
-const RemaxListingsBrowser = include('connector/browsers/remax-listings-browser');
-const LaGranInmobiliariaBrowser = include('connector/browsers/lagraninmobiliaria-browser');
-const LaGranInmobiliariaListingsBrowser = include('connector/browsers/lagraninmobiliaria-listings-browser');
-const MalumaBrowser = include('connector/browsers/maluma-browser');
-const ICasasBrowser = include('connector/browsers/icasas-browser');
-const ICasasListingsBrowser = include('connector/browsers/icasas-listings-browser');
-const SiGroupBrowser = include('connector/browsers/sigroup-browser');
-const CabaPropBrowser = include('connector/browsers/cabaprop-browser');
-const CabaPropListingsBrowser = include('connector/browsers/cabaprop-listings-browser');
-const VarcasiaBrowser = include('connector/browsers/varcasia-browser');
-const MagnaccaBrowser = include('connector/browsers/magnacca-browser');
-const MenendezPropBrowser = include('connector/browsers/menendezprop-browser');
-const MenendezPropListingsBrowser = include('connector/browsers/menendezprop-listings-browser');
-const MeMudoYaBrowser = include('connector/browsers/memudoya-browser');
-const MeMudoYaListingsBrowser = include('connector/browsers/memudoya-listings-browser');
-const LiderPropBrowser = include('connector/browsers/liderprop-browser');
-const LiderPropListingsBrowser = include('connector/browsers/liderprop-listings-browser');
-const SaadCenturionBrowser = include('connector/browsers/saadcenturion-browser');
-const GrupoMegaBrowser = include('connector/browsers/grupomega-browser');
-const GrupoMegaListingsBrowser = include('connector/browsers/grupomega-listings-browser');
+const ZonaPropBrowser = require('./browsers/zonaprop-browser.js');
+const ZonaPropListingsBrowser = require('./browsers/zonaprop-listings-browser.js');
+const ArgenPropBrowser = require('./browsers/argenprop-browser.js');
+const ArgenPropListingsBrowser = require('./browsers/argenprop-listings-browser.js');
+const MercadoLibreBrowser = require('./browsers/mercadolibre-browser.js');
+const MercadoLibreListingsBrowser = require('./browsers/mercadolibre-listings-browser.js');
+const ProperatiBrowser = require('./browsers/properati-browser.js');
+const ProperatiListingsBrowser = require('./browsers/properati-listings-browser.js');
+const EnBuenosAiresBrowser = require('./browsers/enbuenosaires-browser.js');
+const EnBuenosAiresListingsBrowser = require('./browsers/enbuenosaires-listings-browser.js');
+const RemaxBrowser = require('./browsers/remax-browser.js');
+const RemaxListingsBrowser = require('./browsers/remax-listings-browser.js');
+const LaGranInmobiliariaBrowser = require('./browsers/lagraninmobiliaria-browser.js');
+const LaGranInmobiliariaListingsBrowser = require('./browsers/lagraninmobiliaria-listings-browser.js');
+const MalumaBrowser = require('./browsers/maluma-browser.js');
+const ICasasBrowser = require('./browsers/icasas-browser.js');
+const ICasasListingsBrowser = require('./browsers/icasas-listings-browser.js');
+const SiGroupBrowser = require('./browsers/sigroup-browser.js');
+const CabaPropBrowser = require('./browsers/cabaprop-browser.js');
+const CabaPropListingsBrowser = require('./browsers/cabaprop-listings-browser.js');
+const VarcasiaBrowser = require('./browsers/varcasia-browser.js');
+const MagnaccaBrowser = require('./browsers/magnacca-browser.js');
+const MenendezPropBrowser = require('./browsers/menendezprop-browser.js');
+const MenendezPropListingsBrowser = require('./browsers/menendezprop-listings-browser.js');
+const MeMudoYaBrowser = require('./browsers/memudoya-browser.js');
+const MeMudoYaListingsBrowser = require('./browsers/memudoya-listings-browser.js');
+const LiderPropBrowser = require('./browsers/liderprop-browser.js');
+const LiderPropListingsBrowser = require('./browsers/liderprop-listings-browser.js');
+const SaadCenturionBrowser = require('./browsers/saadcenturion-browser.js');
+const GrupoMegaBrowser = require('./browsers/grupomega-browser.js');
+const GrupoMegaListingsBrowser = require('./browsers/grupomega-listings-browser.js');
 
-const logger = include('utils/logger').newLogger('Browser');
+const logger = newLogger('Browser');
 
 //---------------
 
@@ -78,144 +78,145 @@ const SITE_BROWSERS = [
     new GrupoMegaListingsBrowser(),
 ];
 
-/**
- * @constructor
- */
-function Browser() {
-    puppeteerExtra.use(StealthPlugin());
-    this.userAgents = new UserAgents();
-
-    this.browserOptions = {
-        headless: !DEBUG,
-        devtools: DEBUG,
-        args: [
-            '--disable-gpu',
-            '--disable-dev-shm-usage',
-            '--disable-setuid-sandbox',
-            '--no-first-run',
-            '--no-sandbox',
-            '--no-zygote',
-            '--single-process',
-        ],
-    };
-    this.currentBrowserKind = null;
-    this.currentBrowser = null;
-    this.currentBrowserPage = null;
-}
-
-Browser.BROWSER_KINDS = {
+const BROWSER_KINDS = {
     "NORMAL": "NORMAL",
     "STEALTH": "STEALTH",
 };
 
-Browser.prototype.fetchData = function (url) {
-    let self = this;
+class Browser {
 
-    let siteBrowser = self.getSiteBrowserForUrl(url);
-    if (!siteBrowser) {
-        logger.info(`No site browser matches url ${url}`);
-        return Promise.resolve(null);
-    }
 
-    return Promise.resolve().then(() => {
-        let browserKind = siteBrowser.useStealthBrowser() ? Browser.BROWSER_KINDS.STEALTH : Browser.BROWSER_KINDS.NORMAL;
-        logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
-        return self.getBrowserPage(browserKind);
-    }).then(page => {
-        return Promise.resolve().then(() => {
-            let javascriptEnabled = siteBrowser.withJavascriptEnabled();
-            return page.setJavaScriptEnabled(javascriptEnabled);
-        }).then(() => {
-            // Randomize user agent
-            return page.setUserAgent(self.userAgents.toString());
-        }).then(() => {
-            return siteBrowser.extractUrlData(page, url);
-        }).then(data => {
-            logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
-            return {
-                id: self.getUrlIdWithSiteBrowser(url, siteBrowser),
-                url: url,
-                data: data
-            };
-        });
-    });
-};
+    constructor() {
+        puppeteerExtra.use(StealthPlugin());
+        this.userAgents = new UserAgents();
 
-/**
- * Public method exposed to retrieve the id without getting the url data
- * @param url
- * @returns {string|null}
- */
-Browser.prototype.getUrlId = function (url) {
-    let self = this;
-    let siteBrowser = self.getSiteBrowserForUrl(url);
-    if (!siteBrowser) {
-        logger.info(`No site browser matches url ${url}`);
-        return null;
-    }
-    return self.getUrlIdWithSiteBrowser(url, siteBrowser);
-};
-
-Browser.prototype.getUrlIdWithSiteBrowser = function (url, siteBrowser) {
-    return siteBrowser.name() + "-" + siteBrowser.getId(url);
-};
-
-Browser.prototype.getSiteBrowserForUrl = function (url) {
-    let siteBrowsers = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url));
-    if (siteBrowsers.length > 1) {
-        throw new Error(`More than one siteBrowsers match the same url: ${siteBrowsers.map(siteBrowser => siteBrowser.name())}`);
-    }
-    return siteBrowsers[0];
-};
-
-Browser.prototype.getBrowserPage = function (browserKind) {
-    let self = this;
-    if (browserKind === self.currentBrowserKind) {
-        logger.info(`Reusing browser page for kind ${browserKind} ...`);
-        return Promise.resolve(self.currentBrowserPage);
-    }
-
-    // There are 2 memory usage improvements being done here:
-    // - Close the previous browser and open the new one in order to only have one open at a time.
-    // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
-    return self.closeCurrentBrowser().delay(1000).then(() => {
-        self.currentBrowserKind = browserKind;
-        let launcher = browserKind === Browser.BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
-        logger.info(`Opening a new brower for kind ${browserKind} ...`);
-        return launcher.launch(self.browserOptions);
-    }).then(browser => {
-        self.currentBrowser = browser;
-        return self.currentBrowser.newPage();
-    }).then(page => {
-        self.currentBrowserPage = page;
-        return self.currentBrowserPage;
-    });
-};
-
-Browser.prototype.close = function () {
-    let self = this;
-    logger.info(`Shutting down connector ..`);
-    return self.closeCurrentBrowser();
-};
-
-Browser.prototype.closeCurrentBrowser = function () {
-    let self = this;
-    logger.info(`Closing current ${self.currentBrowserKind} browser...`);
-
-    let closeables = [
-        self.currentBrowserPage,
-        self.currentBrowser,
-    ];
-    let promise = Promise.resolve();
-    closeables.filter(closeable => !!closeable).forEach(closeable => {
-        promise = promise.then(() => closeable.close());
-    });
-    return promise.then(() => {
+        this.browserOptions = {
+            headless: !DEBUG,
+            devtools: DEBUG,
+            args: [
+                '--disable-gpu',
+                '--disable-dev-shm-usage',
+                '--disable-setuid-sandbox',
+                '--no-first-run',
+                '--no-sandbox',
+                '--no-zygote',
+                '--single-process',
+            ],
+        };
         this.currentBrowserKind = null;
         this.currentBrowser = null;
         this.currentBrowserPage = null;
-    });
-};
+    }
+
+    fetchData(url) {
+        let self = this;
+
+        let siteBrowser = self.getSiteBrowserForUrl(url);
+        if (!siteBrowser) {
+            logger.info(`No site browser matches url ${url}`);
+            return Promise.resolve(null);
+        }
+
+        return Promise.resolve().then(() => {
+            let browserKind = siteBrowser.useStealthBrowser() ? BROWSER_KINDS.STEALTH : BROWSER_KINDS.NORMAL;
+            logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
+            return self.getBrowserPage(browserKind);
+        }).then(page => {
+            return Promise.resolve().then(() => {
+                let javascriptEnabled = siteBrowser.withJavascriptEnabled();
+                return page.setJavaScriptEnabled(javascriptEnabled);
+            }).then(() => {
+                // Randomize user agent
+                return page.setUserAgent(self.userAgents.toString());
+            }).then(() => {
+                return siteBrowser.extractUrlData(page, url);
+            }).then(data => {
+                logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
+                return {
+                    id: self.getUrlIdWithSiteBrowser(url, siteBrowser),
+                    url: url,
+                    data: data
+                };
+            });
+        });
+    }
+
+    /**
+     * Public method exposed to retrieve the id without getting the url data
+     * @param url
+     * @returns {string|null}
+     */
+    getUrlId(url) {
+        let self = this;
+        let siteBrowser = self.getSiteBrowserForUrl(url);
+        if (!siteBrowser) {
+            logger.info(`No site browser matches url ${url}`);
+            return null;
+        }
+        return self.getUrlIdWithSiteBrowser(url, siteBrowser);
+    }
+
+    getUrlIdWithSiteBrowser(url, siteBrowser) {
+        return siteBrowser.name() + "-" + siteBrowser.getId(url);
+    }
+
+    getSiteBrowserForUrl(url) {
+        let siteBrowsers = SITE_BROWSERS.filter(siteBrowser => siteBrowser.acceptsUrl(url));
+        if (siteBrowsers.length > 1) {
+            throw new Error(`More than one siteBrowsers match the same url: ${siteBrowsers.map(siteBrowser => siteBrowser.name())}`);
+        }
+        return siteBrowsers[0];
+    }
+
+    getBrowserPage(browserKind) {
+        let self = this;
+        if (browserKind === self.currentBrowserKind) {
+            logger.info(`Reusing browser page for kind ${browserKind} ...`);
+            return Promise.resolve(self.currentBrowserPage);
+        }
+
+        // There are 2 memory usage improvements being done here:
+        // - Close the previous browser and open the new one in order to only have one open at a time.
+        // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
+        return self.closeCurrentBrowser().delay(1000).then(() => {
+            self.currentBrowserKind = browserKind;
+            let launcher = browserKind === BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
+            logger.info(`Opening a new brower for kind ${browserKind} ...`);
+            return launcher.launch(self.browserOptions);
+        }).then(browser => {
+            self.currentBrowser = browser;
+            return self.currentBrowser.newPage();
+        }).then(page => {
+            self.currentBrowserPage = page;
+            return self.currentBrowserPage;
+        });
+    }
+
+    close() {
+        let self = this;
+        logger.info(`Shutting down connector ..`);
+        return self.closeCurrentBrowser();
+    }
+
+    closeCurrentBrowser() {
+        let self = this;
+        logger.info(`Closing current ${self.currentBrowserKind} browser...`);
+
+        let closeables = [
+            self.currentBrowserPage,
+            self.currentBrowser,
+        ];
+        let promise = Promise.resolve();
+        closeables.filter(closeable => !!closeable).forEach(closeable => {
+            promise = promise.then(() => closeable.close());
+        });
+        return promise.then(() => {
+            this.currentBrowserKind = null;
+            this.currentBrowser = null;
+            this.currentBrowserPage = null;
+        });
+    }
+}
 
 // ---------
 

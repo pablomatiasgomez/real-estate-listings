@@ -1,65 +1,63 @@
 'use strict';
 
-const util = require('util');
-const SiteBrowser = include('connector/site-browser');
+const SiteBrowser = require('../site-browser.js');
 
-const logger = include('utils/logger').newLogger('ProperatiBrowser');
+const logger = newLogger('ProperatiBrowser');
 
 //---------------
 
 const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/detalle\/(.+?)_.*$/;
 
-/**
- * @constructor
- */
-function ProperatiBrowser() {
-    SiteBrowser.call(this, URL_REGEX);
+class ProperatiBrowser extends SiteBrowser {
+
+    constructor() {
+        super(URL_REGEX);
+    }
+
+    extractData(browserPage) {
+        logger.info(`Extracting data...`);
+
+        return browserPage.evaluate(() => {
+            let response = {
+                EXPORT_VERSION: "5"
+            };
+
+            Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
+
+            delete response.seller.properties_count;
+            delete response.seller.type;
+            delete response.seller.iseller;
+            delete response.seller.image;
+            delete response.seller.search_link;
+            delete response.seller.translatedUrl;
+            delete response.seller.url_name;
+
+            delete response.published_on;
+            delete response.whatsapp_url;
+
+            if (response.features) {
+                response.features.sort((a, b) => a.category.localeCompare(b.category));
+                response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
+            }
+
+            response.tags = (response.tags || []).map(tag => tag.name);
+
+            response.place = response.place.parent_names.join(", ");
+
+            response.pictureUrls = (response.images || []).map(image => {
+                let pictureUrl = image.sizes["1080"].jpg;
+                if (!pictureUrl) throw new Error("Couldn't find picture url!");
+                let match = /filters:strip_icc\(\)\/(.*)$/.exec(pictureUrl);
+                if (!match || match.length !== 2) throw new Error("pictureUrl couldn't be parsed: " + pictureUrl);
+                return decodeURIComponent(match[1]);
+            });
+            delete response.images;
+
+            return response;
+        });
+    }
 }
 
-util.inherits(ProperatiBrowser, SiteBrowser);
-
-ProperatiBrowser.prototype.extractData = function (browserPage) {
-    logger.info(`Extracting data...`);
-
-    return browserPage.evaluate(() => {
-        let response = {
-            EXPORT_VERSION: "5"
-        };
-
-        Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
-
-        delete response.seller.properties_count;
-        delete response.seller.type;
-        delete response.seller.iseller;
-        delete response.seller.image;
-        delete response.seller.search_link;
-        delete response.seller.translatedUrl;
-        delete response.seller.url_name;
-
-        delete response.published_on;
-        delete response.whatsapp_url;
-
-        if (response.features) {
-            response.features.sort((a, b) => a.category.localeCompare(b.category));
-            response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
-        }
-
-        response.tags = (response.tags || []).map(tag => tag.name);
-
-        response.place = response.place.parent_names.join(", ");
-
-        response.pictureUrls = (response.images || []).map(image => {
-            let pictureUrl = image.sizes["1080"].jpg;
-            if (!pictureUrl) throw new Error("Couldn't find picture url!");
-            let match = /filters:strip_icc\(\)\/(.*)$/.exec(pictureUrl);
-            if (!match || match.length !== 2) throw new Error("pictureUrl couldn't be parsed: " + pictureUrl);
-            return decodeURIComponent(match[1]);
-        });
-        delete response.images;
-
-        return response;
-    });
-};
 
 // ---------
 

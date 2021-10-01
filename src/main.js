@@ -3,24 +3,24 @@
 
 global.__project_dir = __dirname + '/..';
 global.__src_dir = __dirname;
-global.include = file => require(__src_dir + '/' + file);
-global.config = Object.assign(include('config'), require(`${__project_dir}/config.json`));
+global.newLogger = className => require('./utils/logger.js').newLogger(className);
+global.config = Object.assign(require('./config.js'), require(`${__project_dir}/config.json`));
 global.Promise = require('bluebird');
 
-const TerminalFont = include('utils/terminal-font');
-const Utils = include('utils/utils');
+const TerminalFont = require('./utils/terminal-font.js');
+const Utils = require('./utils/utils.js');
 
-const WebApiController = include('controller/web-api-controller');
-const DifferenceNotifierService = include('service/difference-notifier-service');
-const NotifierService = include('service/notifier-service');
-const GoogleSheetsService = include('service/googlesheets-service');
-const FileReaderService = include('service/filereader-service');
-const FileDataRepository = include('repository/file-data-repository');
-const Browser = include('connector/browser');
+const WebApiController = require('./controller/web-api-controller.js');
+const DifferenceNotifierService = require('./service/difference-notifier-service.js');
+const NotifierService = require('./service/notifier-service.js');
+const GoogleSheetsService = require('./service/googlesheets-service.js');
+const FileReaderService = require('./service/filereader-service.js');
+const FileDataRepository = require('./repository/file-data-repository.js');
+const Browser = require('./connector/browser.js');
 
 //----------------------
 
-const logger = include('utils/logger').newLogger('Main');
+const logger = newLogger('Main');
 
 //----------------------
 
@@ -42,10 +42,9 @@ function getUrls() {
     }
     if (config.urlsSource.files.enabled) {
         let fileReaderService = new FileReaderService();
-        let filePromises = config.urlsSource.files.files
+        providers.push(...config.urlsSource.files.files
             .map(file => `${__project_dir}/${file}`)
-            .map(filePath => fileReaderService.readFileUrls(filePath));
-        providers.push(...filePromises);
+            .map(filePath => fileReaderService.readFileUrls(filePath)));
     }
 
     return Promise.all(providers).then(results => {
