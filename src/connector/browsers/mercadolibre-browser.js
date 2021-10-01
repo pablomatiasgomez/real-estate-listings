@@ -37,7 +37,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
         }
 
         if (document.querySelector(".vip-section-product-info")) {
-            // This is the new version of MELI listings...
+            // This is the new version of MELI listings (it seems to be no longer used after a few weeks..)...
 
             let statusEl = document.querySelector(".item-status-notification .item-status-title");
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
@@ -75,9 +75,9 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
         } else if (document.querySelector(".item-title")) {
             // Legacy version of MELI listings....
             // TODO Deprecate once no longer used...
-            // throw new Error("Legacy version still used?!");
+            throw new Error("Legacy version still used?!");
 
-            let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title");
+            let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title"); // jshint ignore:line
             let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
             let title = document.querySelector(".item-title").innerText.trim();
@@ -127,7 +127,9 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
             let title = document.querySelector(".ui-pdp-container--pdp .ui-pdp-title").innerText.trim();
             let description = document.querySelector(".ui-pdp-container--pdp .ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".ui-pdp-container--pdp .price-tag-amount").innerText.replace("\n", " ").trim();
-            let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
+
+            // TODO remove this replacemente once the legacy version is no longer used.
+            let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle p").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
 
             // TODO this is not the same as previous version, but impossible to map.
             // let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
