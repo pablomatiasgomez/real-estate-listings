@@ -26,7 +26,7 @@ MercadoLibreBrowser.prototype.extractData = function (browserPage) {
     logger.info(`Extracting data...`);
 
     return browserPage.evaluate(() => {
-        let EXPORT_VERSION = "5";
+        let EXPORT_VERSION = "6";
 
         function findScript(strMatch) {
             let scripts = [...document.getElementsByTagName("script")]
