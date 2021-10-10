@@ -17,18 +17,18 @@
     "url": "https://www.pablomatiasgomez.com.ar"
   },
   "dependencies": {
-    "async": "^3.2.0",
+    "async": "^3.2.1",
     "bluebird": "^3.7.2",
     "express": "^4.17.1",
     "google-spreadsheet": "^3.1.15",
     "json-diff": "pablomatiasgomez/json-diff",
     "node-cache": "^5.1.2",
-    "puppeteer": "^10.1.0",
-    "puppeteer-extra": "^3.1.18",
-    "puppeteer-extra-plugin-stealth": "^2.7.8",
+    "puppeteer": "^10.4.0",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-stealth": "^2.8.2",
     "sanitize-filename": "^1.6.3",
     "telegram-bot-api": "^2.0.1",
-    "user-agents": "^1.0.725"
+    "user-agents": "^1.0.799"
   },
   "bugs": {
     "url": "https://github.com/pablomatiasgomez/real-estate-listings/issues"
