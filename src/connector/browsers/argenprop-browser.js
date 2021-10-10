@@ -20,8 +20,8 @@ class ArgenPropBrowser extends SiteBrowser {
         return browserPage.evaluate(() => {
             let EXPORT_VERSION = "1";
 
-            if (document.querySelector(".error-404-bg")) {
-                // Page shows a 404 error html..
+            // Two 404 options. An html page that shows that the ad is no longer listed, and a simple text page that prints "Aviso no encontrado"
+            if (document.querySelector(".error-404-bg") || document.querySelector("body > pre").innerText === "Aviso no encontrado") {
                 let status = "UNLISTED";
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,
