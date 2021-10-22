@@ -28,7 +28,7 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "3"
+                EXPORT_VERSION: "4"
             };
 
             // Grab postingInfo because JS is disabled.
@@ -47,6 +47,17 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                 delete item.partialPhone;
                 delete item.whatsApp;
 
+                item.prices = item.priceOperationTypes.flatMap(op => {
+                    return op.prices.map(price => {
+                        return {
+                            operation: op.operationType.name,
+                            currency: price.currency,
+                            amount: price.amount,
+                        };
+                    });
+                });
+                delete item.priceOperationTypes;
+
                 let location = "";
                 let loc = item.location;
                 while (loc) {
@@ -54,6 +65,8 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                     loc = loc.parent;
                 }
                 item.location = location.slice(0, -2);
+
+                item.realEstateType = item.realEstateType.name;
 
                 item.url = document.querySelector(`[data-id='${id}'] a.go-to-posting`).href.trim();
                 item.address = document.querySelector(`[data-id='${id}'] .postingCardLocationTitle`).innerText.trim();
