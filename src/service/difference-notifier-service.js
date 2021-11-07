@@ -23,6 +23,8 @@ class DifferenceNotifierService {
         logger.info(`Exporting ${urls.length} urls..`);
 
         let startTime = Date.now();
+        let totalDiffs = 0;
+        let totalErrors = 0;
         let promise = Promise.resolve();
         urls.forEach((url, i) => {
             promise = promise.then(() => {
@@ -34,16 +36,21 @@ class DifferenceNotifierService {
                 if (!response) return; // Skip not handled urls.
 
                 // First we check for data changes and notify:
-                return self.verifyDataDifference(response.url, response.id, response.data).then(() => {
+                return self.verifyDataDifference(response.url, response.id, response.data).then(hadDifference => {
+                    if (hadDifference) totalDiffs++;
                     logger.info(`Going to save data exported for id ${response.id}`);
                     return self.fileDataRepository.createNewDataFile(response.id, response.data);
                 });
             }).catch(e => {
                 // Log error and continue
+                totalErrors++;
                 logger.error(`Failed to export data for url: ${url} `, e);
             });
         });
-        return promise;
+        return promise.then(() => {
+            let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60);
+            logger.info(`Finished checking ${urls.length} urls in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`);
+        });
     }
 
     verifyDataDifference(url, id, currentData) {
@@ -53,12 +60,12 @@ class DifferenceNotifierService {
             logger.info(`Checking data changes... for ${id}`);
             if (!previousData) {
                 logger.info(`There was no previous data for ${id} .. skipping difference check.`);
-                return;
+                return false;
             }
             previousData.EXPORT_VERSION = previousData.EXPORT_VERSION || "0";
             if (previousData.EXPORT_VERSION !== currentData.EXPORT_VERSION) {
                 logger.info(`Not checking data difference because version is different. Previous Version: ${previousData.EXPORT_VERSION} !== ${currentData.EXPORT_VERSION} Current Version.`);
-                return;
+                return false;
             }
             let diff = jsonDiff.diffString(previousData, currentData, {color: false}, {showKeys: ["url"]});
             if (diff) {
@@ -67,9 +74,10 @@ class DifferenceNotifierService {
                     `ID: ${id}\n` +
                     `URL: ${url}\n\n` +
                     diff;
-                return self.notifierService.notify(message);
+                return self.notifierService.notify(message).then(() => true);
             }
             logger.info("No difference was found!");
+            return false;
         });
     }
 }
