@@ -30,7 +30,7 @@ class ArgenPropBrowser extends SiteBrowser {
             }
 
             let title = document.getElementById("ShareDescription").value;
-            let description = document.getElementById("text-responsive-ficha").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
+            let description = document.querySelector(".section-description--content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
             let price = document.querySelector(".titlebar__price").innerText;
             let address = document.querySelector(".titlebar__address").innerText;
 
@@ -60,7 +60,7 @@ class ArgenPropBrowser extends SiteBrowser {
                 features[keyValue[0]] = keyValue[1] || true;
             });
 
-            let pictureUrls = [...document.querySelectorAll("ul[data-carousel] img")].map(img => {
+            let pictureUrls = [...document.querySelectorAll("ul.gallery-content li img")].map(img => {
                 return img.src || img.getAttribute("data-src");
             });
 
