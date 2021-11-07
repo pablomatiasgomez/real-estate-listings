@@ -48,7 +48,7 @@ class DifferenceNotifierService {
             });
         });
         return promise.then(() => {
-            let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60);
+            let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60));
             logger.info(`Finished checking ${urls.length} urls in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`);
         });
     }
