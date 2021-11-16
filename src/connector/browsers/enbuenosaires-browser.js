@@ -29,7 +29,8 @@ class EnBuenosAiresBrowser extends SiteBrowser {
                 };
             }
 
-            let title = titleEl.innerText;
+            let title = titleEl.innerText.trim();
+            if (title === "Error del Sitio :-(") throw new Error("Site error!");
 
             // Description & features
             let description = "";
