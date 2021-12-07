@@ -52,7 +52,7 @@ class MercadoLibreBrowser extends SiteBrowser {
 
                 // TODO remove this replacemente once the legacy version is no longer used.
                 let address = container.querySelector(".ui-vip-location__subtitle p").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
-git stat
+
                 // TODO this is not the same as previous version, but impossible to map.
                 // let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
                 let gaScript = findScript("dimension120");
