@@ -32,111 +32,37 @@ class MercadoLibreBrowser extends SiteBrowser {
                 return scripts[0].innerText;
             }
 
-            if (document.querySelector(".vip-section-product-info")) {
-                // This is the new version of MELI listings (it seems to be no longer used after a few weeks..)...
-
-                let statusEl = document.querySelector(".item-status-notification .item-status-title");
-                let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
-
-                throw new Error("TODO: handle title element.");
-                let title = "TODO!"; // jshint ignore:line
-                let description = document.querySelector(".description-content .preformated-text").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
-                let price = document.querySelector(".vip-price").innerText.trim();
-                let address = document.querySelector(".vip-section-map h2").innerText.trim();
-
-                let gaScript = findScript("dimension120");
-                let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
-
-                let features = {};
-                [...document.querySelectorAll(".attribute-content .attribute-group li")].forEach(li => {
-                    let keyValue = li.innerText.split(":").map(i => i.trim());
-                    features[keyValue[0]] = keyValue[1] || true;
-                });
-
-                let pictureUrlsScript = findScript("items = [");
-                let pictureUrls = JSON.parse(/items = (.*),\n/.exec(pictureUrlsScript)[1])
-                    .map(picture => picture.src.replace("none", ""));
-
+            if (document.querySelector(".ui-search")) {
+                // Redirected to search view.
+                // No data was found (probably got redirected and the house no longer exists)
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,
-                    status: status,
-                    title: title,
-                    description: description,
-                    price: price,
-                    address: address,
-                    seller: seller,
-                    features: features,
-                    pictureUrls: pictureUrls,
+                    status: "OFFLINE",
                 };
-            } else if (document.querySelector(".item-title")) {
-                // Legacy version of MELI listings....
-                // TODO Deprecate once no longer used...
-                throw new Error("Legacy version still used?!");
+            } else if (document.querySelector(".ui-pdp-container--pdp")) {
+                // There are many ".ui-pdp-container" but the one that has the "--pdp" is the valid one.
+                let container = document.querySelector(".ui-pdp-container--pdp");
 
-                let statusEl = document.querySelector(".layout-description-wrapper .item-status-notification__title"); // jshint ignore:line
+                let statusEl = container.querySelector(".ui-pdp-message");
                 let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
-                let title = document.querySelector(".item-title").innerText.trim();
-                let description = document.querySelector("#description-includes").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
-                let price = document.querySelector(".item-price").innerText.replace("\n", " ").trim();
-                let address = document.querySelector(".seller-location").innerText.replace("\n", ", ").trim();
-
-                /*
-                let agency = document.querySelector(".vip-section-seller-info #real_estate_agency");
-                let privateSeller = document.querySelector(".vip-section-seller-info .card-description");
-                let seller = agency ? agency.innerText.trim() : privateSeller.innerText.trim();
-                */
-                let gaScript = findScript("dimension120");
-                let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
-
-                let features = {};
-                [...document.querySelectorAll(".specs-item")].forEach(li => {
-                    let keyValue = li.innerText.split("\n").map(i => i.trim());
-                    features[keyValue[0]] = keyValue[1] || true;
-                });
-                let pictureUrls = JSON.parse(document.querySelector("#gallery_dflt .gallery-content").getAttribute("data-full-images"))
-                    .map(picture => picture.src)
-                    .map(pictureUrl => {
-                        let match = pictureUrl.match(/https:\/\/http2.mlstatic\.com\/(.*)D_NQ_NP_/);
-                        if (match.length !== 2) throw new Error(`Invalid picture url! ${pictureUrl}`);
-                        let perfix = "https://http2.mlstatic.com/";
-                        return perfix + pictureUrl.substr(perfix.length + match[1].length, pictureUrl.length);
-                    });
-
-                return {
-                    EXPORT_VERSION: EXPORT_VERSION,
-                    status: status,
-                    title: title,
-                    description: description,
-                    price: price,
-                    address: address,
-                    seller: seller,
-                    features: features,
-                    pictureUrls: pictureUrls,
-                };
-            } else if (document.querySelector(".ui-pdp-title")) {
-                // Legacy, but updated version of MELI listings....
-
-                let statusEl = document.querySelector(".ui-pdp-container--pdp .ui-pdp-message");
-                let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
-
-                let title = document.querySelector(".ui-pdp-container--pdp .ui-pdp-title").innerText.trim();
-                let description = document.querySelector(".ui-pdp-container--pdp .ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
-                let price = document.querySelector(".ui-pdp-container--pdp .price-tag-amount").innerText.replace("\n", " ").trim();
+                let title = container.querySelector(".ui-pdp-title").innerText.trim();
+                let description = container.querySelector(".ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
+                let price = container.querySelector(".price-tag-amount").innerText.replace("\n", " ").trim();
 
                 // TODO remove this replacemente once the legacy version is no longer used.
-                let address = document.querySelector(".ui-pdp-container--pdp .ui-vip-location__subtitle p").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
-
+                let address = container.querySelector(".ui-vip-location__subtitle p").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
+git stat
                 // TODO this is not the same as previous version, but impossible to map.
                 // let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
                 let gaScript = findScript("dimension120");
                 let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
 
-                let features = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-specs__table table tr")].reduce((features, tr) => {
+                let features = [...container.querySelectorAll(".ui-pdp-specs__table table tr")].reduce((features, tr) => {
                     features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
                     return features;
                 }, {});
-                let pictureUrls = [...document.querySelectorAll(".ui-pdp-container--pdp .ui-pdp-gallery .ui-pdp-gallery__column img.ui-pdp-image.ui-pdp-gallery__figure__image")]
+                let pictureUrls = [...container.querySelectorAll(".ui-pdp-gallery .ui-pdp-gallery__column img.ui-pdp-image.ui-pdp-gallery__figure__image")]
                     .map(i => i.getAttribute("data-zoom"));
 
                 return {
@@ -149,13 +75,6 @@ class MercadoLibreBrowser extends SiteBrowser {
                     seller: seller,
                     features: features,
                     pictureUrls: pictureUrls,
-                };
-            } else if (document.querySelector(".ui-search")) {
-                // Redirected to search view.
-                // No data was found (probably got redirected and the house no longer exists)
-                return {
-                    EXPORT_VERSION: EXPORT_VERSION,
-                    status: "OFFLINE",
                 };
             } else {
                 throw new Error("Couldn't find any valid element!");
