@@ -21,7 +21,7 @@
     "bluebird": "^3.7.2",
     "express": "^4.17.2",
     "google-spreadsheet": "^3.2.0",
-    "json-diff": "pablomatiasgomez/json-diff#output-keys",
+    "json-diff": "^0.7.1",
     "node-cache": "^5.1.2",
     "puppeteer": "^13.0.1",
     "puppeteer-extra": "^3.2.3",
