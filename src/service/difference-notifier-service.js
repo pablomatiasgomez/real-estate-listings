@@ -53,7 +53,7 @@ class DifferenceNotifierService {
         });
         return promise.then(() => {
             let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60));
-            let message = `Finished checking ${urls.length} (${totalSkipped} skipped) urls in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`;
+            let message = `Finished checking ${urls.length} urls (${totalSkipped} skipped) in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`;
             logger.info(message);
             return self.notifierService.notify(message);
         });
