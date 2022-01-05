@@ -23,6 +23,7 @@ class DifferenceNotifierService {
         logger.info(`Exporting ${urls.length} urls..`);
 
         let startTime = Date.now();
+        let totalSkipped = 0;
         let totalDiffs = 0;
         let totalErrors = 0;
         let promise = Promise.resolve();
@@ -33,9 +34,12 @@ class DifferenceNotifierService {
                 logger.info(`[${i + 1}/${urls.length}] [ETA:${remainingMinutes}] Processing url ${url} ..`);
                 return self.browser.fetchData(url);
             }).then(response => {
-                if (!response) return; // Skip not handled urls.
+                if (!response) { // Skip not handled urls.
+                    totalSkipped++;
+                    return;
+                }
 
-                // First we check for data changes and notify:
+                // Check for data changes and notify:
                 return self.verifyDataDifference(response.url, response.id, response.data).then(hadDifference => {
                     if (hadDifference) totalDiffs++;
                     logger.info(`Going to save data exported for id ${response.id}`);
@@ -49,7 +53,7 @@ class DifferenceNotifierService {
         });
         return promise.then(() => {
             let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60));
-            let message = `Finished checking ${urls.length} urls in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`;
+            let message = `Finished checking ${urls.length} (${totalSkipped} skipped) urls in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`;
             logger.info(message);
             return self.notifierService.notify(message);
         });
