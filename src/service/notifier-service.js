@@ -8,7 +8,6 @@ const logger = newLogger('NotifierService');
 //----------------------
 
 const TELEGRAM_MESSAGE_BYTES_LIMIT = 4096;
-const CROPPED_MESSAGE_SUFFIX = " ... (cropped)";
 
 class NotifierService {
     constructor() {
@@ -19,19 +18,36 @@ class NotifierService {
     }
 
     notify(message) {
-        let self = this;
+        let promise = Promise.resolve();
+        this.splitMessage(message).forEach(message => {
+            promise = promise.then(() => {
+                return this.telegramBot.sendMessage({
+                    chat_id: this.chatId,
+                    text: message
+                }).catch(e => {
+                    logger.error("Error while notifying to telegram.. ", e);
+                });
+            }).delay(200);
+        });
+        return promise;
+    }
 
-        if (message.length > TELEGRAM_MESSAGE_BYTES_LIMIT) {
-            logger.info(`Cropping message of length ${message.length}`);
-            message = message.substring(0, TELEGRAM_MESSAGE_BYTES_LIMIT - CROPPED_MESSAGE_SUFFIX.length) + CROPPED_MESSAGE_SUFFIX;
+    // Splits the message into multiple messages so that it fits telegram's max byte limit.
+    splitMessage(message) {
+        if (message.length <= TELEGRAM_MESSAGE_BYTES_LIMIT) {
+            return [message];
         }
 
-        return self.telegramBot.sendMessage({
-            chat_id: self.chatId,
-            text: message
-        }).catch(e => {
-            logger.error("Error while notifying to telegram.. ", e);
-        });
+        let splitIndex = message.lastIndexOf('\n', TELEGRAM_MESSAGE_BYTES_LIMIT);
+        logger.info(`Splitting message of length ${message.length} at index ${splitIndex}`);
+
+        let firstMessage = message.substring(0, splitIndex); // Not including the \n as it will be split into two messages
+        let secondMessage = message.substring(splitIndex + 1);
+
+        return [
+            firstMessage,
+            ...this.splitMessage(secondMessage),
+        ];
     }
 }
 
