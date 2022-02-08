@@ -48,7 +48,7 @@ class MercadoLibreBrowser extends SiteBrowser {
 
                 let title = container.querySelector(".ui-pdp-title").innerText.trim();
                 let description = container.querySelector(".ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
-                let price = container.querySelector(".price-tag-amount").innerText.replace("\n", " ").trim();
+                let price = container.querySelector(".ui-pdp-price").innerText.split("\n").slice(1).join(" ").trim();
 
                 // TODO remove this replacemente once the legacy version is no longer used.
                 let address = container.querySelector(".ui-vip-location__subtitle p").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
