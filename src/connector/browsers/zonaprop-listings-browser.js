@@ -28,7 +28,7 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "4"
+                EXPORT_VERSION: "5"
             };
 
             // Grab postingInfo because JS is disabled.
@@ -68,6 +68,12 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
 
                 item.realEstateType = item.realEstateType.name;
 
+                if (item.geoLocation) {
+                    // Reduce the super long number of chars that are inclued in lat and lng...
+                    item.geoLocation.lat = item.geoLocation.lat.substring(0, 10);
+                    item.geoLocation.lng = item.geoLocation.lng.substring(0, 10);
+                }
+
                 item.url = document.querySelector(`[data-id='${id}'] a.go-to-posting`).href.trim();
                 item.address = document.querySelector(`[data-id='${id}'] .postingCardLocationTitle`).innerText.trim();
                 item.features = [...document.querySelectorAll(`[data-id='${id}'] ul.postingCardMainFeatures li`)].reduce((features, li) => {
@@ -76,7 +82,6 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                     return features;
                 }, {});
                 item.title = document.querySelector(`[data-id='${id}'] .postingCardTitle`).innerText.trim();
-                item.description = document.querySelector(`[data-id='${id}'] .postingCardDescription`).innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
 
                 response[id] = item;
             });
