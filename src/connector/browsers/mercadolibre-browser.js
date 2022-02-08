@@ -22,7 +22,7 @@ class MercadoLibreBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
-            let EXPORT_VERSION = "6";
+            let EXPORT_VERSION = "7";
 
             function findScript(strMatch) {
                 let scripts = [...document.getElementsByTagName("script")]
@@ -49,14 +49,13 @@ class MercadoLibreBrowser extends SiteBrowser {
                 let title = container.querySelector(".ui-pdp-title").innerText.trim();
                 let description = container.querySelector(".ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
                 let price = container.querySelector(".ui-pdp-price").innerText.split("\n").slice(1).join(" ").trim();
+                let address = container.querySelector(".ui-vip-location__subtitle p").innerText.trim();
+                let seller = container.querySelector(".ui-vip-profile-info h3").innerText.trim();
 
-                // TODO remove this replacemente once the legacy version is no longer used.
-                let address = container.querySelector(".ui-vip-location__subtitle p").innerText.replace(", Capital Federal, Capital Federal", ", Capital Federal").trim();
-
-                // TODO this is not the same as previous version, but impossible to map.
-                // let seller = document.querySelector(".ui-vip-profile-info h3").innerText.trim();
                 let gaScript = findScript("dimension120");
-                let seller = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
+                let listingType = /meli_ga\("set", "dimension19", "(.*)"\)/.exec(gaScript)[1];
+                let sellerKind = /meli_ga\("set", "dimension35", "(.*)"\)/.exec(gaScript)[1];
+                let sellerId = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
 
                 let features = [...container.querySelectorAll(".ui-pdp-specs__table table tr")].reduce((features, tr) => {
                     features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
@@ -73,6 +72,9 @@ class MercadoLibreBrowser extends SiteBrowser {
                     price: price,
                     address: address,
                     seller: seller,
+                    sellerKind: sellerKind,
+                    sellerId: sellerId,
+                    listingType: listingType,
                     features: features,
                     pictureUrls: pictureUrls,
                 };
