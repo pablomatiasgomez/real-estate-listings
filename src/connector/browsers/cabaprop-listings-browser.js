@@ -27,7 +27,12 @@ class CabaPropListingsBrowser extends ListingsSiteBrowser {
             };
 
             // Always first query the container and then the items, so that if the page loads incorrectly, we get an error instead of no results.
-            [...document.querySelector(".house-listing .container").querySelectorAll(".house-wrapper")].forEach(item => {
+            let items = document.querySelector(".house-listing .container").querySelectorAll(".house-wrapper");
+            if (items.length === 0) {
+                throw new Error("No items were found, probably the page didn't load correctly.");
+            }
+
+            [...items].forEach(item => {
                 let url = item.querySelector("a").href;
                 let id = url.split("id-")[1];
 
