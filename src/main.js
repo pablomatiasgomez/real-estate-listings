@@ -93,7 +93,7 @@ function initServicesAndExecute() {
         differenceNotifierService = new DifferenceNotifierService(fileDataRepository, browser, notifierService);
         webApiController = new WebApiController(fileDataRepository, browser);
     }).then(action).catch(e => {
-        return logger.error(e);
+        return logger.error("Error executing action!", e);
     }).finally(() => {
         logger.info(`Shutting down the browser..`);
         return browser.close();

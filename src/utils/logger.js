@@ -17,26 +17,28 @@ class Logger {
     }
 
     info() {
-        let args = Array.prototype.slice.call(arguments);
-        args = this.getPrefixAsArray('[INF]').concat(args);
-        console.log.apply(this, args);
+        console.log.apply(this, this.getArgsAsArray('INFO', [...arguments]));
+    }
+
+    warn() {
+        console.warn.apply(this, this.getArgsAsArray('WARN', [...arguments], TerminalFont.FgYellow));
     }
 
     error() {
-        let args = Array.prototype.slice.call(arguments);
-        args = this.getPrefixAsArray('[ERR]').concat(args);
-        args = [TerminalFont.FgRed, ...args, TerminalFont.Reset];
-        console.error.apply(this, args);
+        console.error.apply(this, this.getArgsAsArray('ERROR', [...arguments], TerminalFont.FgRed));
     }
 
-    getPrefixAsArray(type) {
+    getArgsAsArray(type, args, color) {
         let localISOTime = (new Date(Date.now() - this.timeZoneOffset)).toISOString().slice(0, -1);
-        let clazz = this.getClazzWithSpaces();
-        return [localISOTime, clazz, type].filter(i => !!i);
-    }
-
-    getClazzWithSpaces() {
-        return `                                                     [${this.className}]`.slice(-Logger.maxClazzNameLength - 2);
+        let clazz = `[${this.className}]`.padStart(Logger.maxClazzNameLength + 2);
+        type = `[${type}]`.padEnd(7);
+        if (color) {
+            // Cannot use different arg item for the color because they are printed with spaces in the middle.
+            // Only concat on the first as we know is the localISOTime, and use another item for the reset so that we don't break args.
+            return [color + localISOTime, clazz, type, ...args, TerminalFont.Reset];
+        } else {
+            return [localISOTime, clazz, type, ...args];
+        }
     }
 
 }
