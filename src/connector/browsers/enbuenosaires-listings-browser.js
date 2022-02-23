@@ -22,7 +22,12 @@ class EnBuenosAiresListingsBrowser extends ListingsSiteBrowser {
                 EXPORT_VERSION: "2"
             };
 
-            [...document.querySelectorAll(".snapproperty")].forEach(item => {
+            let items = document.querySelectorAll(".snapproperty");
+            if (items.length === 0) {
+                throw new Error("No items were found, probably the page didn't load correctly.");
+            }
+
+            [...items].forEach(item => {
                 let listingLink = item.querySelector(".viewadvertlink");
                 // sometimes the "viewadvertlink" is not shown, so we try to grab the link from the left buttons.
                 if (!listingLink) listingLink = item.querySelector(".pseudolink a");
