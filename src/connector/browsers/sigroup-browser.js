@@ -32,10 +32,10 @@ class SiGroupBrowser extends SiteBrowser {
                 .map(el => el.innerText)
                 .filter(text => text.indexOf("$") !== -1)[0];
 
-            // Consider the page broken as it may happen that it does not load sometimes..
+            // Consider the page broken as it may happen that it does not load sometimes...
             if (!price) throw new Error("Couldn't find price!");
 
-            // Many details as plain text..
+            // Many details as plain text...
             let textDetails = [...document.querySelectorAll("main .txtNew")]
                 .flatMap(i => i.innerText.split(/(?:\n|\. )+/))
                 .map(l => l.trim())

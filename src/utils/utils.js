@@ -21,7 +21,7 @@ class Utils {
 
     static wrapError(message, error) {
         let newError = new Error(message);
-        // Remove this function (wrapError) call from the stack..
+        // Remove this function (wrapError) call from the stack...
         let newStack = newError.stack.split("\n");
         newStack.splice(1, 1);
         newStack = newStack.join("\n");

@@ -22,7 +22,7 @@ class LiderPropBrowser extends SiteBrowser {
 
             let errorButton = document.querySelector("div.page.error-page .container .btn-primary");
             if (errorButton && errorButton.innerText.trim() === "Ir a la home") {
-                // Page shows a 404 error html..
+                // Page shows a 404 error html.
                 let status = "UNLISTED";
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,

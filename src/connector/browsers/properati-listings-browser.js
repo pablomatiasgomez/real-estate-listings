@@ -36,7 +36,7 @@ class ProperatiListingsBrowser extends ListingsSiteBrowser {
                 delete item.published_on;
                 delete item.highlighted;
 
-                // These fields are returning flaky results although they shouldn't..
+                // These fields are returning flaky results, although they shouldn't..
                 delete item.maintenance_fees;
                 delete item.surface;
 

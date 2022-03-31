@@ -49,6 +49,10 @@ class SiteBrowser {
         return match[1];
     }
 
+    /**
+     * This method must be implemented and should extract the listing data in the current page.
+     * @param browserPage the puppeteer browser page with the current page already loaded.
+     */
     extractData(browserPage) {
         throw new Error("Method must be implemented!");
     }

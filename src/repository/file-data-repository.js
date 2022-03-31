@@ -13,11 +13,6 @@ const logger = newLogger('FileDataRepository');
  */
 class FileDataRepository {
 
-    constructor(browser, notifierService) {
-        this.browser = browser;
-        this.notifierService = notifierService;
-    }
-
     /**
      * Gets the latest saved file for the given id and returns the object with the data that it contains.
      * Returns {@code null} if no file is present.

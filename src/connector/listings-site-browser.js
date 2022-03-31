@@ -18,23 +18,23 @@ class ListingsSiteBrowser extends SiteBrowser {
     /**
      * This method must be implemented and should extract the listings in the current page,
      * as map from id -> data, and also includes the pages.
-     * @param browserPage the puppeteer browser with the current page already loaded.
+     * @param browserPage the puppeteer browser page with the current page already loaded.
      */
     extractListPage(browserPage) {
         throw new Error("Method must be implemented!");
     }
 
     /**
-     * This method msut be implemented and should return the new url for the given page number.
+     * This method must be implemented and should return the new url for the given page number.
      * @param listUrl the original list url
      * @param pageNumber the page number to be used to build the new url
+     * @returns {string}
      */
     getListPageUrl(listUrl, pageNumber) {
         throw new Error("Method must be implemented!");
     }
 
     /**
-     *
      * @param browserPage the puppeteer browser that has the first page loaded.
      * @returns Promise
      */

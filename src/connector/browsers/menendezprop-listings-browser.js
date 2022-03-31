@@ -29,7 +29,7 @@ class MenendezPropListingsBrowser extends ListingsSiteBrowser {
                 items = [];
             } else {
                 items = [...document.querySelectorAll(".resultado_datos")];
-                // Sometimes the page may not load correctly so we need to validate it this way:
+                // Sometimes the page may not load correctly, so we need to validate it this way:
                 // We either receive a "no results" error, or we have results. Otherwise, the page was not fully loaded.
                 if (!items.length) throw new Error("Something wrong happened, no error and no results!");
             }
