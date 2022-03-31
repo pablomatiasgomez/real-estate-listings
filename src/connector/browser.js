@@ -37,6 +37,7 @@ const LiderPropListingsBrowser = require('./browsers/liderprop-listings-browser.
 const SaadCenturionBrowser = require('./browsers/saadcenturion-browser.js');
 const GrupoMegaBrowser = require('./browsers/grupomega-browser.js');
 const GrupoMegaListingsBrowser = require('./browsers/grupomega-listings-browser.js');
+const MudafyListingsBrowser = require("./browsers/mudafy-listings-browser");
 
 const logger = newLogger('Browser');
 
@@ -76,6 +77,7 @@ const SITE_BROWSERS = [
     new SaadCenturionBrowser(),
     new GrupoMegaBrowser(),
     new GrupoMegaListingsBrowser(),
+    new MudafyListingsBrowser(),
 ];
 
 const BROWSER_KINDS = {
@@ -84,7 +86,6 @@ const BROWSER_KINDS = {
 };
 
 class Browser {
-
 
     constructor() {
         puppeteerExtra.use(StealthPlugin());

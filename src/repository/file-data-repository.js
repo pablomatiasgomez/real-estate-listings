@@ -18,6 +18,12 @@ class FileDataRepository {
         this.notifierService = notifierService;
     }
 
+    /**
+     * Gets the latest saved file for the given id and returns the object with the data that it contains.
+     * Returns {@code null} if no file is present.
+     * @param id
+     * @returns {Promise<{}>}
+     */
     getLastDataFile(id) {
         let self = this;
         id = sanitize(id);

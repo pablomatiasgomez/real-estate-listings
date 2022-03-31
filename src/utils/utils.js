@@ -58,7 +58,7 @@ class Utils {
 
     /**
      * Sorts all files by name in the given dir and returns the contents of the last one.
-     * @param dir the dir in which to lookup the files
+     * @param dir the dir in which to look up the files
      * @returns {Promise<string>}
      */
     static readLastFileSortedByName(dir) {
