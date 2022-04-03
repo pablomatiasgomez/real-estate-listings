@@ -18,13 +18,29 @@ class LaGranInmobiliariaBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
-            let response = {
-                EXPORT_VERSION: "2"
-            };
+            let EXPORT_VERSION = "2";
 
             let id = location.href.split("-")[0].split("/")[3];
             let data = JSON.parse(document.querySelector("#euclides-lgi-state").innerHTML.replace(/&q;/g, '"'));
-            Object.assign(response, data[`G.https://api.lagraninmobiliaria.com/api/getlisting/id/${id}?`].body);
+
+            let listingApiData = data[`G.https://api.lagraninmobiliaria.com/api/getlisting/id/${id}?`];
+            if (!listingApiData) {
+                if (Object.keys(data).length === 1 && Object.keys(data)[0].startsWith(`G.https://api.lagraninmobiliaria.com/api/getlistings`)) {
+                    // Redirected to listings, listing no longer found
+                    let status = "UNLISTED";
+                    return {
+                        EXPORT_VERSION: EXPORT_VERSION,
+                        status: status,
+                    };
+                } else {
+                    throw new Error(`Unknown state! Data keys: ${Object.keys(data)}`);
+                }
+            }
+
+            let response = {
+                EXPORT_VERSION: EXPORT_VERSION,
+            };
+            Object.assign(response, listingApiData.body);
 
             response.pictureUrls = (response.photos || []).map(photo => {
                 if (!photo.hd) throw new Error("Couldn't find picture url!");
