@@ -20,8 +20,8 @@ class LiderPropBrowser extends SiteBrowser {
         return browserPage.evaluate(() => {
             let EXPORT_VERSION = "0";
 
-            let errorButton = document.querySelector("div.page.error-page .container .btn-primary");
-            if (errorButton && errorButton.innerText.trim() === "Ir a la home") {
+            let errorImg = document.querySelector("div.page.error-page .container img");
+            if (errorImg && errorImg.src.endsWith("/static/img/404.png")) {
                 // Page shows a 404 error html.
                 let status = "UNLISTED";
                 return {
