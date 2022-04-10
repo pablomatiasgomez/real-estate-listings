@@ -19,7 +19,7 @@ class RemaxListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "3"
+                EXPORT_VERSION: "4"
             };
 
             /**
@@ -50,9 +50,8 @@ class RemaxListingsBrowser extends ListingsSiteBrowser {
                 });
                 delete data.photos;
 
-                response[data.slug] = {
+                response[id] = {
                     url: url,
-                    id: id,
                     price: price,
                     features: features,
                     data: data,
