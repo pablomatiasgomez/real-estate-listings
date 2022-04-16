@@ -21,14 +21,14 @@
     "bluebird": "^3.7.2",
     "express": "^4.17.3",
     "google-spreadsheet": "^3.2.0",
-    "json-diff": "^0.7.3",
+    "json-diff": "^0.7.4",
     "node-cache": "^5.1.2",
     "puppeteer": "^13.5.2",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
     "sanitize-filename": "^1.6.3",
     "telegram-bot-api": "^2.0.1",
-    "user-agents": "^1.0.975"
+    "user-agents": "^1.0.988"
   },
   "bugs": {
     "url": "https://github.com/pablomatiasgomez/real-estate-listings/issues"
