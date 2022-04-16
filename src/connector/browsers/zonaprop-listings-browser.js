@@ -47,6 +47,10 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                 delete item.partialPhone;
                 delete item.whatsApp;
 
+                delete item.generalFeatures;
+                delete item.mainFeatures;
+                delete item.visiblePictures;
+
                 item.prices = item.priceOperationTypes.flatMap(op => {
                     return op.prices.map(price => {
                         return {
