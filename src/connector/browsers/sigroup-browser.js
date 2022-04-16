@@ -41,7 +41,7 @@ class SiGroupBrowser extends SiteBrowser {
                 .map(l => l.trim())
                 .filter(l => !!l);
 
-            // TODO Pictures currently not working becasue JS is disabled. But it was flaky (because they are loaded via js..)
+            // Pictures currently not working because JS is disabled, and it was flaky when JS was enabled, because they are loaded via ajax.
             // let pictureUrls = [...document.querySelectorAll("div[aria-label='Matrix gallery'] img")].map(img => img.src);
 
             return {

@@ -75,7 +75,7 @@ class MenendezPropListingsBrowser extends ListingsSiteBrowser {
     }
 
     getListPageUrl(listUrl, pageNumber) {
-        // TODO pagination not supported for MenendezProp, (cannot be done via url change, only via ajax)
+        // Pagination currently not supported for MenendezProp, as it cannot be done via url change, only via ajax.
         throw new Error("Not supported yet!");
     }
 }

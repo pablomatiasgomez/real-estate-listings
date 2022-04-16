@@ -132,6 +132,6 @@ If you want to run the app periodically, you could set up a cron like this:
 
 ## TODO list
 
-* Standarize (create a schema) the output of listing and listings browsers
+* Standardize (create a schema) the output of listing and listings browsers
 * Better handling of new export versions to avoid loosing notifications
 * Allow ignoring some ids from the listings search
