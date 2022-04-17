@@ -17,7 +17,8 @@ class CabaPropBrowser extends SiteBrowser {
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 
-        return browserPage.evaluate(() => {
+        // Wait on CabaProp pages as they are slow to load, and some divs appear after a few seconds.
+        return browserPage.waitForTimeout(8000).evaluate(() => {
             let status = "LISTED";
             if ([...document.querySelectorAll(".agentdetails h4")].filter(i => i.innerText === "Propiedad No Disponible").length > 0) {
                 status = "UNAVAILABLE";
