@@ -11,14 +11,14 @@ const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/.+-id-(\d+)$/;
 class CabaPropBrowser extends SiteBrowser {
 
     constructor() {
-        super(URL_REGEX);
+        super(URL_REGEX, 8000);
     }
 
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 
         // Wait on CabaProp pages as they are slow to load, and some divs appear after a few seconds.
-        return browserPage.waitForTimeout(8000).evaluate(() => {
+        return browserPage.evaluate(() => {
             let status = "LISTED";
             if ([...document.querySelectorAll(".agentdetails h4")].filter(i => i.innerText === "Propiedad No Disponible").length > 0) {
                 status = "UNAVAILABLE";

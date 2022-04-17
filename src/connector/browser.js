@@ -120,7 +120,7 @@ class Browser {
 
         return Promise.resolve().then(() => {
             let browserKind = siteBrowser.useStealthBrowser() ? BROWSER_KINDS.STEALTH : BROWSER_KINDS.NORMAL;
-            logger.info(`Getting url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
+            logger.info(`Getting browser for url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
             return self.getBrowserPage(browserKind);
         }).then(page => {
             return Promise.resolve().then(() => {

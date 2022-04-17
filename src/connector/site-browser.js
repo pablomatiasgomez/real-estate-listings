@@ -14,13 +14,15 @@ class SiteBrowser {
 
     /**
      * @param urlRegex regex to be used to extract the id and kwno if this browser can be used or not for a given url.
+     * @param waitBeforeEvaluateContents time in ms to wait before trying to extract anything from the page.
      * @constructor
      */
-    constructor(urlRegex) {
+    constructor(urlRegex, waitBeforeEvaluateContents = 0) {
         if (!urlRegex) throw new Error("No urlRegex provided!");
         this.urlRegex = urlRegex;
         if (!this.constructor.name.endsWith("Browser")) throw new Error(`Invalid browser name ${this.constructor.name}`);
         this.browserName = this.constructor.name.slice(0, -7);
+        this.waitBeforeEvaluateContents = waitBeforeEvaluateContents;
     }
 
     name() {
@@ -60,6 +62,8 @@ class SiteBrowser {
     extractUrlData(browserPage, url) {
         let self = this;
         return self.loadUrl(browserPage, url).then(() => {
+            return browserPage.waitForTimeout(self.waitBeforeEvaluateContents);
+        }).then(() => {
             return self.extractData(browserPage).catch(e => {
                 if (self.logHtmlOnError()) {
                     return browserPage.evaluate(() => {
@@ -79,6 +83,7 @@ class SiteBrowser {
 
     loadUrl(browserPage, url, referer = "https://www.google.com/") {
         let self = this;
+        logger.info(`Loading url ${url}`);
         return Promise.resolve().then(() => {
             return browserPage.goto(url, {
                 waitUntil: 'load',
