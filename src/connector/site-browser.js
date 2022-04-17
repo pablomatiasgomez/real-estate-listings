@@ -8,21 +8,18 @@ const logger = newLogger('SiteBrowser');
 
 /**
  * Abstract SiteBrowser. Each site browser should implement this class.
- * @param urlRegex regex to be used to extract the id and kwno if this browser can be used or not for a given url.
  */
 class SiteBrowser {
 
     /**
-     * @param urlRegex regex to be used to extract the id and kwno if this browser can be used or not for a given url.
-     * @param waitBeforeEvaluateContents time in ms to wait before trying to extract anything from the page.
+     * @param urlRegex regex to be used to extract the id and know if this browser can be used or not for a given url.
      * @constructor
      */
-    constructor(urlRegex, waitBeforeEvaluateContents = 0) {
+    constructor(urlRegex) {
         if (!urlRegex) throw new Error("No urlRegex provided!");
         this.urlRegex = urlRegex;
         if (!this.constructor.name.endsWith("Browser")) throw new Error(`Invalid browser name ${this.constructor.name}`);
         this.browserName = this.constructor.name.slice(0, -7);
-        this.waitBeforeEvaluateContents = waitBeforeEvaluateContents;
     }
 
     name() {
@@ -62,8 +59,6 @@ class SiteBrowser {
     extractUrlData(browserPage, url) {
         let self = this;
         return self.loadUrl(browserPage, url).then(() => {
-            return browserPage.waitForTimeout(self.waitBeforeEvaluateContents);
-        }).then(() => {
             return self.extractData(browserPage).catch(e => {
                 if (self.logHtmlOnError()) {
                     return browserPage.evaluate(() => {
