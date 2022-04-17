@@ -20,17 +20,24 @@ class EnBuenosAiresBrowser extends SiteBrowser {
         return browserPage.evaluate(() => {
             let EXPORT_VERSION = "2";
 
-            let titleEl = document.querySelector(".container h1:not(#main_header)");
+            let status = "LISTED";
 
+            let titleEl = document.querySelector(".container h1:not(#main_header)");
             if (!titleEl) {
-                // No data was found (probably got redirected and the house no longer exists?)
+                // Redirected to listings, listing no longer found
+                status = "UNLISTED";
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,
+                    status: status,
                 };
             }
 
             let title = titleEl.innerText.trim();
             if (title === "Error del Sitio :-(") throw new Error("Site error!");
+
+            if (document.querySelector(".inquiry-form").querySelector(".not-available")) {
+                status = "UNAVAILABLE";
+            }
 
             // Description & features
             let description = "";
@@ -70,6 +77,7 @@ class EnBuenosAiresBrowser extends SiteBrowser {
 
             return {
                 EXPORT_VERSION: EXPORT_VERSION,
+                status: status,
                 title: title,
                 description: description,
                 features: features,
