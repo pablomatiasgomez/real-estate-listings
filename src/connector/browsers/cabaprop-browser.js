@@ -18,6 +18,11 @@ class CabaPropBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
+            let status = "LISTED";
+            if ([...document.querySelectorAll(".agentdetails h4")].filter(i => i.innerText === "Propiedad No Disponible").length > 0) {
+                status = "UNAVAILABLE";
+            }
+
             let address = document.querySelector(".pro-head h6").innerText;
             let price = document.querySelector(".pro-head .price").innerText;
             let description = document.querySelector(".pro-text").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
@@ -29,8 +34,13 @@ class CabaPropBrowser extends SiteBrowser {
             let pictureUrls = [...document.querySelectorAll(".slick-list .slick-slide:not(.slick-cloned) img")]
                 .map(img => img.src);
 
+            if (price === "Consultar" && address === "," && !description.length) {
+                status = "UNLISTED";
+            }
+
             return {
                 EXPORT_VERSION: "3",
+                status: status,
                 address: address,
                 price: price,
                 description: description,
