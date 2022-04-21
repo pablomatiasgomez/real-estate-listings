@@ -27,7 +27,7 @@ class ZonaPropBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "4"
+                EXPORT_VERSION: "5"
             };
 
             // Grab and eval avisoInfo because JS is disabled.
@@ -41,6 +41,7 @@ class ZonaPropBrowser extends SiteBrowser {
             delete response.similarPostingsLink;
             delete response.similarPostingsLinkDescription;
             delete response.similarLink;
+            delete response.similarLinkMostVisit;
             delete response.urlBack;
             delete response.publisher.url;
             delete response.publisher.urlLogo;
