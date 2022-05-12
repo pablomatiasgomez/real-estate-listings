@@ -95,13 +95,15 @@ class Browser {
             headless: !DEBUG,
             devtools: DEBUG,
             args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+
+                // These were added to run in WSL:
                 '--disable-gpu',
                 '--disable-dev-shm-usage',
-                '--disable-setuid-sandbox',
                 '--no-first-run',
-                '--no-sandbox',
                 '--no-zygote',
-                '--single-process',
+                // '--single-process', // Temporarily disabled as it was not working on Mac M1.
             ],
         };
         this.currentBrowserKind = null;
