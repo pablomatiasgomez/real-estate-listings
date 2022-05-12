@@ -42,6 +42,7 @@ class MudafyListingsBrowser extends ListingsSiteBrowser {
 
                 delete item.score;
                 delete item.score2;
+                delete item.metrics_info.question_count;
 
                 response[item.id] = item;
             });
