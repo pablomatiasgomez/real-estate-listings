@@ -22,7 +22,7 @@
     "google-spreadsheet": "^3.3.0",
     "json-diff": "^0.9.0",
     "node-cache": "^5.1.2",
-    "puppeteer": "^14.3.0",
+    "puppeteer": "^14.0.0",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
     "sanitize-filename": "^1.6.3",
