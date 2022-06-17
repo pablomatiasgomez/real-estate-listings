@@ -22,19 +22,13 @@ class MudafyListingsBrowser extends ListingsSiteBrowser {
                 EXPORT_VERSION: "0"
             };
 
-            let mudafyData = JSON.parse(document.querySelector("#mfy-trinity-state").innerHTML.replace(/&q;/g, '"'));
-
-            let data = Object.entries(mudafyData)
-                .filter(entry => entry[0].startsWith("G.https://chat-noir.mudafy.com/listings/infinite-supply?"))
-                .map(entry => entry[1].body)
-                [0];
-
+            let data = JSON.parse(JSON.stringify(window.__remixContext.routeData["routes/__layout-full/venta.$propertyType.*/index"].listings));
             if (data.next) throw new Error("More than 1 pages not implemented for Mudafy yet!");
             response.pages = [1];
 
-
+            let allLinks = [...document.querySelectorAll("a.location")].map(a => a.href);
             data.results.forEach(item => {
-                item.url = document.querySelector(`[data-id="${item.id}"]`).querySelector("a").href;
+                item.url = allLinks.filter(link => link.includes(item.slug))[0];
                 item.location = item.location.name;
 
                 item.pictureUrls = item.photos.map(photo => photo.image.medium);
@@ -42,7 +36,8 @@ class MudafyListingsBrowser extends ListingsSiteBrowser {
 
                 delete item.score;
                 delete item.score2;
-                delete item.metrics_info.question_count;
+                delete item.metrics_info;
+                delete item.dated_id;
 
                 response[item.id] = item;
             });
