@@ -14,9 +14,9 @@ describe('delay()', function () {
     it('without any value', function () {
         let promise = Promise.resolve();
         let start = Date.now();
-        return promise.then(Utils.delay(500)).then((value) => {
+        return promise.then(Utils.delay(200)).then((value) => {
             let duration = Date.now() - start;
-            assert.ok(duration > 500);
+            assert.ok(duration >= 200);
             assert.equal(value, undefined);
         });
     });
@@ -24,9 +24,9 @@ describe('delay()', function () {
     it('with values', function () {
         let promise = Promise.resolve(someValue);
         let start = Date.now();
-        return promise.then(Utils.delay(500)).then((value) => {
+        return promise.then(Utils.delay(200)).then((value) => {
             let duration = Date.now() - start;
-            assert.ok(duration > 500);
+            assert.ok(duration >= 200);
             assert.equal(value, value);
         });
     });
