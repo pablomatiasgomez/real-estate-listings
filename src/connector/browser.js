@@ -39,6 +39,8 @@ const GrupoMegaBrowser = require('./browsers/grupomega-browser.js');
 const GrupoMegaListingsBrowser = require('./browsers/grupomega-listings-browser.js');
 const MudafyListingsBrowser = require("./browsers/mudafy-listings-browser");
 
+const Utils = require('../utils/utils.js');
+
 const logger = newLogger('Browser');
 
 //---------------
@@ -181,10 +183,10 @@ class Browser {
         // There are 2 memory usage improvements being done here:
         // - Close the previous browser and open the new one in order to only have one open at a time.
         // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
-        return self.closeCurrentBrowser().delay(1000).then(() => {
+        return self.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
             self.currentBrowserKind = browserKind;
             let launcher = browserKind === BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
-            logger.info(`Opening a new brower for kind ${browserKind} ...`);
+            logger.info(`Opening a new browser for kind ${browserKind} ...`);
             return launcher.launch(self.browserOptions);
         }).then(browser => {
             self.currentBrowser = browser;

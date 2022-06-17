@@ -18,12 +18,11 @@
   },
   "dependencies": {
     "async": "^3.2.4",
-    "bluebird": "^3.7.2",
     "express": "^4.18.1",
     "google-spreadsheet": "^3.3.0",
     "json-diff": "^0.9.0",
     "node-cache": "^5.1.2",
-    "puppeteer": "^14.4.1",
+    "puppeteer": "14.3.0",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
     "sanitize-filename": "^1.6.3",

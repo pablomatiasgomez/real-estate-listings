@@ -19,6 +19,10 @@ class Utils {
         return CURRENT_BUILD;
     }
 
+    static delay(delayMs) {
+        return result => new Promise(resolve => setTimeout(() => resolve(result), delayMs));
+    }
+
     static wrapError(message, error) {
         let newError = new Error(message);
         // Remove this function (wrapError) call from the stack...
