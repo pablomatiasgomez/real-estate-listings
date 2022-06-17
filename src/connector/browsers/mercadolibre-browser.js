@@ -49,7 +49,8 @@ class MercadoLibreBrowser extends SiteBrowser {
                 let title = container.querySelector(".ui-pdp-title").innerText.trim();
                 let description = container.querySelector(".ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
                 let price = container.querySelector(".ui-pdp-price").innerText.split("\n").slice(1).join(" ").trim();
-                let address = container.querySelector(".ui-vip-location__subtitle p").innerText.trim();
+                // Seems that some listings don't display the address, but the API still provides it... Eventually could be grabbed it from there.
+                let address = container.querySelector(".ui-vip-location__subtitle p")?.innerText.trim();
                 let seller = container.querySelector(".ui-vip-profile-info h3").innerText.trim();
 
                 let gaScript = findScript("dimension120");
