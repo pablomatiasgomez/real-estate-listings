@@ -2,6 +2,8 @@
 
 const SiteBrowser = require('./site-browser.js');
 
+const Utils = require('../utils/utils.js');
+
 const logger = newLogger('ListingsSiteBrowser');
 
 //---------------
@@ -60,7 +62,7 @@ class ListingsSiteBrowser extends SiteBrowser {
                     return self.loadUrl(browserPage, pageUrl, listUrl);
                 }).then(() => {
                     return self.extractListPage(browserPage);
-                }).delay(2000).then(pageResponse => {
+                }).then(Utils.delay(2000)).then(pageResponse => {
                     logger.info(`Assigning ${Object.keys(pageResponse)} ...`);
                     Object.assign(response, pageResponse);
                 });

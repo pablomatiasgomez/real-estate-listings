@@ -4,7 +4,6 @@
 global.__project_dir = __dirname + '/..';
 global.newLogger = className => require('./utils/logger.js').newLogger(className);
 global.config = Object.assign(require('./config.js'), require(`${__project_dir}/config.json`));
-global.Promise = require('bluebird');
 
 const TerminalFont = require('./utils/terminal-font.js');
 const Utils = require('./utils/utils.js');

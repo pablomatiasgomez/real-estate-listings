@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "async": "^3.2.4",
-    "bluebird": "^3.7.2",
     "express": "^4.18.1",
     "google-spreadsheet": "^3.3.0",
     "json-diff": "^0.9.0",

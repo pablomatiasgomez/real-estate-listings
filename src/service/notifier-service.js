@@ -3,6 +3,8 @@
 // TODO: migrate to "node-telegram-bot-api" once that dependency stops using "request"..
 const TelegramBot = require('telegram-bot-api');
 
+const Utils = require('../utils/utils.js');
+
 const logger = newLogger('NotifierService');
 
 //----------------------
@@ -27,7 +29,7 @@ class NotifierService {
                 }).catch(e => {
                     logger.error("Error while notifying to telegram.. ", e);
                 });
-            }).delay(200);
+            }).then(Utils.delay(200));
         });
         return promise;
     }

@@ -73,7 +73,7 @@ class SiteBrowser {
                 }
                 throw e;
             });
-        }).delay(2000);
+        }).then(Utils.delay(2000));
     }
 
     loadUrl(browserPage, url, referer = "https://www.google.com/") {
@@ -85,7 +85,7 @@ class SiteBrowser {
                 timeout: 5 * 60 * 1000,
                 referer: referer,
             });
-        }).delay(config.browser.timeBetweenPageFetchesMs).then(() => {
+        }).then(Utils.delay(config.browser.timeBetweenPageFetchesMs)).then(() => {
             self.addCommonFunctions(browserPage);
         });
     }
