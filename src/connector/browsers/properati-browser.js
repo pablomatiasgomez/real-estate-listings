@@ -19,18 +19,13 @@ class ProperatiBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "5"
+                EXPORT_VERSION: "6"
             };
 
             Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
 
-            delete response.seller.properties_count;
-            delete response.seller.type;
-            delete response.seller.iseller;
-            delete response.seller.image;
-            delete response.seller.search_link;
-            delete response.seller.translatedUrl;
-            delete response.seller.url_name;
+            // Many properties under seller object change too frequently. Removing it as it is not even useful info.
+            delete response.seller;
 
             delete response.published_on;
             delete response.whatsapp_url;
