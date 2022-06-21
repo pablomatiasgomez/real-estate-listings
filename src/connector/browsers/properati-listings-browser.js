@@ -19,7 +19,7 @@ class ProperatiListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "11"
+                EXPORT_VERSION: "12"
             };
 
             let nextData = JSON.parse(document.querySelector("#__NEXT_DATA__").innerText);
@@ -39,6 +39,7 @@ class ProperatiListingsBrowser extends ListingsSiteBrowser {
                 // These fields are returning flaky results, although they shouldn't..
                 delete item.maintenance_fees;
                 delete item.surface;
+                delete item.seller;
 
                 response[item.id] = item;
             });
