@@ -13,6 +13,7 @@ const CURRENT_BUILD = {
 
 class Utils {
     constructor() {
+        throw new Error("Utils class not meant to be instantiated");
     }
 
     static get CURRENT_BUILD() {
@@ -33,11 +34,17 @@ class Utils {
         return newError;
     }
 
+    /**
+     * @returns {string} the created dir
+     */
     static createDirIfNotExists(dir) {
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, {recursive: true});
         return dir;
     }
 
+    /**
+     * @returns {Promise<>}
+     */
     static createFile(filePath, contents) {
         return new Promise((resolve, reject) => {
             fs.writeFile(filePath, contents, err => {
@@ -47,6 +54,9 @@ class Utils {
         });
     }
 
+    /**
+     * @returns {Promise<string>}
+     */
     static readFile(filePath) {
         return new Promise((resolve, reject) => {
             fs.readFile(filePath, "utf8", (err, data) => {
@@ -54,10 +64,6 @@ class Utils {
                 resolve(data);
             });
         });
-    }
-
-    static readFileSync(filePath) {
-        return fs.readFileSync(filePath, "utf8");
     }
 
     /**

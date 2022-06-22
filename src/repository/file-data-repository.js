@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const sanitize = require("sanitize-filename");
 
 const Utils = require('../utils/utils.js');
@@ -37,13 +38,13 @@ class FileDataRepository {
         id = sanitize(id);
         let fileDir = Utils.createDirIfNotExists(self.getFileDir(id));
 
-        let newFilePath = `${fileDir}/${new Date().toISOString().split(".")[0]}.json`;
+        let newFilePath = path.join(fileDir, new Date().toISOString().split(".")[0] + ".json");
         return Utils.createFile(newFilePath, JSON.stringify(data));
     }
 
     getFileDir(id) {
         id = sanitize(id);
-        return `${__project_dir}/exports/${id}`;
+        return path.join(__project_dir, "exports", id);
     }
 }
 
