@@ -27,7 +27,7 @@ class ZonaPropBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "5"
+                EXPORT_VERSION: "6"
             };
 
             // Grab and eval avisoInfo because JS is disabled.

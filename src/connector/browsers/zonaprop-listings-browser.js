@@ -28,7 +28,7 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "5"
+                EXPORT_VERSION: "6"
             };
 
             // Grab postingInfo because JS is disabled.
