@@ -49,6 +49,7 @@ class ZonaPropBrowser extends SiteBrowser {
             delete response.whatsApp;
             delete response.quintoAndar;
             delete response.quintoAndarUrl;
+            delete response.premier;
 
             response.description = response.description.split(/(?:<br>|\. )+/).map(l => l.trim()).filter(l => !!l);
 

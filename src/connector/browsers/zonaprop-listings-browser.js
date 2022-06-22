@@ -46,6 +46,7 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                 delete item.publisher.urlLogo;
                 delete item.partialPhone;
                 delete item.whatsApp;
+                delete item.premier;
 
                 delete item.generalFeatures;
                 delete item.mainFeatures;
