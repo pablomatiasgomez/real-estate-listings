@@ -16,13 +16,15 @@ const Utils = require("../../src/utils/utils");
 let fileDataRepository = new FileDataRepository();
 
 let oldProjectDir = __project_dir;
-let testProjectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'real-estate-listings'));
+let testProjectDir;
 before(function () {
     oldProjectDir = __project_dir;
+    testProjectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'real-estate-listings-'));
     global.__project_dir = testProjectDir;
 });
 after(function () {
     global.__project_dir = oldProjectDir;
+    fs.rmSync(testProjectDir, {recursive:true});
 });
 
 describe('getFileDir()', function () {
