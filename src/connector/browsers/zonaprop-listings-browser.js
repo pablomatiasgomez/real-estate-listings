@@ -28,31 +28,26 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "6"
+                EXPORT_VERSION: "7"
             };
 
-            // Grab postingInfo because JS is disabled.
-            eval([...document.scripts] // jshint ignore:line
-                .map(script => script.innerHTML)
-                .filter(script => script.indexOf("postingInfo") !== -1)
-                [0]
-                .replace("let postingInfo = {", "var customPostingInfo = {"));
+            // Grab listings' info because JS is disabled.
+            let evalWindow = {};
+            // noinspection JSUnusedLocalSymbols
+            (function (window) {
+                eval(document.querySelector("#preloadedData").innerText); // jshint ignore:line
+            })(evalWindow);
 
-            Object.entries(customPostingInfo).forEach(entry => { // jshint ignore:line
-                let id = entry[0];
-                let item = entry[1];
+            evalWindow.__PRELOADED_STATE__.listStore.listPostings.forEach(listPosting => {
+                let id = listPosting.postingId;
+                let url = new URL(listPosting.url, location.origin).href;
+                let type = listPosting.realEstateType.name;
+                let title = listPosting.title;
+                let reserved = listPosting.reserved;
+                let status = listPosting.status;
+                let address = listPosting.postingLocation.address?.name;
 
-                delete item.publisher.url;
-                delete item.publisher.urlLogo;
-                delete item.partialPhone;
-                delete item.whatsApp;
-                delete item.premier;
-
-                delete item.generalFeatures;
-                delete item.mainFeatures;
-                delete item.visiblePictures;
-
-                item.prices = item.priceOperationTypes.flatMap(op => {
+                let prices = listPosting.priceOperationTypes.flatMap(op => {
                     return op.prices.map(price => {
                         return {
                             operation: op.operationType.name,
@@ -61,37 +56,30 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                         };
                     });
                 });
-                delete item.priceOperationTypes;
+                let expenses = listPosting.expenses ? listPosting.expenses.currency + listPosting.expenses.amount : null;
 
-                let location = "";
-                let loc = item.location;
-                while (loc) {
-                    location += loc.name + ", ";
-                    loc = loc.parent;
-                }
-                item.location = location.slice(0, -2);
-
-                item.realEstateType = item.realEstateType.name;
-
-                if (item.geoLocation) {
-                    // Reduce the super long number of chars that are inclued in lat and lng...
-                    item.geoLocation.lat = item.geoLocation.lat.substring(0, 10);
-                    item.geoLocation.lng = item.geoLocation.lng.substring(0, 10);
-                }
-
-                item.url = document.querySelector(`[data-id='${id}'] a.go-to-posting`).href.trim();
-                item.address = document.querySelector(`[data-id='${id}'] .postingCardLocationTitle`).innerText.trim();
-                item.features = [...document.querySelectorAll(`[data-id='${id}'] ul.postingCardMainFeatures li`)].reduce((features, li) => {
-                    let key = li.querySelector("i").className.replace("postingCardIconsFeatures icon", "").trim();
-                    features[key] = li.innerText.trim();
+                let features = Object.values(listPosting.mainFeatures).reduce((features, feature) => {
+                    features[feature.label] = feature.value + (feature.measure || "");
                     return features;
                 }, {});
-                item.title = document.querySelector(`[data-id='${id}'] .postingCardTitle`).innerText.trim();
 
-                response[id] = item;
+                let seller = listPosting.publisher.name;
+
+                response[id] = {
+                    url: url,
+                    type: type,
+                    title: title,
+                    reserved: reserved,
+                    status: status,
+                    address: address,
+                    prices: prices,
+                    expenses: expenses,
+                    features: features,
+                    seller: seller,
+                };
             });
 
-            response.pages = [...document.querySelectorAll(".paging li:not(.pag-go-prev):not(.pag-go-next) a")]
+            response.pages = [...document.querySelectorAll("a[class^='stylespaging__PageItem']")]
                 .map(a => parseInt(a.innerText))
                 .filter(page => !isNaN(page));
             return response;
