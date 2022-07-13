@@ -30,11 +30,12 @@ class VarcasiaBrowser extends SiteBrowser {
 
             let title = document.querySelector(".mh-top-title__heading").innerText.trim();
             let price = document.querySelector(".mh-estate__details__price__single").innerText;
-            let features = {};
-            [...document.querySelectorAll(".mh-estate__list li")].map(li => {
+            let features = [...document.querySelectorAll(".mh-estate__list li")].reduce((features, li) => {
                 let keyValue = li.innerText.split(":").map(i => i.trim());
+                if (keyValue[1].endsWith(",")) keyValue[1] = keyValue[1].slice(0, -1).trim();
                 features[keyValue[0]] = keyValue[1];
-            });
+                return features;
+            }, {});
             let description = [...document.querySelectorAll(".mh-estate__section")].filter(section => {
                 let heading = section.querySelector(".mh-estate__section__heading");
                 return heading && heading.innerText.trim() === "DESCRIPCIÓN";
