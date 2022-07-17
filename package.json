@@ -22,12 +22,12 @@
     "google-spreadsheet": "^3.3.0",
     "json-diff": "^0.9.0",
     "node-cache": "^5.1.2",
-    "puppeteer": "^15.2.0",
-    "puppeteer-extra": "^3.3.0",
-    "puppeteer-extra-plugin-stealth": "^2.10.1",
+    "puppeteer": "^15.4.0",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.0",
     "sanitize-filename": "^1.6.3",
     "telegram-bot-api": "^2.0.1",
-    "user-agents": "^1.0.1062"
+    "user-agents": "^1.0.1079"
   },
   "devDependencies": {
     "mocha": "^10.0.0",
