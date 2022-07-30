@@ -42,6 +42,7 @@ class ArgenPropBrowser extends SiteBrowser {
                     "tracker-statistics",
                     "tracker-statistics-url",
                     "data-fecha-visita",
+                    "data-puntos",
                 ];
                 let attributes = gaElement.attributes;
                 for (let i = 0; i < attributes.length; i++) {
