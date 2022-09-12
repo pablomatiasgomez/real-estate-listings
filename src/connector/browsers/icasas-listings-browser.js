@@ -22,7 +22,8 @@ class ICasasListingsBrowser extends ListingsSiteBrowser {
                 EXPORT_VERSION: "1"
             };
 
-            [...document.querySelectorAll(".listAds .ad:not(.similar)")].forEach(item => {
+            // Exclude ad.similar and ad.featured which are not actual results, just suggestions.
+            [...document.querySelectorAll(".listAds .ad:not(.similar):not(.featured)")].forEach(item => {
                 let url = item.querySelector(".detail-redirection").href;
                 let id = item.querySelector("[data-adid]").getAttribute("data-adid");
 
