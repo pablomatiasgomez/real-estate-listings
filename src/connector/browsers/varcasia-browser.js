@@ -32,8 +32,13 @@ class VarcasiaBrowser extends SiteBrowser {
             let price = document.querySelector(".mh-estate__details__price__single").innerText;
             let features = [...document.querySelectorAll(".mh-estate__list li")].reduce((features, li) => {
                 let keyValue = li.innerText.split(":").map(i => i.trim());
-                if (keyValue[1].endsWith(",")) keyValue[1] = keyValue[1].slice(0, -1).trim();
-                features[keyValue[0]] = keyValue[1];
+                let key = keyValue[0];
+                let value = keyValue[1];
+                if (value.endsWith(",")) value = value.slice(0, -1).trim();
+                // "Localidad / Barrio" returns values that are sometimes different but they are actually the same.
+                // We need to sort in order to avoid differences.
+                if (key === "Localidad / Barrio") value = value.split(",").map(i => i.trim()).sort().join(", ");
+                features[key] = value;
                 return features;
             }, {});
             let description = [...document.querySelectorAll(".mh-estate__section")].filter(section => {
