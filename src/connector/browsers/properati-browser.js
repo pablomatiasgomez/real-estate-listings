@@ -22,7 +22,14 @@ class ProperatiBrowser extends SiteBrowser {
                 EXPORT_VERSION: "6"
             };
 
-            Object.assign(response, JSON.parse(JSON.stringify(window.__NEXT_DATA__.props.pageProps.property)));
+            let propertyProps = window.__NEXT_DATA__.props.pageProps.property;
+            if (propertyProps !== null) {
+                // Got not found page, property unlisted.
+                response.status = "UNLISTED";
+                return response;
+            }
+
+            Object.assign(response, JSON.parse(JSON.stringify(propertyProps)));
 
             // Many properties under seller object change too frequently. Removing it as it is not even useful info.
             delete response.seller;
