@@ -19,11 +19,11 @@ class ProperatiBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "6"
+                EXPORT_VERSION: "7"
             };
 
             let propertyProps = window.__NEXT_DATA__.props.pageProps.property;
-            if (propertyProps !== null) {
+            if (!propertyProps) {
                 // Got not found page, property unlisted.
                 response.status = "UNLISTED";
                 return response;
