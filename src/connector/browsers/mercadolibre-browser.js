@@ -22,7 +22,7 @@ class MercadoLibreBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
-            let EXPORT_VERSION = "7";
+            let EXPORT_VERSION = "8";
 
             function findScript(strMatch) {
                 let scripts = [...document.getElementsByTagName("script")]
@@ -65,18 +65,19 @@ class MercadoLibreBrowser extends SiteBrowser {
                 let pictureUrls = [...container.querySelectorAll(".ui-pdp-gallery .ui-pdp-gallery__column img.ui-pdp-image.ui-pdp-gallery__figure__image")]
                     .map(i => i.getAttribute("data-zoom"));
 
+                // address and features removed for now as they are flaky (appear and disappear)
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,
                     status: status,
                     title: title,
                     description: description,
                     price: price,
-                    address: address,
+                    // address: address,
                     seller: seller,
                     sellerKind: sellerKind,
                     sellerId: sellerId,
                     listingType: listingType,
-                    features: features,
+                    // features: features,
                     pictureUrls: pictureUrls,
                 };
             } else {
