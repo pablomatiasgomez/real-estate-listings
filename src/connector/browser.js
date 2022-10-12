@@ -34,7 +34,6 @@ const MeMudoYaBrowser = require('./browsers/memudoya-browser.js');
 const MeMudoYaListingsBrowser = require('./browsers/memudoya-listings-browser.js');
 const LiderPropBrowser = require('./browsers/liderprop-browser.js');
 const LiderPropListingsBrowser = require('./browsers/liderprop-listings-browser.js');
-const SaadCenturionBrowser = require('./browsers/saadcenturion-browser.js');
 const GrupoMegaBrowser = require('./browsers/grupomega-browser.js');
 const GrupoMegaListingsBrowser = require('./browsers/grupomega-listings-browser.js');
 const MudafyListingsBrowser = require("./browsers/mudafy-listings-browser");
@@ -76,7 +75,6 @@ const SITE_BROWSERS = [
     new MeMudoYaListingsBrowser(),
     new LiderPropBrowser(),
     new LiderPropListingsBrowser(),
-    new SaadCenturionBrowser(),
     new GrupoMegaBrowser(),
     new GrupoMegaListingsBrowser(),
     new MudafyListingsBrowser(),
