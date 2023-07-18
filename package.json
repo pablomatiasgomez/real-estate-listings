@@ -20,19 +20,19 @@
     "async": "^3.2.4",
     "express": "^4.18.2",
     "google-spreadsheet": "^3.3.0",
-    "json-diff": "^1.0.0",
+    "json-diff": "^1.0.6",
     "node-cache": "^5.1.2",
-    "puppeteer": "^19.4.0",
-    "puppeteer-extra": "^3.3.4",
-    "puppeteer-extra-plugin-stealth": "^2.11.1",
+    "puppeteer": "^20.8.3",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sanitize-filename": "^1.6.3",
     "telegram-bot-api": "^2.0.1",
-    "user-agents": "^1.0.1224"
+    "user-agents": "^1.0.1444"
   },
   "devDependencies": {
-    "mocha": "^10.1.0",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "sinon": "^15.0.0"
+    "sinon": "^15.2.0"
   },
   "bugs": {
     "url": "https://github.com/pablomatiasgomez/real-estate-listings/issues"
