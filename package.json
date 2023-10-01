@@ -22,7 +22,7 @@
     "google-spreadsheet": "^3.3.0",
     "json-diff": "^1.0.6",
     "node-cache": "^5.1.2",
-    "puppeteer": "^20.8.3",
+    "puppeteer": "^21.3.6",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sanitize-filename": "^1.6.3",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "sinon": "^15.2.0"
+    "sinon": "^16.0.0"
   },
   "bugs": {
     "url": "https://github.com/pablomatiasgomez/real-estate-listings/issues"
