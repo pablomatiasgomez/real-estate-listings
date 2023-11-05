@@ -15,11 +15,11 @@ class ZonaPropBrowser extends SiteBrowser {
     }
 
     useStealthBrowser() {
-        return true;
+        return false;
     }
 
     withJavascriptEnabled() {
-        return true;
+        return false;
     }
 
     logHtmlOnError() {
