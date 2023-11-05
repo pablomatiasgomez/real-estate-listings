@@ -19,7 +19,7 @@ class ZonaPropBrowser extends SiteBrowser {
     }
 
     withJavascriptEnabled() {
-        return false;
+        return true;
     }
 
     logHtmlOnError() {

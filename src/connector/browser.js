@@ -92,7 +92,7 @@ class Browser {
         this.userAgents = new UserAgents();
 
         this.browserOptions = {
-            headless: !DEBUG,
+            headless: !DEBUG && "new", // Use "new" to test ou the new chrome headless browser
             devtools: DEBUG,
             args: [
                 '--no-sandbox',
