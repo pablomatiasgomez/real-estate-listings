@@ -15,7 +15,7 @@ class ZonaPropBrowser extends SiteBrowser {
     }
 
     useStealthBrowser() {
-        return false;
+        return true;
     }
 
     withJavascriptEnabled() {
