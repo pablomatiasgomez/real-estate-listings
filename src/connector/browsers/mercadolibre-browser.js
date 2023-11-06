@@ -39,9 +39,12 @@ class MercadoLibreBrowser extends SiteBrowser {
                     EXPORT_VERSION: EXPORT_VERSION,
                     status: "OFFLINE",
                 };
-            } else if (document.querySelector(".ui-pdp-container--pdp")) {
-                // There are many ".ui-pdp-container" but the one that has the "--pdp" is the valid one.
-                let container = document.querySelector(".ui-pdp-container--pdp");
+            } else if (document.querySelector(".ui-pdp-container")) {
+                // There are many ".ui-pdp-container" but the one that has the "--pdp" (or --top) is the valid one.
+                // If --pdp is present, use that one, otherwise it looks like a mobile view, that has the --top present.
+                let container = document.querySelector(".ui-pdp-container.ui-pdp-container--pdp");
+                if (!container) container = document.querySelector(".ui-pdp-container.ui-pdp-container--top");
+                if (!container) throw new Error("Couldn't find valid container!");
 
                 let statusEl = container.querySelector(".ui-pdp-message");
                 let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
@@ -50,7 +53,8 @@ class MercadoLibreBrowser extends SiteBrowser {
                 let description = container.querySelector(".ui-pdp-description__content").innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
                 let price = container.querySelector(".ui-pdp-price").innerText.split("\n").slice(1).join(" ").trim();
                 // Seems that some listings don't display the address, but the API still provides it... Eventually could be grabbed it from there.
-                let address = container.querySelector(".ui-vip-location__subtitle p")?.innerText.trim();
+                // skipped for now
+                // let address = container.querySelector(".ui-vip-location__subtitle p")?.innerText.trim();
                 let seller = container.querySelector(".ui-vip-profile-info h3").innerText.trim();
 
                 let gaScript = findScript("dimension120");
@@ -58,12 +62,16 @@ class MercadoLibreBrowser extends SiteBrowser {
                 let sellerKind = /meli_ga\("set", "dimension35", "(.*)"\)/.exec(gaScript)[1];
                 let sellerId = /meli_ga\("set", "dimension120", "(.*)"\)/.exec(gaScript)[1];
 
-                let features = [...container.querySelectorAll(".ui-pdp-specs__table table tr")].reduce((features, tr) => {
-                    features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
-                    return features;
-                }, {});
-                let pictureUrls = [...container.querySelectorAll(".ui-pdp-gallery .ui-pdp-gallery__column img.ui-pdp-image.ui-pdp-gallery__figure__image")]
-                    .map(i => i.getAttribute("data-zoom"));
+                // skipped for now
+                // let features = [...container.querySelectorAll(".ui-pdp-specs__table table tr")].reduce((features, tr) => {
+                //     features[tr.querySelector("th").innerText.trim()] = tr.querySelector("td").innerText.trim();
+                //     return features;
+                // }, {});
+
+                let pictureUrls = [
+                    ...container.querySelectorAll(".ui-pdp-gallery img.ui-pdp-image.ui-pdp-gallery__figure__image"),
+                    ...container.querySelectorAll(".ui-pdp-gallery img.ui-pdp-image.ui-pdp-gallery--horizontal"),
+                ].map(i => i.getAttribute("data-zoom") || (i.getAttribute("data-src") || i.getAttribute("src")).replace("-O.webp", "-F.webp"));
 
                 // address and features removed for now as they are flaky (appear and disappear)
                 return {
