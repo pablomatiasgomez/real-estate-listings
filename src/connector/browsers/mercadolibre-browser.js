@@ -50,7 +50,7 @@ class MercadoLibreBrowser extends SiteBrowser {
                 let status = statusEl ? statusEl.innerText.trim() : "ONLINE";
 
                 let title = container.querySelector(".ui-pdp-title").innerText.trim();
-                let description = container.querySelector(".ui-pdp-description__content")?.innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
+                // let description = container.querySelector(".ui-pdp-description__content")?.innerText.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
                 let price = container.querySelector(".ui-pdp-price").innerText.split("\n").slice(1).join(" ").trim();
                 // Seems that some listings don't display the address, but the API still provides it... Eventually could be grabbed it from there.
                 // skipped for now
@@ -73,12 +73,12 @@ class MercadoLibreBrowser extends SiteBrowser {
                     ...container.querySelectorAll(".ui-pdp-gallery img.ui-pdp-image.ui-pdp-gallery--horizontal"),
                 ].map(i => i.getAttribute("data-zoom") || (i.getAttribute("data-src") || i.getAttribute("src")).replace("-O.webp", "-F.webp"));
 
-                // address and features removed for now as they are flaky (appear and disappear)
+                // address, description and features removed for now as they are flaky (appear and disappear)
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,
                     status: status,
                     title: title,
-                    description: description,
+                    // description: description,
                     price: price,
                     // address: address,
                     seller: seller,
