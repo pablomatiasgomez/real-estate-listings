@@ -92,9 +92,6 @@ class Browser {
         this.userAgents = new UserAgents();
 
         this.browserOptions = {
-            // disabled "new" as it was causing timeout errors. like:
-            // ProtocolError: Network.setUserAgentOverride timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed.
-            // headless: !DEBUG && "new", // Use "new" to test out the new chrome headless browser
             headless: !DEBUG,
             devtools: DEBUG,
             args: [
