@@ -84,6 +84,7 @@ const BROWSER_KINDS = {
     "NORMAL": "NORMAL",
     "STEALTH": "STEALTH",
 };
+const MAX_RETRY_TIMES = 3;
 
 class Browser {
 
@@ -111,7 +112,7 @@ class Browser {
         this.currentBrowserPage = null;
     }
 
-    fetchData(url) {
+    fetchData(url, tryCount = 1) {
         let self = this;
 
         let siteBrowser = self.getSiteBrowserForUrl(url);
@@ -122,7 +123,7 @@ class Browser {
 
         return Promise.resolve().then(() => {
             let browserKind = siteBrowser.useStealthBrowser() ? BROWSER_KINDS.STEALTH : BROWSER_KINDS.NORMAL;
-            logger.info(`Getting browser for url ${url} using ${siteBrowser.name()} with ${browserKind} browser..`);
+            logger.info(`Getting browser for url ${url} using ${siteBrowser.name()} with ${browserKind} browser, try ${tryCount}..`);
             return self.getBrowserPage(browserKind);
         }).then(page => {
             return Promise.resolve().then(() => {
@@ -140,6 +141,16 @@ class Browser {
                     url: url,
                     data: data
                 };
+            });
+        }).catch(e => {
+            // Allow to retry by closing the browser and opening again.
+            if (tryCount >= MAX_RETRY_TIMES) {
+                logger.error(`Failed to fetch data for url ${url}, tried ${tryCount}, skipping...`, e);
+                throw e;
+            }
+            logger.error(`Failed to fetch data for url ${url}, tried ${tryCount}, trying again...`, e);
+            return self.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
+                return self.fetchData(url, tryCount + 1);
             });
         });
     }
