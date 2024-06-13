@@ -143,9 +143,21 @@ class Browser {
                 };
             });
         }).catch(e => {
+            /**
+             * An error can be retried if it is a TimeoutError or a ProtocolError
+             * - TimeoutError: when the page is not loaded in time or the element is not found
+             * - ProtocolError: when the page is closed before the screenshot is taken
+             * - That include the message "Target closed" or "Protocol error" - e.g: Protocol error (Page.captureScreenshot): Target closed or Protocol error (DOM.describeNode): Target closed"
+             */
+            const isRetryableError =
+                e instanceof puppeteer.TimeoutError ||
+                e instanceof puppeteer.ProtocolError ||
+                e.message.includes('Protocol error') ||
+                e.message.includes('Target closed');
+
             // Allow to retry by closing the browser and opening again.
-            if (tryCount >= MAX_RETRY_TIMES) {
-                logger.error(`Failed to fetch data for url ${url}, tried ${tryCount}, skipping...`, e);
+            if (!isRetryableError || tryCount >= MAX_RETRY_TIMES) {
+                logger.error(`Failed to fetch data for url ${url}, tried ${tryCount} times, isRetryableError: ${isRetryableError}, skipping...`, e);
                 throw e;
             }
             logger.error(`Failed to fetch data for url ${url}, tried ${tryCount}, trying again...`, e);
