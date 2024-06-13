@@ -18,5 +18,8 @@ tar -czf ./exports/exports-"$datePrefix".tar --files-from ./export-files.manifes
 echo "Deleting files"
 cat ./export-files.manifest | xargs rm
 
+echo "Deleting empty dirs"
+find ./exports/ -empty -type d -delete
+
 echo "Deleting manifest file"
 rm ./export-files.manifest
