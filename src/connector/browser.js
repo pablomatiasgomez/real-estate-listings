@@ -95,6 +95,10 @@ class Browser {
         this.browserOptions = {
             headless: !DEBUG,
             devtools: DEBUG,
+            targetFilter: (target) => {
+                console.log(`calling target filter with type: ${target.type()} , url: ${target.url()} , returning ${target.type() !== 'other' || !!target.url()} `);
+                return target.type() !== 'other' || !!target.url();
+            },
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
