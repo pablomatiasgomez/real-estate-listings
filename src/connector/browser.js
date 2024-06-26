@@ -3,6 +3,7 @@
 const puppeteer = require('puppeteer');
 const puppeteerExtra = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const ZenRows = require('zenrows').ZenRows;
 
 const UserAgents = require('user-agents');
 
@@ -119,6 +120,28 @@ class Browser {
         if (!siteBrowser) {
             logger.info(`No site browser matches url ${url}`);
             return Promise.resolve(null);
+        }
+
+        // TODO this should be handled differently...
+        if (siteBrowser.useZenRows()) {
+            const client = new ZenRows(config.zenrows.token);
+            return client.get(url, {
+                "js_render": "true"
+            }).then(response => {
+                let html = response.data;
+                logger.info(`HTML fetched from url ${url} via ZenRows: `, html.length);
+                return siteBrowser.extractData(html);
+            }).then(data => {
+                logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
+                return {
+                    id: self.getUrlIdWithSiteBrowser(url, siteBrowser),
+                    url: url,
+                    data: data
+                };
+            }).catch(e => {
+                logger.error(`Failed to fetch data for url ${url}, skipping`, e);
+                throw e;
+            });
         }
 
         return Promise.resolve().then(() => {

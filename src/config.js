@@ -22,6 +22,9 @@ let Config = {
         "token": null,
         // Can be retrieved using https://api.telegram.org/bot{TOKEN}/getUpdates
         "chatId": null
+    },
+    "zenrows": {
+        "token": null,
     }
 };
 

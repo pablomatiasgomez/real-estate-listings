@@ -26,6 +26,10 @@ class SiteBrowser {
         return this.browserName;
     }
 
+    useZenRows() {
+        return false;
+    }
+
     useStealthBrowser() {
         return false;
     }
