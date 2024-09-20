@@ -31,7 +31,7 @@ The currently supported websites are the following:
 | [MenendezProp](http://www.menendezprop.com.ar/)       | ✅ | ✅ |
 | [GrupoMega](https://www.grupomega.com.ar/index.php)   | ✅ | ✅ |
 | [Mudafy](https://mudafy.com.ar/)                      |    | ✅ |
-| [Morselli](https://morselli.com.ar/)        |    | ✅ |
+| [Morselli](https://morselli.com.ar/)                  | ✅ |    |
 
 ## Prerequisites
 
