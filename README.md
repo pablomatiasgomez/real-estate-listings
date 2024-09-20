@@ -91,11 +91,12 @@ cp config.default.json config.json
     }
   },
   "browser": {
+    "xintelApiKey": "",
     "timeBetweenPageFetchesMs": 16000
   },
   "telegram": {
-    "token": null,
-    "chatId": null
+    "token": "",
+    "chatId": ""
   }
 }
 ```
@@ -108,7 +109,7 @@ Where:
     * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
       start with "//" or are empty.
 * `broser` - configures how the browser will run and fetch the pages
-    * `xintnelApiKey` - apiKey to use when fetching xintel pages
+    * `xintelApiKey` - apiKey to use when fetching xintel pages
     * `timeBetweenPageFetchesMs` - Time to wait between each page fetch
 * `telegram` - Telegram configuration used to notify the changes:
     * `token` - bot token, provided when you create the bot
@@ -119,7 +120,7 @@ Where:
 
 Then you can run it using `./scripts/start.sh` which will run the app in background and notify of any change.
 
-### Running in foregraund
+### Running in foreground
 
 Simply run `./src/main.js --diff-check`
 
