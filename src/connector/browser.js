@@ -37,6 +37,7 @@ const LiderPropListingsBrowser = require('./browsers/liderprop-listings-browser.
 const GrupoMegaBrowser = require('./browsers/grupomega-browser.js');
 const GrupoMegaListingsBrowser = require('./browsers/grupomega-listings-browser.js');
 const MudafyListingsBrowser = require("./browsers/mudafy-listings-browser");
+const MorselliBrowser = require("./browsers/morselli-browser");
 
 const Utils = require('../utils/utils.js');
 
@@ -78,6 +79,7 @@ const SITE_BROWSERS = [
     new GrupoMegaBrowser(),
     new GrupoMegaListingsBrowser(),
     new MudafyListingsBrowser(),
+    new MorselliBrowser(),
 ];
 
 const BROWSER_KINDS = {

@@ -16,12 +16,12 @@ let Config = {
         }
     },
     "browser": {
+        "xintelApiKey": "",
         "timeBetweenPageFetchesMs": 16000
     },
     "telegram": {
-        "token": null,
-        // Can be retrieved using https://api.telegram.org/bot{TOKEN}/getUpdates
-        "chatId": null
+        "token": "",
+        "chatId": "" // Can be retrieved using https://api.telegram.org/bot{TOKEN}/getUpdates
     }
 };
 

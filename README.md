@@ -31,6 +31,7 @@ The currently supported websites are the following:
 | [MenendezProp](http://www.menendezprop.com.ar/)       | ✅ | ✅ |
 | [GrupoMega](https://www.grupomega.com.ar/index.php)   | ✅ | ✅ |
 | [Mudafy](https://mudafy.com.ar/)                      |    | ✅ |
+| [Morselli](https://morselli.com.ar/)        |    | ✅ |
 
 ## Prerequisites
 
@@ -107,6 +108,7 @@ Where:
     * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
       start with "//" or are empty.
 * `broser` - configures how the browser will run and fetch the pages
+    * `xintnelApiKey` - apiKey to use when fetching xintel pages
     * `timeBetweenPageFetchesMs` - Time to wait between each page fetch
 * `telegram` - Telegram configuration used to notify the changes:
     * `token` - bot token, provided when you create the bot
