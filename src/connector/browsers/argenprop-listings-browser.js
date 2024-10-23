@@ -6,7 +6,7 @@ const logger = newLogger('ArgenPropListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www\.argenprop\.com\/([\w-]*[a-zA-Z])$/;
+const URL_REGEX = /^https:\/\/www\.argenprop\.com\/([\/\w-]*[a-zA-Z0-9])$/;
 
 class ArgenPropListingsBrowser extends ListingsSiteBrowser {
 
