@@ -19,46 +19,25 @@ class RemaxListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "4"
+                EXPORT_VERSION: "5"
             };
 
             /**
              * @namespace remaxData
-             * @property {Object} searchListingDomainKey
-             * @property {Array} searchListingDomainKey.data[]
-             * @property {number} searchListingDomainKey.totalPages
+             * @property {Object} searchListingAndEntrepreneurshipDomainKey
+             * @property {Array} searchListingAndEntrepreneurshipDomainKey.data[]
+             * @property {number} searchListingAndEntrepreneurshipDomainKey.totalPages
              */
             let remaxData = JSON.parse(document.querySelector("#serverApp-state").innerHTML.replace(/&q;/g, '"'));
 
-            [...document.querySelectorAll("#listing qr-card-prop")].forEach(item => {
-                let id = [...item.querySelector("#images .button-prev").classList]
-                    .filter(clazz => clazz.startsWith("button-prev"))
-                    .map(clazz => clazz.replace("button-prev", ""))
-                    .filter(clazz => !!clazz)
-                    [0];
+            remaxData.searchListingAndEntrepreneurshipDomainKey.data.forEach(item => {
+                item.url = location.origin + "/listings/" + item.slug;
+                delete item.photos;
 
-                /**
-                 * @namespace data
-                 * @property {Object} slug
-                 */
-                let data = remaxData.searchListingDomainKey.data.filter(item => item.id === id)[0];
-                let url = location.origin + "/listings/" + data.slug;
-
-                let price = item.querySelector("#price").innerText.trim();
-                let features = [...item.querySelectorAll(".features-item p")].map(feature => {
-                    return feature.innerText.trim();
-                });
-                delete data.photos;
-
-                response[id] = {
-                    url: url,
-                    price: price,
-                    features: features,
-                    data: data,
-                };
+                response[item.id] = item;
             });
 
-            response.pages = window.BrowserUtils.pageCountToPagesArray(remaxData.searchListingDomainKey.totalPages);
+            response.pages = window.BrowserUtils.pageCountToPagesArray(remaxData.searchListingAndEntrepreneurshipDomainKey.totalPages);
 
             return response;
         });
