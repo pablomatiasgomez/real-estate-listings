@@ -14,6 +14,10 @@ class MercadoLibreListingsBrowser extends ListingsSiteBrowser {
         super(URL_REGEX);
     }
 
+    logHtmlOnError() {
+        return true;
+    }
+
     extractListPage(browserPage) {
         logger.info(`Extracting list data for ${browserPage.url()}...`);
 
