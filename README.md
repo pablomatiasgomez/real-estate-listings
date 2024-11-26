@@ -43,17 +43,17 @@ running `npm install` when installing puppeteer, try running the following to in
 CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`
 
 # Remove existing downloads and binaries so we can start from scratch.
-sudo apt-get remove google-chrome-stable
+sudo apt remove google-chrome-stable
 
 # Install dependencies.
-sudo apt-get update
-sudo apt-get install -y unzip openjdk-8-jre-headless xvfb libxi6 libgconf-2-4
+sudo apt update
+sudo apt install -y unzip openjdk-8-jre-headless xvfb libxi6 libgconf-2-4
 
 # Install Chrome.
 sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add
 echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-sudo apt-get -y update
-sudo apt-get -y install google-chrome-stable
+sudo apt -y update
+sudo apt -y install google-chrome-stable
 ```
 
 You can also try installing chromium if using Ubuntu with WSL
