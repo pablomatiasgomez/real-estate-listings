@@ -27,7 +27,6 @@
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sanitize-filename": "^1.6.3",
-    "telegram-bot-api": "^2.0.1",
     "user-agents": "^1.1.370"
   },
   "devDependencies": {
