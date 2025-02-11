@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "async": "^3.2.6",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "google-auth-library": "^9.15.0",
     "google-spreadsheet": "^4.1.4",
     "json-diff": "^1.0.6",
