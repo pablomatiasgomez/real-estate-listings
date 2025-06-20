@@ -91,6 +91,7 @@ cp config.default.json config.json
     }
   },
   "browser": {
+    "proxy": "",
     "xintelApiKey": "",
     "timeBetweenPageFetchesMs": 16000
   },
@@ -108,11 +109,12 @@ Where:
       up all the columns that have "links" as header. Uses `credentials` to authenticate as a service account.
     * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
       start with "//" or are empty.
-* `broser` - configures how the browser will run and fetch the pages
-    * `xintelApiKey` - apiKey to use when fetching xintel pages
-    * `timeBetweenPageFetchesMs` - Time to wait between each page fetch
+* `broser` - configures how the browser will run and fetch the pages:
+    * `proxy` - proxy to be used when launching browser, if any.
+    * `xintelApiKey` - apiKey to use when fetching xintel pages.
+    * `timeBetweenPageFetchesMs` - Time to wait between each page fetch.
 * `telegram` - Telegram configuration used to notify the changes:
-    * `token` - bot token, provided when you create the bot
+    * `token` - bot token, provided when you create the bot.
     * `chatId` - chat in which you want to receive the notifications. You can retrieve the bot's chats by getting the
       latest messages, using https://api.telegram.org/bot{TOKEN}/getUpdates
 

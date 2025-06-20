@@ -16,6 +16,7 @@ let Config = {
         }
     },
     "browser": {
+        "proxy": "",
         "xintelApiKey": "",
         "timeBetweenPageFetchesMs": 16000
     },
