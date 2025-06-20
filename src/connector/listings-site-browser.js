@@ -41,13 +41,12 @@ class ListingsSiteBrowser extends SiteBrowser {
      * @returns Promise
      */
     extractData(browserPage) {
-        let self = this;
         logger.info(`Extracting listings pages data...`);
 
         let listUrl = browserPage.url();
         let response = {};
 
-        return self.extractListPage(browserPage).then(pageResponse => {
+        return this.extractListPage(browserPage).then(pageResponse => {
             logger.info(`Assigning ${Object.keys(pageResponse)} ...`);
             Object.assign(response, pageResponse);
             return pageResponse.pages;
@@ -57,11 +56,11 @@ class ListingsSiteBrowser extends SiteBrowser {
             let promise = Promise.resolve();
             pages.slice(1).forEach(pageNumber => {
                 promise = promise.then(() => {
-                    let pageUrl = self.getListPageUrl(listUrl, pageNumber);
+                    let pageUrl = this.getListPageUrl(listUrl, pageNumber);
                     logger.info(`Processing page ${pageNumber}. Url: ${pageUrl}`);
-                    return self.loadUrl(browserPage, pageUrl, listUrl);
+                    return this.loadUrl(browserPage, pageUrl, listUrl);
                 }).then(() => {
-                    return self.extractListPage(browserPage);
+                    return this.extractListPage(browserPage);
                 }).then(Utils.delay(2000)).then(pageResponse => {
                     logger.info(`Assigning ${Object.keys(pageResponse)} ...`);
                     Object.assign(response, pageResponse);

@@ -57,10 +57,9 @@ class SiteBrowser {
     }
 
     extractUrlData(browserPage, url) {
-        let self = this;
-        return self.loadUrl(browserPage, url).then(() => {
-            return self.extractData(browserPage).catch(e => {
-                if (self.logHtmlOnError()) {
+        return this.loadUrl(browserPage, url).then(() => {
+            return this.extractData(browserPage).catch(e => {
+                if (this.logHtmlOnError()) {
                     return browserPage.evaluate(() => {
                         return document.getElementsByTagName("html")[0].innerHTML;
                     }).catch(htmlExtractError => {
@@ -77,7 +76,6 @@ class SiteBrowser {
     }
 
     loadUrl(browserPage, url, referer = "https://www.google.com/") {
-        let self = this;
         logger.info(`Loading url ${url}`);
         return Promise.resolve().then(() => {
             return browserPage.goto(url, {
@@ -86,7 +84,7 @@ class SiteBrowser {
                 referer: referer,
             });
         }).then(Utils.delay(config.browser.timeBetweenPageFetchesMs)).then(() => {
-            self.addCommonFunctions(browserPage);
+            this.addCommonFunctions(browserPage);
         });
     }
 

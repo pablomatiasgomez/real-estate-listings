@@ -24,24 +24,22 @@ class WebApiController {
      * Creates a queue with concurrency 1 so that we have at most one open browser.
      */
     createQueue() {
-        let self = this;
-
         return async.queue((url, resolve) => {
-            let response = self.cache.get(url);
+            let response = this.cache.get(url);
             if (response) {
                 logger.info(`Cache hit for url ${url}`);
                 return resolve(null, response);
             }
 
             logger.info(`Getting listing data for url ${url}`);
-            self.getLastSavedData(url).then(lastSavedData => {
+            this.getLastSavedData(url).then(lastSavedData => {
                 if (!lastSavedData) {
                     logger.info(`Couldn't find lastSavedData, going to fetch live data..`);
-                    return self.getLiveData(url);
+                    return this.getLiveData(url);
                 }
                 return lastSavedData;
             }).then(data => {
-                self.cache.set(url, data);
+                this.cache.set(url, data);
                 resolve(null, data);
             }).catch(e => {
                 resolve(e, null);
@@ -50,26 +48,23 @@ class WebApiController {
     }
 
     getLiveData(url) {
-        let self = this;
         // TODO handle browser closing after the page is fetched
-        return self.browser.fetchData(url).then(response => {
+        return this.browser.fetchData(url).then(response => {
             if (!response) return null;
             return response.data;
         });
     }
 
     getLastSavedData(url) {
-        let self = this;
         return Promise.resolve().then(() => {
-            return self.browser.getUrlId(url);
+            return this.browser.getUrlId(url);
         }).then(id => {
             if (!id) return null;
-            return self.fileDataRepository.getLastDataFile(id);
+            return this.fileDataRepository.getLastDataFile(id);
         });
     }
 
     listen(port) {
-        let self = this;
         logger.info(`Starting server on port ${port} ..`);
 
         let app = express();
@@ -85,7 +80,7 @@ class WebApiController {
             let url = req.query.url;
             if (!url) return res.status(400).send("Invalid URL!");
 
-            self.queue.push(url, (error, response) => {
+            this.queue.push(url, (error, response) => {
                 if (error) {
                     logger.error(error);
                     return res.status(500).send(error.message);
@@ -98,19 +93,18 @@ class WebApiController {
         });
 
         app.get("/stats", function (req, res) {
-            res.send(self.cache.getStats());
+            res.send(this.cache.getStats());
         });
 
-        self.server = app.listen(port, () => logger.info(`Started API on port ${port}`));
+        this.server = app.listen(port, () => logger.info(`Started API on port ${port}`));
     }
 
     close() {
-        let self = this;
         logger.info(`Shutting down server gracefully...`);
 
         return new Promise(resolve => {
-            if (!self.server) return;
-            return self.server.close(resolve);
+            if (!this.server) return;
+            return this.server.close(resolve);
         });
     }
 }

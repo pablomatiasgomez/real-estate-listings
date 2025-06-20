@@ -21,9 +21,8 @@ class FileDataRepository {
      * @returns {Promise<{}>}
      */
     getLastDataFile(id) {
-        let self = this;
         id = sanitize(id);
-        let fileDir = Utils.createDirIfNotExists(self.getFileDir(id));
+        let fileDir = Utils.createDirIfNotExists(this.getFileDir(id));
 
         logger.info(`Getting last data file for id ${id}`);
         return Utils.readLastFileSortedByName(fileDir).then(content => {
@@ -34,9 +33,8 @@ class FileDataRepository {
     }
 
     createNewDataFile(id, data) {
-        let self = this;
         id = sanitize(id);
-        let fileDir = Utils.createDirIfNotExists(self.getFileDir(id));
+        let fileDir = Utils.createDirIfNotExists(this.getFileDir(id));
 
         let newFilePath = path.join(fileDir, new Date().toISOString().split(".")[0] + ".json");
         return Utils.createFile(newFilePath, JSON.stringify(data));
