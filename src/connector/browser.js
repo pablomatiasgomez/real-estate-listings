@@ -107,6 +107,8 @@ class Browser {
                 '--no-first-run',
                 '--no-zygote',
                 // '--single-process', // Temporarily disabled as it was not working on Mac M1.
+
+                config.browser.proxy ? '--proxy-server=' + config.browser.proxy : '',
             ],
         };
         this.currentBrowserKind = null;
