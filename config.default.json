@@ -1,20 +1,20 @@
 {
-    "urlsSource": {
-        "googleSheet": {
-            "enabled": false,
-            "credentials": null,
-            "spreadsheetId": null
-        },
-        "files": {
-            "enabled": false,
-            "files": []
-        }
+  "urlsSource": {
+    "googleSheet": {
+      "enabled": false,
+      "credentials": null,
+      "spreadsheetId": null
     },
-    "browser": {
-        "timeBetweenPageFetchesMs": 16000
-    },
-    "telegram": {
-        "token": null,
-        "chatId": null
+    "files": {
+      "enabled": false,
+      "files": []
     }
+  },
+  "browser": {
+    "timeBetweenPageFetchesMs": 16000
+  },
+  "telegram": {
+    "token": null,
+    "chatId": null
+  }
 }
