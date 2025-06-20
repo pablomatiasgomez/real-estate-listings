@@ -17,10 +17,9 @@
     "url": "https://www.pablomatiasgomez.com.ar"
   },
   "dependencies": {
+    "@googleapis/sheets": "^10.0.1",
     "async": "^3.2.6",
     "express": "^5.1.0",
-    "google-auth-library": "^9.15.1",
-    "google-spreadsheet": "^4.1.4",
     "json-diff": "^1.0.6",
     "node-cache": "^5.1.2",
     "puppeteer": "^24.10.2",
