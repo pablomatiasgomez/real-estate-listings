@@ -1,34 +1,36 @@
 'use strict';
 
-const GoogleSpreadsheet = require('google-spreadsheet').GoogleSpreadsheet;
-const JWT = require('google-auth-library').JWT;
+const GoogleSheets = require('@googleapis/sheets');
 
 const logger = newLogger('GoogleSheetsService');
 
 //----------------------
 
 class GoogleSheetsService {
+
     constructor() {
-        const jwt = new JWT({
-            email: config.urlsSource.googleSheet.credentials.client_email,
-            key: config.urlsSource.googleSheet.credentials.private_key,
+        let auth = new GoogleSheets.auth.GoogleAuth({
+            credentials: config.urlsSource.googleSheet.credentials,
             scopes: ['https://www.googleapis.com/auth/spreadsheets'],
         });
-        this.doc = new GoogleSpreadsheet(config.urlsSource.googleSheet.spreadsheetId, jwt);
+        this.sheets = GoogleSheets.sheets({version: 'v4', auth: auth});
+        this.spreadsheetId = config.urlsSource.googleSheet.spreadsheetId;
     }
 
     getUrls() {
-        let self = this;
-        return Promise.resolve().then(() => {
-            return self.doc.loadInfo();
-        }).then(() => {
+        return this.sheets.spreadsheets.get({
+            spreadsheetId: config.urlsSource.googleSheet.spreadsheetId,
+        }).then(spreadsheet => {
+            let sheetNames = spreadsheet.data.sheets.map(s => s.properties.title);
+            logger.info(`Got ${sheetNames.length} sheets from spreadsheet: '${spreadsheet.data.properties.title}'`);
+
             let urls = [];
             let promise = Promise.resolve();
-            Object.values(self.doc.sheetsByIndex).forEach(sheet => {
+            sheetNames.forEach(sheetName => {
                 promise = promise.then(() => {
-                    return self.getUrlsFromSheet(sheet);
+                    return this.getUrlsFromSheet(sheetName);
                 }).then(sheetUrls => {
-                    logger.info(`Got ${sheetUrls.length} urls from sheet ${sheet.title}`);
+                    logger.info(`Got ${sheetUrls.length} urls from sheet ${sheetName}`);
                     urls.push(...sheetUrls);
                 });
             });
@@ -36,21 +38,18 @@ class GoogleSheetsService {
         });
     }
 
-    getUrlsFromSheet(sheet) {
-        let self = this;
-        logger.info(`Getting urls from sheet ${sheet.title}`);
-        return Promise.resolve().then(() => {
-            return sheet.getCellsInRange('A1:Z1');
-        }).then(cells => {
-            if (!cells) return [];
+    getUrlsFromSheet(sheetName) {
+        logger.info(`Getting urls from sheet ${sheetName}`);
+        return this.getRowsInRange(sheetName, "A1:Z1").then(rows => {
+            if (!rows || !rows.length) return [];
 
-            let columnIndex = cells[0].indexOf("links");
+            let columnIndex = rows[0].indexOf("links");
             if (columnIndex === -1) return [];
 
-            let columnLetter = self.columnToLetter(columnIndex + 1);
+            let columnLetter = this.columnToLetter(columnIndex + 1);
             logger.info(`Using column ${columnLetter}`);
 
-            return sheet.getCellsInRange(`${columnLetter}2:${columnLetter}1000`);
+            return this.getRowsInRange(sheetName, `${columnLetter}2:${columnLetter}1000`);
         }).then(cells => {
             return cells
                 .flatMap(cell => cell[0])
@@ -59,15 +58,22 @@ class GoogleSheetsService {
         });
     }
 
-    // Copied from 'google-spreadsheet/lib/utils' as it is not exported.
-    columnToLetter(columnIndex) {
-        let temp;
+    getRowsInRange(sheetName, range) {
+        return this.sheets.spreadsheets.values.get({
+            spreadsheetId: config.urlsSource.googleSheet.spreadsheetId,
+            range: `${sheetName}!${range}`,
+        }).then(res => {
+            return res.data.values;
+        });
+    }
+
+    // columnToLetter converts a columnNumber like 3 to a columnLetter like C
+    columnToLetter(columnNumber) {
         let letter = '';
-        let col = columnIndex;
-        while (col > 0) {
-            temp = (col - 1) % 26;
-            letter = String.fromCharCode(temp + 65) + letter;
-            col = (col - temp - 1) / 26;
+        while (columnNumber > 0) {
+            const mod = (columnNumber - 1) % 26;
+            letter = String.fromCharCode(mod + 65) + letter;
+            columnNumber = (columnNumber - mod - 1) / 26;
         }
         return letter;
     }

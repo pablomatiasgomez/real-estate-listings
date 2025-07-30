@@ -4,12 +4,12 @@ const XintelBrowser = require('./xintel-browser.js');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/(?:www\.)?maluma\.com\.ar\/.*MLM(\d+).*$/i;
+const URL_REGEX = /^https?:\/\/(?:www\.)?morselli\.com\.ar\/propiedad\.php\?reference_code=MII(\d+).*$/i;
 
-class MalumaBrowser extends XintelBrowser {
+class MorselliBrowser extends XintelBrowser {
 
     getXintelId(url) {
-        let splits = url.split("-");
+        let splits = url.split("=");
         return splits[splits.length - 1];
     }
 
@@ -21,4 +21,4 @@ class MalumaBrowser extends XintelBrowser {
 
 // ---------
 
-module.exports = MalumaBrowser;
+module.exports = MorselliBrowser;

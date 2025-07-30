@@ -31,6 +31,7 @@ The currently supported websites are the following:
 | [MenendezProp](http://www.menendezprop.com.ar/)       | ✅ | ✅ |
 | [GrupoMega](https://www.grupomega.com.ar/index.php)   | ✅ | ✅ |
 | [Mudafy](https://mudafy.com.ar/)                      |    | ✅ |
+| [Morselli](https://morselli.com.ar/)                  | ✅ |    |
 
 ## Prerequisites
 
@@ -42,17 +43,17 @@ running `npm install` when installing puppeteer, try running the following to in
 CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`
 
 # Remove existing downloads and binaries so we can start from scratch.
-sudo apt-get remove google-chrome-stable
+sudo apt remove google-chrome-stable
 
 # Install dependencies.
-sudo apt-get update
-sudo apt-get install -y unzip openjdk-8-jre-headless xvfb libxi6 libgconf-2-4
+sudo apt update
+sudo apt install -y unzip openjdk-8-jre-headless xvfb libxi6 libgconf-2-4
 
 # Install Chrome.
 sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add
 echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-sudo apt-get -y update
-sudo apt-get -y install google-chrome-stable
+sudo apt -y update
+sudo apt -y install google-chrome-stable
 ```
 
 You can also try installing chromium if using Ubuntu with WSL
@@ -90,11 +91,13 @@ cp config.default.json config.json
     }
   },
   "browser": {
+    "proxy": "",
+    "xintelApiKey": "",
     "timeBetweenPageFetchesMs": 16000
   },
   "telegram": {
-    "token": null,
-    "chatId": null
+    "token": "",
+    "chatId": ""
   }
 }
 ```
@@ -106,10 +109,12 @@ Where:
       up all the columns that have "links" as header. Uses `credentials` to authenticate as a service account.
     * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
       start with "//" or are empty.
-* `broser` - configures how the browser will run and fetch the pages
-    * `timeBetweenPageFetchesMs` - Time to wait between each page fetch
+* `broser` - configures how the browser will run and fetch the pages:
+    * `proxy` - proxy to be used when launching browser, if any.
+    * `xintelApiKey` - apiKey to use when fetching xintel pages.
+    * `timeBetweenPageFetchesMs` - Time to wait between each page fetch.
 * `telegram` - Telegram configuration used to notify the changes:
-    * `token` - bot token, provided when you create the bot
+    * `token` - bot token, provided when you create the bot.
     * `chatId` - chat in which you want to receive the notifications. You can retrieve the bot's chats by getting the
       latest messages, using https://api.telegram.org/bot{TOKEN}/getUpdates
 
@@ -117,7 +122,7 @@ Where:
 
 Then you can run it using `./scripts/start.sh` which will run the app in background and notify of any change.
 
-### Running in foregraund
+### Running in foreground
 
 Simply run `./src/main.js --diff-check`
 

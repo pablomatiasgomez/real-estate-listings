@@ -38,6 +38,7 @@ const LiderPropListingsBrowser = require('./browsers/liderprop-listings-browser.
 const GrupoMegaBrowser = require('./browsers/grupomega-browser.js');
 const GrupoMegaListingsBrowser = require('./browsers/grupomega-listings-browser.js');
 const MudafyListingsBrowser = require("./browsers/mudafy-listings-browser");
+const MorselliBrowser = require("./browsers/morselli-browser");
 
 const Utils = require('../utils/utils.js');
 
@@ -79,6 +80,7 @@ const SITE_BROWSERS = [
     new GrupoMegaBrowser(),
     new GrupoMegaListingsBrowser(),
     new MudafyListingsBrowser(),
+    new MorselliBrowser(),
 ];
 
 const BROWSER_KINDS = {
@@ -106,6 +108,8 @@ class Browser {
                 '--no-first-run',
                 '--no-zygote',
                 // '--single-process', // Temporarily disabled as it was not working on Mac M1.
+
+                config.browser.proxy ? '--proxy-server=' + config.browser.proxy : '',
             ],
         };
         this.currentBrowserKind = null;
@@ -114,9 +118,7 @@ class Browser {
     }
 
     fetchData(url, tryCount = 1) {
-        let self = this;
-
-        let siteBrowser = self.getSiteBrowserForUrl(url);
+        let siteBrowser = this.getSiteBrowserForUrl(url);
         if (!siteBrowser) {
             logger.info(`No site browser matches url ${url}`);
             return Promise.resolve(null);
@@ -134,7 +136,7 @@ class Browser {
             }).then(data => {
                 logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
                 return {
-                    id: self.getUrlIdWithSiteBrowser(url, siteBrowser),
+                    id: this.getUrlIdWithSiteBrowser(url, siteBrowser),
                     url: url,
                     data: data
                 };
@@ -147,20 +149,20 @@ class Browser {
         return Promise.resolve().then(() => {
             let browserKind = siteBrowser.useStealthBrowser() ? BROWSER_KINDS.STEALTH : BROWSER_KINDS.NORMAL;
             logger.info(`Getting browser for url ${url} using ${siteBrowser.name()} with ${browserKind} browser, try ${tryCount}..`);
-            return self.getBrowserPage(browserKind);
+            return this.getBrowserPage(browserKind);
         }).then(page => {
             return Promise.resolve().then(() => {
                 let javascriptEnabled = siteBrowser.withJavascriptEnabled();
                 return page.setJavaScriptEnabled(javascriptEnabled);
             }).then(() => {
                 // Randomize user agent
-                return page.setUserAgent(self.userAgents.toString());
+                return page.setUserAgent(this.userAgents.toString());
             }).then(() => {
                 return siteBrowser.extractUrlData(page, url);
             }).then(data => {
                 logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
                 return {
-                    id: self.getUrlIdWithSiteBrowser(url, siteBrowser),
+                    id: this.getUrlIdWithSiteBrowser(url, siteBrowser),
                     url: url,
                     data: data
                 };
@@ -184,8 +186,8 @@ class Browser {
                 throw e;
             }
             logger.error(`Failed to fetch data for url ${url}, tried ${tryCount}, trying again...`, e);
-            return self.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
-                return self.fetchData(url, tryCount + 1);
+            return this.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
+                return this.fetchData(url, tryCount + 1);
             });
         });
     }
@@ -196,13 +198,12 @@ class Browser {
      * @returns {string|null}
      */
     getUrlId(url) {
-        let self = this;
-        let siteBrowser = self.getSiteBrowserForUrl(url);
+        let siteBrowser = this.getSiteBrowserForUrl(url);
         if (!siteBrowser) {
             logger.info(`No site browser matches url ${url}`);
             return null;
         }
-        return self.getUrlIdWithSiteBrowser(url, siteBrowser);
+        return this.getUrlIdWithSiteBrowser(url, siteBrowser);
     }
 
     getUrlIdWithSiteBrowser(url, siteBrowser) {
@@ -218,42 +219,39 @@ class Browser {
     }
 
     getBrowserPage(browserKind) {
-        let self = this;
-        if (browserKind === self.currentBrowserKind) {
+        if (browserKind === this.currentBrowserKind) {
             logger.info(`Reusing browser page for kind ${browserKind} ...`);
-            return Promise.resolve(self.currentBrowserPage);
+            return Promise.resolve(this.currentBrowserPage);
         }
 
         // There are 2 memory usage improvements being done here:
         // - Close the previous browser and open the new one in order to only have one open at a time.
         // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
-        return self.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
-            self.currentBrowserKind = browserKind;
+        return this.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
+            this.currentBrowserKind = browserKind;
             let launcher = browserKind === BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
             logger.info(`Opening a new browser for kind ${browserKind} ...`);
-            return launcher.launch(self.browserOptions);
+            return launcher.launch(this.browserOptions);
         }).then(browser => {
-            self.currentBrowser = browser;
-            return self.currentBrowser.newPage();
+            this.currentBrowser = browser;
+            return this.currentBrowser.newPage();
         }).then(page => {
-            self.currentBrowserPage = page;
-            return self.currentBrowserPage;
+            this.currentBrowserPage = page;
+            return this.currentBrowserPage;
         });
     }
 
     close() {
-        let self = this;
         logger.info(`Shutting down connector ..`);
-        return self.closeCurrentBrowser();
+        return this.closeCurrentBrowser();
     }
 
     closeCurrentBrowser() {
-        let self = this;
-        logger.info(`Closing current ${self.currentBrowserKind} browser...`);
+        logger.info(`Closing current ${this.currentBrowserKind} browser...`);
 
         let closeables = [
-            self.currentBrowserPage,
-            self.currentBrowser,
+            this.currentBrowserPage,
+            this.currentBrowser,
         ];
         let promise = Promise.resolve();
         closeables.filter(closeable => !!closeable).forEach(closeable => {

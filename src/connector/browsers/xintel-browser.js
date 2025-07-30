@@ -15,49 +15,37 @@ class XintelBrowser extends SiteBrowser {
         super(urlRegex);
     }
 
+    /**
+     * This method must be implemented and should extract the ID from the url
+     * @param url current url
+     */
+    getXintelId(url) {
+        throw new Error("Method must be implemented!");
+    }
+
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 
-        return browserPage.evaluate(() => {
-            return new Promise((resolve, reject) => {
-                let response = {
-                    EXPORT_VERSION: "1"
-                };
+        let xintelId = this.getXintelId(browserPage.url());
+        logger.info(`Using xintelId ${xintelId}...`);
 
-                let script = [...document.getElementsByTagName("script")]
-                    .filter(script => script.innerText.indexOf("fichas.propiedades") !== -1)
-                    [0]
-                    .innerText;
+        return browserPage.evaluate((xintelApiKey, xintelId) => {
+            let response = {
+                EXPORT_VERSION: "1"
+            };
 
-                let successFnStr = "success:function(response){";
-                let startingFunctionIndex = script.indexOf(successFnStr);
-                if (startingFunctionIndex === -1) throw new Error("Couldn't find success fn!");
-                script = script.substring(0, startingFunctionIndex + successFnStr.length);
+            let code = xintelId.substring(0, 3);
+            let id = xintelId.substring(3);
+            let apiURL = `https://xintelapi.com.ar/?cache=20092024&json=fichas.propiedades&amaira=false&suc=${code}&global=LU3AIKPR4F6ZSUY8GQODKWRO8&emprendimiento=True&oppel=&esweb=&apiK=${xintelApiKey}&id=${id}&_=${Date.now()}`;
 
-                /**
-                 * Create global fns where we will be called.
-                 * @param {{ resultado: Object }} r - ajax response
-                 */
-                window.customOnSuccessFn = function (r) {
-                    Object.assign(response, r.resultado);
-                    resolve(response);
-                };
-                window.customOnError = function (err) {
-                    reject(err);
-                };
-
-                //  success:function(response){
-                script += `
-                        window.customOnSuccessFn(response);
-                    },
-                    error: function(err) {
-                        window.customOnError(err)
-                    }
-                });`;
-
-                eval(script); // jshint ignore:line
+            return fetch(apiURL).then(response => {
+                if (!response.ok) throw new Error("Failed to fetch data" + response);
+                return response.json();
+            }).then(responseJson => {
+                Object.assign(response, responseJson.resultado);
+                return response;
             });
-        });
+        }, config.browser.xintelApiKey, xintelId);
     }
 }
 

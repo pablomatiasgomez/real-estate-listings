@@ -19,7 +19,6 @@ class DifferenceNotifierService {
     }
 
     exportData(urls) {
-        let self = this;
         logger.info(`Exporting ${urls.length} urls..`);
 
         let startTime = Date.now();
@@ -32,7 +31,7 @@ class DifferenceNotifierService {
                 let elapsedMinutes = (Date.now() - startTime) / 1000 / 60;
                 let remainingMinutes = i === 0 ? "n/a" : Math.round((urls.length - i) * elapsedMinutes / i) + "m";
                 logger.info(`[${i + 1}/${urls.length}] [ETA:${remainingMinutes}] Processing url ${url} ..`);
-                return self.browser.fetchData(url);
+                return this.browser.fetchData(url);
             }).then(response => {
                 if (!response) { // Skip not handled urls.
                     totalSkipped++;
@@ -40,10 +39,10 @@ class DifferenceNotifierService {
                 }
 
                 // Check for data changes and notify:
-                return self.verifyDataDifference(response.url, response.id, response.data).then(hadDifference => {
+                return this.verifyDataDifference(response.url, response.id, response.data).then(hadDifference => {
                     if (hadDifference) totalDiffs++;
                     logger.info(`Going to save data exported for id ${response.id}`);
-                    return self.fileDataRepository.createNewDataFile(response.id, response.data);
+                    return this.fileDataRepository.createNewDataFile(response.id, response.data);
                 });
             }).catch(e => {
                 // Log error and continue
@@ -55,14 +54,12 @@ class DifferenceNotifierService {
             let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60));
             let message = `Finished checking ${urls.length} urls (${totalSkipped} skipped) in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`;
             logger.info(message);
-            return self.notifierService.notify(message);
+            return this.notifierService.notify(message);
         });
     }
 
     verifyDataDifference(url, id, currentData) {
-        let self = this;
-
-        return self.fileDataRepository.getLastDataFile(id).then(previousData => {
+        return this.fileDataRepository.getLastDataFile(id).then(previousData => {
             logger.info(`Checking data changes... for ${id}`);
             if (!previousData) {
                 logger.info(`There was no previous data for ${id} .. skipping difference check.`);
@@ -80,7 +77,7 @@ class DifferenceNotifierService {
                     `ID: ${id}\n` +
                     `URL: ${url}\n\n` +
                     diff;
-                return self.notifierService.notify(message).then(() => true);
+                return this.notifierService.notify(message).then(() => true);
             }
             logger.info("No difference was found!");
             return false;
