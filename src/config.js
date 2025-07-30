@@ -18,6 +18,7 @@ let Config = {
     "browser": {
         "proxy": "",
         "xintelApiKey": "",
+        "scrapeDoToken": "",
         "timeBetweenPageFetchesMs": 16000
     },
     "telegram": {

@@ -30,6 +30,10 @@ class SiteBrowser {
         return false;
     }
 
+    useScrapeDo() {
+        return false;
+    }
+
     withJavascriptEnabled() {
         return true;
     }

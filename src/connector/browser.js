@@ -123,6 +123,28 @@ class Browser {
             return Promise.resolve(null);
         }
 
+        // TODO this should be handled differently...
+        if (siteBrowser.useScrapeDo()) {
+            let scrapeUrl = `http://api.scrape.do/?transparentResponse=true&url=${encodeURIComponent(url)}&render=${siteBrowser.withJavascriptEnabled()}&token=${config.browser.scrapeDoToken}`;
+            return fetch(scrapeUrl).then(response => {
+                if (!response.ok) throw new Error(`Error while getting data using scrapeDo: ${response.status}`);
+                return response.text();
+            }).then(html => {
+                logger.info(`HTML fetched from url ${url} via ScrapeDo: `, html.length);
+                return siteBrowser.extractData(html);
+            }).then(data => {
+                logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
+                return {
+                    id: this.getUrlIdWithSiteBrowser(url, siteBrowser),
+                    url: url,
+                    data: data
+                };
+            }).catch(e => {
+                logger.error(`Failed to fetch data for url ${url}, skipping`, e);
+                throw e;
+            });
+        }
+
         return Promise.resolve().then(() => {
             let browserKind = siteBrowser.useStealthBrowser() ? BROWSER_KINDS.STEALTH : BROWSER_KINDS.NORMAL;
             logger.info(`Getting browser for url ${url} using ${siteBrowser.name()} with ${browserKind} browser, try ${tryCount}..`);

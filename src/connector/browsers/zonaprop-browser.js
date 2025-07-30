@@ -18,6 +18,10 @@ class ZonaPropBrowser extends SiteBrowser {
         return true;
     }
 
+    useScrapeDo() {
+        return true;
+    }
+
     withJavascriptEnabled() {
         return false;
     }
@@ -26,20 +30,41 @@ class ZonaPropBrowser extends SiteBrowser {
         return true;
     }
 
-    extractData(browserPage) {
+    extractData(html) {
         logger.info(`Extracting data...`);
 
-        return browserPage.evaluate(() => {
+        return Promise.resolve().then(() => {
             let response = {
                 EXPORT_VERSION: "6"
             };
 
+            // This is pretty hacky and works just because ZonaProp has their <script> tags with new lines...
+            // Eventually cheerio or jsdom could be used to parse the html properly.
+            let lines = html.split("\n");
+            let scripts = [];
+            let script = "";
+            let startedScript = false;
+            for (let line of lines) {
+                if (line.trim() === "<script>") {
+                    if (startedScript) throw new Error(`Starting script when already started...`);
+                    startedScript = true;
+                } else if (startedScript && line.trim() === "</script>") {
+                    startedScript = false;
+                    scripts.push(script);
+                    script = "";
+                } else if (startedScript) {
+                    script += line;
+                    script += "\n";
+                }
+            }
+
+            let customAvisoInfo;
+
             // Grab and eval avisoInfo because JS is disabled.
-            eval([...document.scripts] // jshint ignore:line
-                .map(script => script.innerHTML)
-                .filter(script => script.indexOf("avisoInfo") !== -1)
+            eval(scripts // jshint ignore:line
+                .filter(script => script.includes("avisoInfo"))
                 [0]
-                .replace("const avisoInfo = {", "var customAvisoInfo = {"));
+                .replace("const avisoInfo = {", "customAvisoInfo = {"));
 
             Object.assign(response, customAvisoInfo); // jshint ignore:line
             delete response.similarPostingsLink;
