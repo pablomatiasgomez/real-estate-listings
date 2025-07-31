@@ -10,13 +10,14 @@
       "files": []
     }
   },
+  "runOnStartUp": "",
   "browser": {
     "proxy": "",
     "xintelApiKey": "",
     "timeBetweenPageFetchesMs": 16000
   },
   "telegram": {
-    "token": null,
-    "chatId": null
+    "token": "",
+    "chatId": ""
   }
 }

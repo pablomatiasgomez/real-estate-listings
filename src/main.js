@@ -9,6 +9,7 @@ const TerminalFont = require('./utils/terminal-font.js');
 const Utils = require('./utils/utils.js');
 
 const WebApiController = require('./controller/web-api-controller.js');
+const CommandService = require("./service/command-service");
 const DifferenceNotifierService = require('./service/difference-notifier-service.js');
 const NotifierService = require('./service/notifier-service.js');
 const GoogleSheetsService = require('./service/googlesheets-service.js');
@@ -61,8 +62,9 @@ function initServicesAndExecute() {
     logger.info('|==================================================================================');
     logger.info('');
 
-    let browser;
+    let commandService;
     let fileDataRepository;
+    let browser;
     let notifierService;
     let differenceNotifierService;
     let webApiController;
@@ -85,6 +87,11 @@ function initServicesAndExecute() {
     }
 
     return Promise.resolve().then(() => {
+        if (config.runOnStartUp) {
+            commandService = new CommandService(config.runOnStartUp);
+            return commandService.run();
+        }
+    }).then(() => {
         fileDataRepository = new FileDataRepository();
         browser = new Browser();
         notifierService = new NotifierService();
@@ -93,6 +100,11 @@ function initServicesAndExecute() {
     }).then(action).catch(e => {
         return logger.error("Error executing action!", e);
     }).finally(() => {
+        if (commandService) {
+            logger.info(`Shutting down command..`);
+            commandService.close();
+        }
+
         logger.info(`Shutting down the browser..`);
         return browser.close();
     });

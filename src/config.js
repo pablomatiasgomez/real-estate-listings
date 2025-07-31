@@ -15,6 +15,7 @@ let Config = {
             "files": []
         }
     },
+    "runOnStartUp": "",
     "browser": {
         "proxy": "",
         "xintelApiKey": "",

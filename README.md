@@ -77,31 +77,6 @@ First you need to create a `config.json` located at the root. You can start with
 cp config.default.json config.json
 ```
 
-```json
-{
-  "urlsSource": {
-    "googleSheet": {
-      "enabled": false,
-      "credentials": null,
-      "spreadsheetId": null
-    },
-    "files": {
-      "enabled": false,
-      "files": []
-    }
-  },
-  "browser": {
-    "proxy": "",
-    "xintelApiKey": "",
-    "timeBetweenPageFetchesMs": 16000
-  },
-  "telegram": {
-    "token": "",
-    "chatId": ""
-  }
-}
-```
-
 Where:
 
 * `urlsSource` - configures where to fetch the urls from:
@@ -109,7 +84,8 @@ Where:
       up all the columns that have "links" as header. Uses `credentials` to authenticate as a service account.
     * `files` - Reads each file in `files` (path relative to the project folder), line by line and ignores lines that
       start with "//" or are empty.
-* `broser` - configures how the browser will run and fetch the pages:
+* `runOnStartUp` - configures a process to be run on startup and killed at the end. Useful to start proxy connections.
+* `browser` - configures how the browser will run and fetch the pages:
     * `proxy` - proxy to be used when launching browser, if any.
     * `xintelApiKey` - apiKey to use when fetching xintel pages.
     * `timeBetweenPageFetchesMs` - Time to wait between each page fetch.
