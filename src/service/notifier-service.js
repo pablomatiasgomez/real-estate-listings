@@ -66,7 +66,9 @@ class NotifierService {
                 parse_mode: 'HTML',
             }),
         }).then(response => {
-            if (response.status !== 200) throw new Error(`Error while executing sendMessage to TelegramAPI: ${response.status}`);
+            if (response.status !== 200) return response.text().then(response => {
+                throw new Error(`Error while executing sendMessage to TelegramAPI: ${response.status}`);
+            });
             return response.json();
         }).then(response => {
             if (!response.ok) throw new Error(`Error while executing sendMessage to TelegramAPI: ${response}`);
