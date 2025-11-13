@@ -6,7 +6,7 @@ const logger = newLogger('CabaPropListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\.php\?(.+pagina=0.*)$/;
+const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\/(.+)\?.*$/;
 
 class CabaPropListingsBrowser extends ListingsSiteBrowser {
 
@@ -23,42 +23,46 @@ class CabaPropListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "0"
+                EXPORT_VERSION: "1"
             };
 
-            // Always first query the container and then the items, so that if the page loads incorrectly, we get an error instead of no results.
-            let items = document.querySelector(".house-listing .container").querySelectorAll(".house-wrapper");
-            if (items.length === 0) {
-                throw new Error("No items were found, probably the page didn't load correctly.");
-            }
+            [...document.querySelectorAll(".feat_property")].forEach(item => {
+                item = item.parentNode;
+                let url = item.querySelector(".gallery-slider  a").href;
+                let id = url.split("/")[4];
 
-            [...items].forEach(item => {
-                let url = item.querySelector("a").href;
-                let id = url.split("id-")[1];
+                let title = item.querySelector(".details .tc_content h4").innerText.trim();
+                let operation = item.querySelector(".img-thumb .tag2 li").innerText.trim();
+                let typeAndLocation = item.querySelector(".details .tc_content p").innerText.split("\n");
+                let type = typeAndLocation[0].trim();
+                let location = typeAndLocation[1].trim();
 
-                let price = item.querySelector("p").innerText.trim();
-                let address = item.querySelector("h5").innerText.trim();
-                let features = [...item.querySelectorAll("ul li")].map(i => i.innerText.trim());
-                let seller = item.querySelector(".house-holder-info").innerText.trim();
+                let price = [...item.querySelectorAll(".fp_footer .lc-price-normal, .fp_footer .lc-price-small")].map(i => i.innerText.trim());
+                let features = [...item.querySelectorAll(".details .prop_details li")].map(i => i.innerText.trim());
+                let date = item.querySelector(".fp_footer > li > span").innerText.trim();
 
                 response[id] = {
                     url: url,
+                    title: title,
+                    operation: operation,
+                    type: type,
+                    location: location,
                     price: price,
-                    address: address,
                     features: features,
-                    seller: seller,
+                    date: date,
                 };
             });
 
-            response.pages = [...document.querySelectorAll(".page-item .page-link")]
-                .map(el => parseInt(el.innerText))
-                .filter(page => !isNaN(page));
+            let pagesSelector = document.querySelectorAll(".pagination li");
+            let pageCount = parseInt(pagesSelector[pagesSelector.length - 2].innerText.trim());
+
+            response.pages = window.BrowserUtils.pageCountToPagesArray(pageCount);
             return response;
         });
     }
 
     getListPageUrl(listUrl, pageNumber) {
-        return listUrl.replace("pagina=0", "pagina=" + (pageNumber - 1));
+        return listUrl.replace("pagina=1", "pagina=" + pageNumber);
     }
 }
 
