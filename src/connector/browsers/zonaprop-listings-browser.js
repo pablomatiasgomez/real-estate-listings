@@ -79,9 +79,7 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                 };
             });
 
-            response.pages = [...document.querySelectorAll("a[class^='stylespaging__PageItem']")]
-                .map(a => parseInt(a.innerText))
-                .filter(page => !isNaN(page));
+            response.pages = evalWindow.__PRELOADED_STATE__.listStore.paging.pages;
             return response;
         });
     }
