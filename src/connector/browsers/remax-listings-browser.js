@@ -6,7 +6,7 @@ const logger = newLogger('RemaxListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar\/listings\/buy\?(.+)$/;
+const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar\/listings\/(.+)$/;
 
 class RemaxListingsBrowser extends ListingsSiteBrowser {
 
@@ -19,25 +19,22 @@ class RemaxListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "5"
+                EXPORT_VERSION: "6"
             };
 
-            /**
-             * @namespace remaxData
-             * @property {Object} searchListingAndEntrepreneurshipDomainKey
-             * @property {Array} searchListingAndEntrepreneurshipDomainKey.data[]
-             * @property {number} searchListingAndEntrepreneurshipDomainKey.totalPages
-             */
-            let remaxData = JSON.parse(document.querySelector("#serverApp-state").innerHTML.replace(/&q;/g, '"'));
+            let ngState = JSON.parse(document.querySelector("#ng-state").textContent);
 
-            remaxData.searchListingAndEntrepreneurshipDomainKey.data.forEach(item => {
+            let remaxData = Object.values(ngState)
+                .filter(v => v?.u?.includes("api/listings/findAll"))
+                .map(v => v.b.data)
+                [0];
+
+            remaxData.data.forEach(item => {
                 item.url = location.origin + "/listings/" + item.slug;
-                delete item.photos;
-
                 response[item.id] = item;
             });
 
-            response.pages = window.BrowserUtils.pageCountToPagesArray(remaxData.searchListingAndEntrepreneurshipDomainKey.totalPages);
+            response.pages = window.BrowserUtils.pageCountToPagesArray(remaxData.totalPages);
 
             return response;
         });
