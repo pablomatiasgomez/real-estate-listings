@@ -50,9 +50,8 @@ class ProperatiListingsBrowser extends ListingsSiteBrowser {
     }
 
     getListPageUrl(listUrl, pageNumber) {
-        if (listUrl.includes("page=")) throw new Error("listUrl already contains pagination!");
-        let appendChar = listUrl.includes("?") ? "&" : "?";
-        return `${listUrl}${appendChar}page=${pageNumber}`;
+        let parts = listUrl.split("?");
+        return `${parts[0]}/${pageNumber}?${parts[1]}`;
     }
 }
 
