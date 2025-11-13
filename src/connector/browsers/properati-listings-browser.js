@@ -6,7 +6,7 @@ const logger = newLogger('ProperatiListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/s\/([\w:\-\/]+)$/;
+const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/s\/(.+)$/;
 
 class ProperatiListingsBrowser extends ListingsSiteBrowser {
 
@@ -19,32 +19,30 @@ class ProperatiListingsBrowser extends ListingsSiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "12"
+                EXPORT_VERSION: "13"
             };
 
-            let nextData = JSON.parse(document.querySelector("#__NEXT_DATA__").innerText);
+            [...document.querySelectorAll("#listings-content .snippet")].forEach(item => {
+                let url = item.getAttribute("data-url");
+                let id = url.split("/")[4];
 
-            let results = nextData.props.pageProps.results;
+                let title = item.querySelector(".title").innerText.trim();
+                let price = item.querySelector(".price").innerText.trim();
+                let location = item.querySelector(".location").innerText.trim();
+                let seller = item.querySelector(".agency__name").innerText.trim();
+                let features = [...item.querySelectorAll(".properties span")].map(i => i.innerText.trim());
 
-            results.data.forEach(item => {
-                item.url = location.origin + "/detalle/" + item.url_name;
-                item.place = item.place.parent_names.join(", ");
-                item.picturesCount = (item.images || []).length;
-                delete item.images;
-                delete item.score;
-                delete item.created_on;
-                delete item.published_on;
-                delete item.highlighted;
-
-                // These fields are returning flaky results, although they shouldn't..
-                delete item.maintenance_fees;
-                delete item.surface;
-                delete item.seller;
-
-                response[item.id] = item;
+                response[id] = {
+                    url: url,
+                    title: title,
+                    price: price,
+                    location: location,
+                    seller: seller,
+                    features: features,
+                };
             });
 
-            let pageCount = Math.ceil(results.metadata.total / results.metadata.limit);
+            let pageCount = document.querySelector(".pagination__summary")?.innerText.split(" de ")[0].split("/")[1] || 1;
             response.pages = window.BrowserUtils.pageCountToPagesArray(pageCount);
 
             return response;
