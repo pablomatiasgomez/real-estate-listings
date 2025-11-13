@@ -67,7 +67,7 @@ class SiteBrowser {
                         logger.error(`Failed to extract HTML from page.`, htmlExtractError);
                         throw e;
                     }).then(html => {
-                        throw Utils.wrapError(`Error while extracting page data. HTML:\n------------------------------\n\n${html}\n\n------------------------------\n`, e);
+                        throw new Error(`Error while extracting page data. HTML:\n------------------------------\n\n${html}\n\n------------------------------\n`, {cause: e});
                     });
                 }
                 throw e;

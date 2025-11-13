@@ -24,16 +24,6 @@ class Utils {
         return result => new Promise(resolve => setTimeout(() => resolve(result), delayMs));
     }
 
-    static wrapError(message, error) {
-        let newError = new Error(message);
-        // Remove this function (wrapError) call from the stack...
-        let newStack = newError.stack.split("\n");
-        newStack.splice(1, 1);
-        newStack = newStack.join("\n");
-        newError.stack = `${newStack}\nCaused by: ${error.stack}`;
-        return newError;
-    }
-
     /**
      * @returns {string} the created dir
      */
