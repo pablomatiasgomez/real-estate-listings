@@ -23,7 +23,8 @@ class ICasasListingsBrowser extends ListingsSiteBrowser {
             };
 
             // Exclude ad.similar and ad.featured which are not actual results, just suggestions.
-            [...document.querySelectorAll(".listAds .ad:not(.similar):not(.featured)")].forEach(item => {
+            // Always first query the container and then the items, so that if the page loads incorrectly, we get an error instead of no results.
+            [...document.querySelector(".container-body.listado").querySelectorAll(".listAds .ad:not(.similar):not(.featured)")].forEach(item => {
                 let url = item.querySelector(".detail-redirection").href;
                 let id = item.querySelector("[data-adid]").getAttribute("data-adid");
 
