@@ -22,10 +22,6 @@ class ZonaPropBrowser extends SiteBrowser {
         return false;
     }
 
-    logHtmlOnError() {
-        return true;
-    }
-
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 

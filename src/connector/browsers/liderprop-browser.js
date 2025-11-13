@@ -14,10 +14,6 @@ class LiderPropBrowser extends SiteBrowser {
         super(URL_REGEX);
     }
 
-    logHtmlOnError() {
-        return true;
-    }
-
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 

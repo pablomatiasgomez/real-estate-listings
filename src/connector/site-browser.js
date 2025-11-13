@@ -38,10 +38,6 @@ class SiteBrowser {
         return this.urlRegex.test(url);
     }
 
-    logHtmlOnError() {
-        return false;
-    }
-
     getId(url) {
         let match = this.urlRegex.exec(url);
         if (!match || match.length !== 2) throw new Error(`Url couldn't be parsed: ${url}`);
@@ -59,18 +55,18 @@ class SiteBrowser {
     extractUrlData(browserPage, url) {
         return this.loadUrl(browserPage, url).then(() => {
             return this.extractData(browserPage).catch(e => {
-                if (this.logHtmlOnError()) {
-                    return browserPage.evaluate(() => {
-                        return document.getElementsByTagName("html")[0].innerHTML;
-                    }).catch(htmlExtractError => {
-                        // If fails to retrieve HTML, return the original error.
-                        logger.error(`Failed to extract HTML from page.`, htmlExtractError);
-                        throw e;
-                    }).then(html => {
-                        throw new Error(`Error while extracting page data. HTML:\n------------------------------\n\n${html}\n\n------------------------------\n`, {cause: e});
-                    });
-                }
-                throw e;
+                // Save HTML to debug file for later analysis to understand what failed.
+                return browserPage.evaluate(() => {
+                    return document.getElementsByTagName("html")[0].innerHTML;
+                }).catch(htmlExtractError => {
+                    // If fails to retrieve HTML, log it, but throw the original error.
+                    logger.error(`Failed to extract HTML from page.`, htmlExtractError);
+                    throw e;
+                }).then(html => {
+                    return Utils.saveHtmlToDebugFile(html);
+                }).then(filePath => {
+                    throw new Error(`Error while extracting page data. HTML for debug was saved at ${filePath}`, {cause: e});
+                });
             });
         }).then(Utils.delay(2000));
     }

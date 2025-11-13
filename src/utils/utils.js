@@ -73,6 +73,20 @@ class Utils {
             });
         });
     }
+
+    /**
+     * Saves HTML content to a temp file for debugging purposes
+     * @param html the HTML content to save
+     * @returns {Promise<string>} the path to the created temp file
+     */
+    static saveHtmlToDebugFile(html) {
+        const timestamp = new Date().toISOString().split(".")[0];
+        const debugDir = Utils.createDirIfNotExists(path.join(__project_dir, 'debug'));
+        const fileName = `${timestamp}.html`;
+        const filePath = path.join(debugDir, fileName);
+
+        return Utils.createFile(filePath, html).then(() => filePath);
+    }
 }
 
 

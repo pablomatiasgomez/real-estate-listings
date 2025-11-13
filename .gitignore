@@ -10,3 +10,5 @@ exports/
 config.json
 urls.txt
 urls.txt.bk
+
+debug/
