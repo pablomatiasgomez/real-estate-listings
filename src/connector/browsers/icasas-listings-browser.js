@@ -6,7 +6,7 @@ const logger = newLogger('ICasasListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www\.icasas\.com\.ar\/venta\/(.+)$/;
+const URL_REGEX = /^https:\/\/www\.icasas\.com\.ar\/(.+)$/;
 
 class ICasasListingsBrowser extends ListingsSiteBrowser {
 
