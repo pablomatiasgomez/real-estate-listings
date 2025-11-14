@@ -16,7 +16,7 @@ class ArgenPropListingsBrowser extends ListingsSiteBrowser {
     }
 
     extractListPage(browserPage) {
-        logger.info(`Extracting list data for ${browserPage.url()}...`);
+        logger.info(`Extracting list data for ${browserPage.url()}`);
 
         return browserPage.evaluate(() => {
             let response = {
@@ -53,7 +53,9 @@ class ArgenPropListingsBrowser extends ListingsSiteBrowser {
     }
 
     getListPageUrl(listUrl, pageNumber) {
-        return `${listUrl}-pagina-${pageNumber}`;
+        if (listUrl.includes("pagina-")) throw new Error("listUrl already contains pagination!");
+        let appendChar = listUrl.includes("?") ? "&" : "?";
+        return `${listUrl}${appendChar}pagina-${pageNumber}`;
     }
 }
 

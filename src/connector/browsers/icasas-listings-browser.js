@@ -15,7 +15,7 @@ class ICasasListingsBrowser extends ListingsSiteBrowser {
     }
 
     extractListPage(browserPage) {
-        logger.info(`Extracting list data for ${browserPage.url()}...`);
+        logger.info(`Extracting list data for ${browserPage.url()}`);
 
         return browserPage.evaluate(() => {
             let response = {
