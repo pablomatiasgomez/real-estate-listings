@@ -57,7 +57,7 @@ class SiteBrowser {
             return this.extractData(browserPage).catch(e => {
                 // Save HTML to debug file for later analysis to understand what failed.
                 return browserPage.evaluate(() => {
-                    return document.getElementsByTagName("html")[0].innerHTML;
+                    return document.documentElement.outerHTML;
                 }).catch(htmlExtractError => {
                     // If fails to retrieve HTML, log it, but throw the original error.
                     logger.error(`Failed to extract HTML from page.`, htmlExtractError);
