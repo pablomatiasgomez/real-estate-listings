@@ -22,7 +22,7 @@
     "express": "^5.1.0",
     "json-diff": "^1.0.6",
     "node-cache": "^5.1.2",
-    "puppeteer": "^24.30.0",
+    "puppeteer": "^24.31.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sanitize-filename": "^1.6.3",
