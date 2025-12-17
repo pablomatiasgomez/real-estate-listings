@@ -100,14 +100,14 @@ Then you can run it using `./scripts/start.sh` which will run the app in backgro
 
 ### Running in foreground
 
-Simply run `./src/main.js --diff-check`
+Simply run `./src/main.js diff-check -c config.json`
 
 ### Run the app periodically
 
 If you want to run the app periodically, you could set up a cron like this:
 
 ```
-10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js --diff-check >> /path/real-estate-listings/logs/stdout.log 2>&1
+10 7 * * * /usr/local/bin/node /path/real-estate-listings/src/main.js diff-check -c /path/real-estate-listings/config.json >> /path/real-estate-listings/logs/stdout.log 2>&1
 ```
 
 ## TODO list

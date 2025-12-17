@@ -15,7 +15,7 @@ let Config = {
             "files": []
         }
     },
-    "runOnStartUp": "",
+    "runOnStartUp": "", // Executes command as a child process
     "browser": {
         "proxy": "",
         "xintelApiKey": "",

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
+const fs = require('node:fs');
+const util = require('node:util');
+
 global.__project_dir = __dirname + '/..';
 global.newLogger = className => require('./utils/logger.js').newLogger(className);
-global.config = Object.assign(require('./config.js'), require(`${__project_dir}/config.json`));
 
 const TerminalFont = require('./utils/terminal-font.js');
 const Utils = require('./utils/utils.js');
@@ -69,9 +71,26 @@ function initServicesAndExecute() {
     let differenceNotifierService;
     let webApiController;
 
+    let args = util.parseArgs({
+        args: process.argv.slice(2),
+        strict: false,
+        tokens: true,
+        options: {
+            config: {
+                type: 'string',
+                short: 'c',
+            },
+        },
+    });
+    let command = args.positionals[0];
+    let configFilePath = args.values.config;
+
+    // First assign global config from file:
+    global.config = Object.assign(require('./config.js'), JSON.parse(fs.readFileSync(configFilePath, 'utf8')));
+
     const ACTIONS = {
-        "--diff-check": () => getUrls().then(urls => differenceNotifierService.exportData(urls)),
-        "--web-api": () => {
+        "diff-check": () => getUrls().then(urls => differenceNotifierService.exportData(urls)),
+        "web-api": () => {
             webApiController.listen(8200);
             return new Promise(resolve => {
                 process.on("SIGTERM", () => webApiController.close(resolve));
@@ -80,9 +99,9 @@ function initServicesAndExecute() {
         }
     };
 
-    let action = ACTIONS[process.argv.slice(2)[0]];
+    let action = ACTIONS[command];
     if (!action) {
-        logger.error(`Invalid action: ${process.argv.slice(2)[0]}. Valid actions are: ${Object.keys(ACTIONS).join(", ")}`);
+        logger.error(`Invalid action: ${command}. Valid actions are: ${Object.keys(ACTIONS).join(", ")}`);
         return;
     }
 
