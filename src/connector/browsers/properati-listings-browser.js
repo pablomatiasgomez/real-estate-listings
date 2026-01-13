@@ -30,7 +30,7 @@ class ProperatiListingsBrowser extends ListingsSiteBrowser {
                 let price = item.querySelector(".price").innerText.trim();
                 let location = item.querySelector(".location").innerText.trim();
                 let seller = item.querySelector(".agency__name").innerText.trim();
-                let features = [...item.querySelectorAll(".properties span")].map(i => i.innerText.trim());
+                // let features = [...item.querySelectorAll(".properties span")].map(i => i.innerText.trim());
 
                 response[id] = {
                     url: url,
@@ -38,7 +38,8 @@ class ProperatiListingsBrowser extends ListingsSiteBrowser {
                     price: price,
                     location: location,
                     seller: seller,
-                    features: features,
+                    // Commented out as its returning flaky values
+                    // features: features,
                 };
             });
 
