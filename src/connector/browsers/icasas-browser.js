@@ -14,6 +14,15 @@ class ICasasBrowser extends SiteBrowser {
         super(URL_REGEX);
     }
 
+    getCookies() {
+        return [{
+            name: '_currency',
+            value: 'ARS',
+            domain: 'www.icasas.com.ar',
+            path: '/'
+        }];
+    }
+
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 

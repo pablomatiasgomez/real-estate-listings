@@ -34,6 +34,15 @@ class SiteBrowser {
         return true;
     }
 
+    /**
+     * Returns an array of cookies to be set before loading the page.
+     * Each cookie should be an object with at least: name, value, domain, path
+     * @returns {Array}
+     */
+    getCookies() {
+        return [];
+    }
+
     acceptsUrl(url) {
         return this.urlRegex.test(url);
     }
@@ -74,6 +83,12 @@ class SiteBrowser {
     loadUrl(browserPage, url, referer = "https://www.google.com/") {
         logger.info(`Loading url ${url}`);
         return Promise.resolve().then(() => {
+            let cookies = this.getCookies();
+            if (cookies.length > 0) {
+                logger.info(`Setting ${cookies.length} cookie(s) before loading page...`);
+                return browserPage.setCookie(...cookies);
+            }
+        }).then(() => {
             return browserPage.goto(url, {
                 waitUntil: 'load',
                 timeout: 5 * 60 * 1000,
