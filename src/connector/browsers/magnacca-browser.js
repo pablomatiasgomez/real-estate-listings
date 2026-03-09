@@ -6,7 +6,7 @@ const logger = newLogger('MagnaccaBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/magnaccapatelli\.com\/detalle_propiedad\.php\?id=(\d+)$/;
+const URL_REGEX = /^https:\/\/magnaccapatelli\.com\/detalle_propiedad\.php\?id=(\d+)(?:&.*)?$/;
 
 class MagnaccaBrowser extends SiteBrowser {
 
