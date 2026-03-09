@@ -6,7 +6,7 @@ const logger = newLogger('ZonaPropBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www\.zonaprop\.com\.ar\/propiedades\/.*-(\d+).html$/;
+const URL_REGEX = /^https:\/\/www\.zonaprop\.com\.ar\/propiedades\/.*-(\d+).html(?:\?.*)?$/;
 
 class ZonaPropBrowser extends SiteBrowser {
 
