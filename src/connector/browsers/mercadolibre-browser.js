@@ -28,9 +28,10 @@ class MercadoLibreBrowser extends SiteBrowser {
                 return scripts[0].innerText;
             }
 
-            if (document.querySelector(".ui-search")) {
-                // Redirected to search view.
-                // No data was found (probably got redirected and the house no longer exists)
+            if (
+                document.querySelector(".ui-search") ||                       // Redirected to search view (probably got redirected as the listing no longer exists)
+                document.querySelector("main#root-app > .ui-pdp-not-found")   // No data was found
+            ) {
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,
                     status: "OFFLINE",
