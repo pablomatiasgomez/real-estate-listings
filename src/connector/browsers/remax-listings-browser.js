@@ -6,7 +6,7 @@ const logger = newLogger('RemaxListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar\/listings\/(.+)$/;
+const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar\/listings\/((?:buy|rent).+)$/;
 
 class RemaxListingsBrowser extends ListingsSiteBrowser {
 

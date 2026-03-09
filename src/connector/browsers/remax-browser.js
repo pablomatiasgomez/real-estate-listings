@@ -6,7 +6,7 @@ const logger = newLogger('RemaxBrowser');
 
 //---------------
 
-const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar.*\/listings\/([\w\d-]+)$/;
+const URL_REGEX = /^https?:\/\/www\.remax\.com\.ar.*\/listings\/((?!buy|rent)[\w\d-]+)(?:\?.*)?$/;
 
 class RemaxBrowser extends SiteBrowser {
 
@@ -19,26 +19,17 @@ class RemaxBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "2"
+                EXPORT_VERSION: "3"
             };
 
-            let remaxData = JSON.parse(document.querySelector("#serverApp-state").innerHTML.replace(/&q;/g, '"'));
+            let ngState = JSON.parse(document.querySelector("#ng-state").textContent);
 
-            let listing = remaxData["listing-detail.listing"];
-            if (!listing) {
-                response.status = "UNLISTED";
-                return response;
-            }
+            let remaxData = Object.values(ngState)
+                .filter(v => v?.u?.includes("api/listings/findBySlug"))
+                .map(v => v.b.data)
+                [0];
 
-            Object.assign(response, listing);
-
-            // Geo object is big and contains no interesting data that may also randomly change.
-            response.geoLabel = response.geo.label;
-            delete response.geo;
-
-            response.description = response.description.split(/(?:\n|\. )+/).map(l => l.trim()).filter(l => !!l);
-            response.pictureUrls = response.photos.map(photo => photo.value);
-            delete response.photos;
+            Object.assign(response, remaxData);
 
             return response;
         });
