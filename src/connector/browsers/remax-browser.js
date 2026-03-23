@@ -19,7 +19,7 @@ class RemaxBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "3"
+                EXPORT_VERSION: "4"
             };
 
             let ngState = JSON.parse(document.querySelector("#ng-state").textContent);
@@ -30,6 +30,10 @@ class RemaxBrowser extends SiteBrowser {
                 [0];
 
             Object.assign(response, remaxData);
+
+            // Geo object contains ids that change from time to time
+            delete response.geo.id;
+            delete response.geo.rootCount;
 
             return response;
         });
