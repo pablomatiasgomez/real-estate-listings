@@ -18,9 +18,15 @@ class RemaxBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
-            let response = {
-                EXPORT_VERSION: "4"
-            };
+            const EXPORT_VERSION = "4";
+
+            if (window.location.pathname === "/") {
+                // Removed listings get redirected to the homepage.
+                return {
+                    EXPORT_VERSION: EXPORT_VERSION,
+                    status: "OFFLINE",
+                };
+            }
 
             let ngState = JSON.parse(document.querySelector("#ng-state").textContent);
 
@@ -29,7 +35,7 @@ class RemaxBrowser extends SiteBrowser {
                 .map(v => v.b.data)
                 [0];
 
-            Object.assign(response, remaxData);
+            let response = Object.assign({EXPORT_VERSION: EXPORT_VERSION}, remaxData);
 
             // Geo object contains ids that change from time to time
             delete response.geo.id;
