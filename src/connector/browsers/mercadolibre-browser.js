@@ -18,6 +18,10 @@ class MercadoLibreBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
+            if (window.location.pathname.startsWith("/gz/account-verification")) {
+                throw new Error("MercadoLibre bot-blocked: redirected to /gz/account-verification");
+            }
+
             let EXPORT_VERSION = "8";
 
             function findScript(strMatch) {

@@ -18,33 +18,38 @@ class MercadoLibreListingsBrowser extends ListingsSiteBrowser {
         logger.info(`Extracting list data for ${browserPage.url()}`);
 
         return browserPage.evaluate(() => {
+            if (window.location.pathname.startsWith("/gz/account-verification")) {
+                throw new Error("MercadoLibre bot-blocked: redirected to /gz/account-verification");
+            }
+
             let response = {
-                EXPORT_VERSION: "0"
+                EXPORT_VERSION: "1"
             };
 
-            // Always first query the container and then the items, so that if the page loads incorrectly, we get an error instead of no results.
-            [...document.querySelector(".ui-search-results").querySelectorAll(".ui-search-layout__item")].forEach(item => {
-                let id = item.querySelector("input[name='itemId']").value;
-                let price = item.querySelector(".ui-search-item__group--price .price-tag-amount").innerText.replace("\n", " ").trim();
-                let features = [...item.querySelectorAll(".ui-search-item__group--attributes li")].map(li => li.innerText.trim());
-                let title = item.querySelector(".ui-search-item__group--title .ui-search-item__title").innerText.trim();
-                let address = item.querySelector(".ui-search-item__group--location").innerText.trim();
-                let url = item.querySelector(".ui-search-link").href.split("#")[0];
+            // Listings data lives in a JSON-LD <script> inside .ui-search. Sponsored items don't have offers.url and are excluded.
+            let ldScript = document.querySelector(".ui-search script[type='application/ld+json']");
+            if (!ldScript) throw new Error("Couldn't find JSON-LD script!");
+            let ld = JSON.parse(ldScript.innerText);
 
-                response[id] = {
-                    price: price,
-                    features: features,
-                    title: title,
-                    address: address,
-                    url: url,
-                };
+            ld["@graph"].filter(entry => entry.offers && entry.offers.url).forEach(entry => {
+                let idMatch = entry.offers.url.match(/MLA-(\d+)/);
+                if (!idMatch) throw new Error(`Couldn't extract id from url: ${entry.offers.url}`);
+                let id = idMatch[1];
+
+                let item = Object.assign({}, entry);
+                delete item["@type"];
+                delete item["@context"];
+                delete item.mainEntityOfPage;
+                response[id] = item;
             });
 
-            let pages = [...document.querySelectorAll(".ui-search-pagination .andes-pagination__button a")]
-                .map(el => parseInt(el.innerText))
-                .filter(page => !isNaN(page));
-            if (!pages.length) pages = [1];
-            response.pages = pages;
+            // Pagination lives in the global rendering context script. last_page is 0 when single-page.
+            let ctxScript = document.querySelector("script#__NORDIC_RENDERING_CTX__");
+            if (!ctxScript) throw new Error("Couldn't find rendering ctx script!");
+            let lastPageMatch = ctxScript.innerText.match(/"last_page":(\d+)/);
+            if (!lastPageMatch) throw new Error("Couldn't find last_page in rendering ctx!");
+            let lastPage = parseInt(lastPageMatch[1]) || 1;
+            response.pages = Array.from({length: lastPage}, (_, i) => i + 1);
 
             return response;
         });
