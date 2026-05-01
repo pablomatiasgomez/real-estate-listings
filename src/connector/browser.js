@@ -92,7 +92,7 @@ class Browser {
 
     constructor() {
         puppeteerExtra.use(StealthPlugin());
-        this.userAgents = new UserAgents();
+        this.userAgents = new UserAgents({ deviceCategory: 'desktop' });
 
         this.browserOptions = {
             headless: !DEBUG,
