@@ -1,7 +1,5 @@
 'use strict';
 
-const TerminalFont = require('../utils/terminal-font.js');
-
 class Logger {
     static newLogger(className) {
         return new Logger(className);
@@ -21,24 +19,18 @@ class Logger {
     }
 
     warn() {
-        console.warn.apply(this, this.getArgsAsArray('WARN', [...arguments], TerminalFont.FgYellow));
+        console.warn.apply(this, this.getArgsAsArray('WARN', [...arguments]));
     }
 
     error() {
-        console.error.apply(this, this.getArgsAsArray('ERROR', [...arguments], TerminalFont.FgRed));
+        console.error.apply(this, this.getArgsAsArray('ERROR', [...arguments]));
     }
 
-    getArgsAsArray(type, args, color) {
+    getArgsAsArray(type, args) {
         let localISOTime = (new Date(Date.now() - this.timeZoneOffset)).toISOString().slice(0, -1);
         let clazz = `[${this.className}]`.padStart(Logger.maxClazzNameLength + 2);
         type = `[${type}]`.padEnd(7);
-        if (color) {
-            // Cannot use different arg item for the color because they are printed with spaces in the middle.
-            // Only concat on the first as we know is the localISOTime, and use another item for the reset so that we don't break args.
-            return [color + localISOTime, clazz, type, ...args, TerminalFont.Reset];
-        } else {
-            return [localISOTime, clazz, type, ...args];
-        }
+        return [localISOTime, clazz, type, ...args];
     }
 
 }

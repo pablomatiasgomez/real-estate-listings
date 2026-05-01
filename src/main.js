@@ -7,7 +7,6 @@ const util = require('node:util');
 global.__project_dir = __dirname + '/..';
 global.newLogger = className => require('./utils/logger.js').newLogger(className);
 
-const TerminalFont = require('./utils/terminal-font.js');
 const Utils = require('./utils/utils.js');
 
 const WebApiController = require('./controller/web-api-controller.js');
@@ -57,7 +56,7 @@ function getUrls() {
 function initServicesAndExecute() {
     logger.info('');
     logger.info('|==================================================================================');
-    logger.info(`|                          ${TerminalFont.Bright}Real Estate Listings${TerminalFont.Reset}`);
+    logger.info(`|                          Real Estate Listings`);
     logger.info('|==================================================================================');
     logger.info(`| Git changeset: ${Utils.CURRENT_BUILD.changeset}`);
     logger.info(`| Git branch: ${Utils.CURRENT_BUILD.branch}`);
