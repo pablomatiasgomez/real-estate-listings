@@ -7,7 +7,7 @@ const logger = newLogger('ArgenPropListingsBrowser');
 //---------------
 
 // (?!.*--) avoids 2 consecutive dashes, to avoid collision with ArgenPropBrowser.URL_REGEX url.
-const URL_REGEX = /^https:\/\/www\.argenprop\.com\/(?!.*--)([\/\w-]*)$/;
+const URL_REGEX = /^https:\/\/www\.argenprop\.com\/(?!.*--)([\/\w\-?&=]*)$/;
 
 class ArgenPropListingsBrowser extends ListingsSiteBrowser {
 
