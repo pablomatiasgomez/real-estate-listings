@@ -162,7 +162,7 @@ class Browser {
                 logger.error(`Failed to fetch data for url ${url}, tried ${tryCount} times, isRetryableError: ${isRetryableError}, skipping...`, e);
                 throw e;
             }
-            logger.error(`Failed to fetch data for url ${url}, tried ${tryCount}, trying again...`, e);
+            logger.warn(`Failed to fetch data for url ${url}, tried ${tryCount}, trying again...`, e);
             return this.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
                 return this.fetchData(url, tryCount + 1);
             });
