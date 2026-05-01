@@ -22,7 +22,6 @@ const LaGranInmobiliariaBrowser = require('./browsers/lagraninmobiliaria-browser
 const LaGranInmobiliariaListingsBrowser = require('./browsers/lagraninmobiliaria-listings-browser.js');
 const MalumaBrowser = require('./browsers/maluma-browser.js');
 const ICasasBrowser = require('./browsers/icasas-browser.js');
-const ICasasListingsBrowser = require('./browsers/icasas-listings-browser.js');
 const SiGroupBrowser = require('./browsers/sigroup-browser.js');
 const CabaPropBrowser = require('./browsers/cabaprop-browser.js');
 const CabaPropListingsBrowser = require('./browsers/cabaprop-listings-browser.js');
@@ -64,7 +63,8 @@ const SITE_BROWSERS = [
     new LaGranInmobiliariaListingsBrowser(),
     new MalumaBrowser(),
     new ICasasBrowser(),
-    new ICasasListingsBrowser(),
+    // Disabled: gives false-positive diffs. See src/connector/browsers/icasas-listings-browser.js for details.
+    // new ICasasListingsBrowser(),
     new SiGroupBrowser(),
     new CabaPropBrowser(),
     new CabaPropListingsBrowser(),

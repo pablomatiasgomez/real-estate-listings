@@ -14,7 +14,8 @@ class ICasasListingsBrowser extends ListingsSiteBrowser {
         super(URL_REGEX);
     }
 
-    // TODO: This looks to work for the currency but for whatever reason changes the screen to be responsive and the selectors break
+    // TODO: This looks to work for the currency but for whatever reason changes the screen to be responsive and the selectors break.
+    //  Also a problem when seraching for buying (USD) vs renting (ARS)...
     getCookies() {
         return [{
             name: '_currency',
