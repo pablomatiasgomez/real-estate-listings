@@ -160,6 +160,7 @@ class Browser {
             // Allow to retry by closing the browser and opening again.
             if (!isRetryableError || tryCount >= MAX_RETRY_TIMES) {
                 logger.error(`Failed to fetch data for url ${url}, tried ${tryCount} times, isRetryableError: ${isRetryableError}, skipping...`, e);
+                e.siteBrowserName = siteBrowser.name();
                 throw e;
             }
             logger.warn(`Failed to fetch data for url ${url}, tried ${tryCount}, trying again...`, e);

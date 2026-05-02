@@ -114,10 +114,11 @@ describe('exportData()', function () {
         let urlSkipped = `https://example.com/path-to-id-4`;
         let urls = [urlWithDifference, urlWithNoDifference, urlWithError, urlSkipped];
 
+        let fetchError = Object.assign(new Error(`Error getting ${urlWithError}`), { siteBrowserName: "TestBrowser" });
         let browserData = {
             [urlWithDifference]: Promise.resolve(dataForUrl(urlWithDifference)),
             [urlWithNoDifference]: Promise.resolve(dataForUrl(urlWithNoDifference)),
-            [urlWithError]: Promise.reject(`Error getting ${urlWithError}`),
+            [urlWithError]: Promise.reject(fetchError),
         };
         browser.fetchData.callsFake(url => browserData[url]);
 
@@ -141,7 +142,7 @@ describe('exportData()', function () {
                 ` {\n+  newField: "newValue"\n }\n`;
             sinon.assert.calledWith(notifierService.notify, expectedMessage);
 
-            expectedMessage = `Finished checking 4 urls (1 skipped) in 0 minutes, with 1 differences, and 1 errors.`;
+            expectedMessage = `Finished checking 4 urls (1 skipped) in 0 minutes, with 1 differences, and 1 errors (TestBrowser: 1).`;
             sinon.assert.calledWith(notifierService.notify, expectedMessage);
         });
     });

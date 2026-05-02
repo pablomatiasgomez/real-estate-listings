@@ -24,7 +24,7 @@ class DifferenceNotifierService {
         let startTime = Date.now();
         let totalSkipped = 0;
         let totalDiffs = 0;
-        let totalErrors = 0;
+        let errorsByBrowser = {};
         let promise = Promise.resolve();
         urls.forEach((url, i) => {
             promise = promise.then(() => {
@@ -46,13 +46,18 @@ class DifferenceNotifierService {
                 });
             }).catch(e => {
                 // Log error and continue
-                totalErrors++;
+                let browserName = e.siteBrowserName || "unknown";
+                errorsByBrowser[browserName] = (errorsByBrowser[browserName] || 0) + 1;
                 logger.error(`Failed to export data for url: ${url} `, e);
             });
         });
         return promise.then(() => {
             let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60));
-            let message = `Finished checking ${urls.length} urls (${totalSkipped} skipped) in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors.`;
+            let totalErrors = Object.values(errorsByBrowser).reduce((sum, n) => sum + n, 0);
+            let errorsBreakdown = totalErrors > 0 ?
+                ` (${Object.entries(errorsByBrowser).map(([name, count]) => `${name}: ${count}`).join(", ")})` :
+                "";
+            let message = `Finished checking ${urls.length} urls (${totalSkipped} skipped) in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors${errorsBreakdown}.`;
             logger.info(message);
             return this.notifierService.notify(message);
         });
