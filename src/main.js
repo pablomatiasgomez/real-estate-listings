@@ -123,8 +123,10 @@ function initServicesAndExecute() {
             commandService.close();
         }
 
-        logger.info(`Shutting down the browser..`);
-        return browser.close();
+        if (browser) {
+            logger.info(`Shutting down the browser..`);
+            return browser.close();
+        }
     });
 }
 
