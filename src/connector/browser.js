@@ -92,7 +92,7 @@ class Browser {
 
     constructor() {
         puppeteerExtra.use(StealthPlugin());
-        this.userAgents = new UserAgents({ deviceCategory: 'desktop' });
+        this.userAgents = new UserAgents({deviceCategory: 'desktop'});
 
         this.browserOptions = {
             headless: !DEBUG,
@@ -227,15 +227,11 @@ class Browser {
     closeCurrentBrowser() {
         logger.info(`Closing current ${this.currentBrowserKind} browser...`);
 
-        let closeables = [
-            this.currentBrowserPage,
-            this.currentBrowser,
-        ];
-        let promise = Promise.resolve();
-        closeables.filter(closeable => !!closeable).forEach(closeable => {
-            promise = promise.then(() => closeable.close());
-        });
-        return promise.then(() => {
+        return Promise.resolve().then(() => {
+            return this.currentBrowserPage && this.currentBrowserPage.close();
+        }).then(() => {
+            return this.currentBrowser && this.currentBrowser.close();
+        }).then(() => {
             this.currentBrowserKind = null;
             this.currentBrowser = null;
             this.currentBrowserPage = null;
