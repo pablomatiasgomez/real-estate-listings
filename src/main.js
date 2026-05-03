@@ -105,18 +105,19 @@ function initServicesAndExecute() {
     }
 
     return Promise.resolve().then(() => {
-        if (config.runOnStartUp) {
-            commandService = new CommandService(config.runOnStartUp);
-            return commandService.run();
-        }
-    }).then(() => {
         fileDataRepository = new FileDataRepository();
         browser = new Browser();
         notifierService = new NotifierService();
         differenceNotifierService = new DifferenceNotifierService(fileDataRepository, browser, notifierService);
         webApiController = new WebApiController(fileDataRepository, browser);
+    }).then(() => {
+        if (config.runOnStartUp) {
+            commandService = new CommandService(config.runOnStartUp);
+            return commandService.run();
+        }
     }).then(action).catch(e => {
-        return logger.error("Error executing action!", e);
+        logger.error("Error executing action!", e);
+        return notifierService && notifierService.notify(`Error executing action: ${e.message || e}`);
     }).finally(() => {
         if (commandService) {
             logger.info(`Shutting down command..`);
