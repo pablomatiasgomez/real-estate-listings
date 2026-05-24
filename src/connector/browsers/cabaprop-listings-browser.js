@@ -51,8 +51,8 @@ class CabaPropListingsBrowser extends ListingsSiteBrowser {
 
             let pagesSelector = document.querySelectorAll(".pagination li");
             let pageCount = parseInt(pagesSelector[pagesSelector.length - 2].innerText.trim());
-
             response.pages = window.BrowserUtils.pageCountToPagesArray(pageCount);
+
             return response;
         });
     }

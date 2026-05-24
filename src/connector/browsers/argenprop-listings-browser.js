@@ -45,9 +45,10 @@ class ArgenPropListingsBrowser extends ListingsSiteBrowser {
                 };
             });
 
-            response.pages = [...document.querySelectorAll(".pagination__page:not(.pagination__page-prev):not(.pagination__page-next)")]
-                .map(a => parseInt(a.innerText))
-                .filter(page => !isNaN(page));
+            let pagesSelector = document.querySelectorAll(".pagination__page:not(.pagination__page-prev):not(.pagination__page-next)");
+            let pageCount = pagesSelector.length ? parseInt(pagesSelector[pagesSelector.length - 1].innerText.trim()) : 1;
+            response.pages = window.BrowserUtils.pageCountToPagesArray(pageCount);
+
             return response;
         });
     }
