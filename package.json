@@ -22,11 +22,11 @@
     "express": "^5.2.1",
     "json-diff": "^1.0.6",
     "node-cache": "^5.1.2",
-    "puppeteer": "^25.0.4",
+    "puppeteer": "^25.1.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sanitize-filename": "^1.6.4",
-    "user-agents": "^2.1.70"
+    "user-agents": "^2.1.79"
   },
   "devDependencies": {
     "mocha": "^11.7.6",
