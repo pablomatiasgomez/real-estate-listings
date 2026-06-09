@@ -6,7 +6,7 @@ const logger = newLogger('ProperatiBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/detalle\/(.+?)_.*$/;
+const URL_REGEX = /^https:\/\/www\.properati\.com\.ar\/detalle\/(.+?)$/;
 
 class ProperatiBrowser extends SiteBrowser {
 
@@ -19,41 +19,45 @@ class ProperatiBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "7"
+                EXPORT_VERSION: "8"
             };
 
-            let propertyProps = window.__NEXT_DATA__.props.pageProps.property;
-            if (!propertyProps) {
+            // Properati no longer ships a __NEXT_DATA__ blob. The detail page is now server-rendered
+            // HTML and the data has to be read straight from the DOM.
+            let detail = document.querySelector(".adform__detail");
+            let title = document.querySelector(".main-title h1");
+            if (!detail || !title) {
                 // Got not found page, property unlisted.
                 response.status = "UNLISTED";
                 return response;
             }
 
-            Object.assign(response, JSON.parse(JSON.stringify(propertyProps)));
+            response.title = title.innerText.trim();
+            response.location = document.querySelector(".row-details .left-details .location")?.innerText.trim() || null;
 
-            // Many properties under seller object change too frequently. Removing it as it is not even useful info.
-            delete response.seller;
-
-            delete response.published_on;
-            delete response.whatsapp_url;
-
-            if (response.features) {
-                response.features.sort((a, b) => a.category.localeCompare(b.category));
-                response.features.forEach(feature => feature.features.sort((a, b) => a.key.localeCompare(b.key)));
+            // Price lives in a div that also holds a nested period (e.g. "/mes"). Read the leading
+            // text node for the amount and the nested element for the period separately.
+            let priceEl = document.querySelector('[data-test="listing-price"]');
+            if (priceEl) {
+                response.price = priceEl.firstChild?.textContent.trim() || null;
+                response.pricePeriod = priceEl.querySelector(".prices-and-fees__month")?.innerText.trim() || null;
             }
 
-            response.tags = (response.tags || []).map(tag => tag.name);
-
-            response.place = response.place.parent_names.join(", ");
-
-            response.pictureUrls = (response.images || []).map(image => {
-                let pictureUrl = image.sizes["1080"].jpg;
-                if (!pictureUrl) throw new Error("Couldn't find picture url!");
-                let match = /filters:strip_icc\(\)\/(.*)$/.exec(pictureUrl);
-                if (!match || match.length !== 2) throw new Error("pictureUrl couldn't be parsed: " + pictureUrl);
-                return decodeURIComponent(match[1]);
+            // Features: main place details (bedrooms, bathrooms, area, ...) plus the property specs
+            // (property type, operation type, construction year, ...), keyed by their data-test name.
+            response.features = {};
+            [
+                ...document.querySelectorAll(".row-details .place-details .details-item-value[data-test]"),
+                ...document.querySelectorAll(".place-features .place-features__values[data-test]"),
+            ].forEach(el => {
+                let key = el.getAttribute("data-test").replace(/-value$/, "");
+                response.features[key] = el.innerText.trim();
             });
-            delete response.images;
+
+            let descEl = document.getElementById("description-text");
+            response.description = descEl ? descEl.innerText.split("\n").map(l => l.trim()).filter(l => !!l) : [];
+
+            response.agency = document.querySelector('[data-test="agency-name"]')?.innerText.trim() || null;
 
             return response;
         });
