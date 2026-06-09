@@ -98,6 +98,7 @@ describe('exportData()', function () {
         return {
             url: url,
             id: url.slice(-1),
+            name: "TestBrowser",
             data: {
                 EXPORT_VERSION: 1,
                 oldField: "oldValue",
@@ -142,7 +143,13 @@ describe('exportData()', function () {
                 ` {\n+  newField: "newValue"\n }\n`;
             sinon.assert.calledWith(notifierService.notify, expectedMessage);
 
-            expectedMessage = `Finished checking 4 urls (1 skipped) in 0 minutes, with 1 differences, and 1 errors (TestBrowser: 1).`;
+            expectedMessage = `Finished checking 4 urls in 0 minutes.\n` +
+                `Differences: 1\n` +
+                `  TestBrowser: 1\n` +
+                `Skipped: 1\n` +
+                `  example.com: 1\n` +
+                `Errors: 1\n` +
+                `  TestBrowser: 1`;
             sinon.assert.calledWith(notifierService.notify, expectedMessage);
         });
     });

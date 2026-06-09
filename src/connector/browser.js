@@ -141,6 +141,7 @@ class Browser {
                 return {
                     id: this.getUrlIdWithSiteBrowser(url, siteBrowser),
                     url: url,
+                    name: siteBrowser.name(),
                     data: data
                 };
             });
