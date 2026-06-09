@@ -7,6 +7,18 @@ const logger = newLogger('DifferenceNotifierService');
 //----------------------
 
 /**
+ * Formats a labeled total with a nested per-key breakdown, e.g.:
+ *   Skipped: 8
+ *     mercadolibre.com.ar: 5
+ *     argenprop.com: 3
+ */
+function formatBreakdown(label, countsByKey) {
+    let total = Object.values(countsByKey).reduce((sum, n) => sum + n, 0);
+    let lines = Object.entries(countsByKey).map(([key, count]) => `  ${key}: ${count}`);
+    return [`${label}: ${total}`, ...lines].join("\n");
+}
+
+/**
  * Service that exports all the given urls and compares the data against the previous exported version.
  * If any difference is found, it notifies using the notifierService
  */
@@ -22,8 +34,8 @@ class DifferenceNotifierService {
         logger.info(`Exporting ${urls.length} urls..`);
 
         let startTime = Date.now();
-        let totalSkipped = 0;
-        let totalDiffs = 0;
+        let skippedByDomain = {};
+        let diffsByBrowser = {};
         let errorsByBrowser = {};
         let promise = Promise.resolve();
         urls.forEach((url, i) => {
@@ -34,13 +46,16 @@ class DifferenceNotifierService {
                 return this.browser.fetchData(url);
             }).then(response => {
                 if (!response) { // Skip not handled urls.
-                    totalSkipped++;
+                    let domain = new URL(url).hostname;
+                    skippedByDomain[domain] = (skippedByDomain[domain] || 0) + 1;
                     return;
                 }
 
                 // Check for data changes and notify:
                 return this.verifyDataDifference(response.url, response.id, response.data).then(hadDifference => {
-                    if (hadDifference) totalDiffs++;
+                    if (hadDifference) {
+                        diffsByBrowser[response.name] = (diffsByBrowser[response.name] || 0) + 1;
+                    }
                     logger.info(`Going to save data exported for id ${response.id}`);
                     return this.fileDataRepository.createNewDataFile(response.id, response.data);
                 });
@@ -53,11 +68,10 @@ class DifferenceNotifierService {
         });
         return promise.then(() => {
             let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60));
-            let totalErrors = Object.values(errorsByBrowser).reduce((sum, n) => sum + n, 0);
-            let errorsBreakdown = totalErrors > 0 ?
-                ` (${Object.entries(errorsByBrowser).map(([name, count]) => `${name}: ${count}`).join(", ")})` :
-                "";
-            let message = `Finished checking ${urls.length} urls (${totalSkipped} skipped) in ${elapsedMinutes} minutes, with ${totalDiffs} differences, and ${totalErrors} errors${errorsBreakdown}.`;
+            let message = `Finished checking ${urls.length} urls in ${elapsedMinutes} minutes.\n` +
+                formatBreakdown("Differences", diffsByBrowser) + "\n" +
+                formatBreakdown("Skipped", skippedByDomain) + "\n" +
+                formatBreakdown("Errors", errorsByBrowser);
             logger.info(message);
             return this.notifierService.notify(message);
         });
