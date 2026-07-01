@@ -8,6 +8,8 @@ const logger = newLogger('NotifierService');
 
 const TELEGRAM_MESSAGE_BYTES_LIMIT = 4096;
 const TELEGRAM_BASE_URL = 'https://api.telegram.org';
+const MAX_SEND_RETRIES = 3;
+const RETRY_BACKOFF_MS = 500;
 
 class NotifierService {
     constructor() {
@@ -24,7 +26,7 @@ class NotifierService {
         let promise = Promise.resolve();
         this.splitMessage(message).forEach(message => {
             promise = promise.then(() => {
-                return this.sendHTMLMessage(message).catch(e => {
+                return this.sendWithRetry(message).catch(e => {
                     logger.error("Error while notifying to telegram.. ", e);
                 });
             }).then(Utils.delay(200));
@@ -53,25 +55,39 @@ class NotifierService {
     }
 
     /**
+     * Sends the message, retrying up to MAX_SEND_RETRIES times with a small linear backoff on failure.
+     * @param {string} message
+     * @param {number} attempt - current attempt (1-based)
+     * @returns {Promise<void>}
+     */
+    sendWithRetry(message, attempt = 1) {
+        return this.sendMessage(message).catch(e => {
+            if (attempt >= MAX_SEND_RETRIES) throw e;
+            let backoffMs = RETRY_BACKOFF_MS * attempt;
+            logger.info(`sendMessage attempt ${attempt}/${MAX_SEND_RETRIES} failed (${e.message}). Retrying in ${backoffMs}ms..`);
+            return Utils.delay(backoffMs)().then(() => this.sendWithRetry(message, attempt + 1));
+        });
+    }
+
+    /**
      * Actually sends the message to TelegramAPI.
      * @param message
      * @returns {Promise<void>}
      */
-    sendHTMLMessage(message) {
+    sendMessage(message) {
         return fetch(TELEGRAM_BASE_URL + '/bot' + this.token + '/sendMessage', {
             method: 'POST',
             body: new URLSearchParams({
                 chat_id: this.chatId,
                 text: message,
-                parse_mode: 'HTML',
             }),
         }).then(response => {
-            if (response.status !== 200) return response.text().then(response => {
-                throw new Error(`Error while executing sendMessage to TelegramAPI: ${response.status}`);
+            if (response.status !== 200) return response.text().then(body => {
+                throw new Error(`Error while executing sendMessage to TelegramAPI: HTTP ${response.status} - ${body}`);
             });
             return response.json();
         }).then(response => {
-            if (!response.ok) throw new Error(`Error while executing sendMessage to TelegramAPI: ${response}`);
+            if (!response.ok) throw new Error(`Error while executing sendMessage to TelegramAPI: ${JSON.stringify(response)}`);
             return response;
         });
     }
