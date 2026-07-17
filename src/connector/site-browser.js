@@ -105,6 +105,15 @@ class SiteBrowser {
                 timeout: 5 * 60 * 1000,
                 referer: referer,
             });
+        }).then(response => {
+            // A 5xx means the server (or an upstream gateway) transiently failed - e.g. a 502 that renders as
+            // Chrome's error page. Parsing that as content produces false positives (e.g. a bogus OFFLINE), so
+            // surface it as a retryable error instead.
+            if (response && response.status() >= 500) {
+                let error = new Error(`Server error: HTTP ${response.status()} while loading ${url}`);
+                error.retryableHttpError = true;
+                throw error;
+            }
         }).then(Utils.delay(config.browser.timeBetweenPageFetchesMs)).then(() => {
             this.addCommonFunctions(browserPage);
         });

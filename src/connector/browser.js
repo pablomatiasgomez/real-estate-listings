@@ -151,12 +151,14 @@ class Browser {
              * - TimeoutError: when the page is not loaded in time or the element is not found
              * - ProtocolError: when the page is closed before the screenshot is taken
              * - That include the message "Target closed" or "Protocol error" - e.g: Protocol error (Page.captureScreenshot): Target closed or Protocol error (DOM.describeNode): Target closed"
+             * - retryableHttpError: a transient server error (5xx) detected while loading the page (see SiteBrowser.loadUrl)
              */
             const isRetryableError =
                 e instanceof puppeteer.TimeoutError ||
                 e instanceof puppeteer.ProtocolError ||
                 e.message.includes('Protocol error') ||
-                e.message.includes('Target closed');
+                e.message.includes('Target closed') ||
+                e.retryableHttpError === true;
 
             // Allow to retry by closing the browser and opening again.
             if (!isRetryableError || tryCount >= MAX_RETRY_TIMES) {
