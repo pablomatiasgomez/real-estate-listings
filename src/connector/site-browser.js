@@ -64,20 +64,31 @@ class SiteBrowser {
     extractUrlData(browserPage, url) {
         return this.loadUrl(browserPage, url).then(() => {
             return this.extractData(browserPage).catch(e => {
-                // Save HTML to debug file for later analysis to understand what failed.
-                return browserPage.evaluate(() => {
-                    return document.documentElement.outerHTML;
-                }).catch(htmlExtractError => {
-                    // If fails to retrieve HTML, log it, but throw the original error.
-                    logger.error(`Failed to extract HTML from page.`, htmlExtractError);
-                    throw e;
-                }).then(html => {
-                    return Utils.saveHtmlToDebugFile(html);
-                }).then(filePath => {
-                    throw new Error(`Error while extracting page data. HTML for debug was saved at ${filePath}`, {cause: e});
+                // Save HTML to a debug file for later analysis to understand what failed.
+                return this.captureDebugHtml(browserPage).then(filePath => {
+                    let savedAt = filePath ? `HTML for debug was saved at ${filePath}` : `debug HTML could not be saved`;
+                    throw new Error(`Error while extracting page data. ${savedAt}`, {cause: e});
                 });
             });
         }).then(Utils.delay(2000));
+    }
+
+    /**
+     * Captures the current page's full HTML and saves it to a debug file for later analysis.
+     * Never throws: on failure it logs and resolves to null.
+     * @param browserPage the puppeteer browser page
+     * @param label optional label included in the debug file name to make it identifiable
+     * @returns {Promise<string|null>} the path to the saved debug file, or null if it couldn't be saved
+     */
+    captureDebugHtml(browserPage, label) {
+        return browserPage.evaluate(() => {
+            return document.documentElement.outerHTML;
+        }).then(html => {
+            return Utils.saveHtmlToDebugFile(html, label);
+        }).catch(e => {
+            logger.error(`Failed to capture debug HTML from page.`, e);
+            return null;
+        });
     }
 
     loadUrl(browserPage, url, referer = "https://www.google.com/") {

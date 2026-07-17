@@ -77,12 +77,14 @@ class Utils {
     /**
      * Saves HTML content to a temp file for debugging purposes
      * @param html the HTML content to save
+     * @param label optional label included in the file name to make the debug file identifiable
      * @returns {Promise<string>} the path to the created temp file
      */
-    static saveHtmlToDebugFile(html) {
+    static saveHtmlToDebugFile(html, label) {
         const timestamp = new Date().toISOString().split(".")[0];
         const debugDir = Utils.createDirIfNotExists(path.join(__project_dir, 'debug'));
-        const fileName = `${timestamp}.html`;
+        const safeLabel = label ? "-" + label.replace(/[^\w.-]+/g, "_") : "";
+        const fileName = `${timestamp}${safeLabel}.html`;
         const filePath = path.join(debugDir, fileName);
 
         return Utils.createFile(filePath, html).then(() => filePath);

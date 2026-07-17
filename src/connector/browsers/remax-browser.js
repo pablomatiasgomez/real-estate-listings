@@ -14,6 +14,10 @@ class RemaxBrowser extends SiteBrowser {
         super(URL_REGEX);
     }
 
+    useStealthBrowser() {
+        return true;
+    }
+
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 
@@ -42,6 +46,15 @@ class RemaxBrowser extends SiteBrowser {
             delete response.geo.rootCount;
 
             return response;
+        }).then(data => {
+            // We have had some false positives for OFFLINE status, so dump the html to see what is going on.
+            if (data && data.status === "OFFLINE") {
+                return this.captureDebugHtml(browserPage).then(filePath => {
+                    if (filePath) logger.warn(`Remax listing is OFFLINE. Saved debug HTML to ${filePath}`);
+                    return data;
+                });
+            }
+            return data;
         });
     }
 }
