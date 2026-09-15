@@ -115,7 +115,7 @@ class SiteBrowser {
                 throw error;
             }
         }).then(Utils.delay(config.browser.timeBetweenPageFetchesMs)).then(() => {
-            this.addCommonFunctions(browserPage);
+            return this.addCommonFunctions(browserPage);
         });
     }
 

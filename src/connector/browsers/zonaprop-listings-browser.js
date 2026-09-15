@@ -79,7 +79,8 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
                 };
             });
 
-            response.pages = evalWindow.__PRELOADED_STATE__.listStore.paging.pages;
+            // paging.pages is only the pager widget window (see showFrom/showUntil), not every page.
+            response.pages = window.BrowserUtils.pageCountToPagesArray(evalWindow.__PRELOADED_STATE__.listStore.paging.totalPages);
             return response;
         });
     }
