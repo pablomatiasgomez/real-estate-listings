@@ -17,19 +17,19 @@
     "url": "https://www.pablomatiasgomez.com.ar"
   },
   "dependencies": {
-    "@googleapis/sheets": "^14.0.0",
+    "@googleapis/sheets": "^18.0.0",
     "async": "^3.2.6",
     "express": "^5.2.1",
     "json-diff": "^1.0.6",
     "node-cache": "^5.1.2",
-    "puppeteer": "^25.6.0",
+    "puppeteer": "^25.11.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sanitize-filename": "^1.6.4",
-    "user-agents": "^2.1.150"
+    "user-agents": "^2.1.184"
   },
   "devDependencies": {
-    "mocha": "^11.8.0",
+    "mocha": "^12.0.1",
     "nyc": "^18.0.0",
     "sinon": "^22.1.0"
   },
