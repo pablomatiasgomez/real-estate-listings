@@ -209,7 +209,6 @@ class Browser {
         // - Close the previous browser and open the new one in order to only have one open at a time.
         // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
         return this.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
-            this.currentBrowserKind = browserKind;
             let launcher = browserKind === BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
             logger.info(`Opening a new browser for kind ${browserKind} ...`);
             return launcher.launch(this.browserOptions);
@@ -217,6 +216,7 @@ class Browser {
             this.currentBrowser = browser;
             return this.currentBrowser.newPage();
         }).then(page => {
+            this.currentBrowserKind = browserKind;
             this.currentBrowserPage = page;
             return this.currentBrowserPage;
         });
