@@ -18,7 +18,10 @@ class MercadoLibreListingsBrowser extends ListingsSiteBrowser {
         return super.detectBotBlock(browserPage).then(blockReason => {
             if (blockReason) return blockReason;
             return browserPage.evaluate(() => {
-                return window.location.pathname.startsWith("/gz/account-verification") ? "MercadoLibre account verification" : null;
+                if (window.location.pathname.startsWith("/gz/account-verification")) return "MercadoLibre account verification";
+                // "Por seguridad, completá este paso" page, served by the abuse-captcha frontend.
+                if (document.documentElement.dataset.assetsPrefix?.includes("abuse-captcha")) return "MercadoLibre captcha";
+                return null;
             });
         });
     }

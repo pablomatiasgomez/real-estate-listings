@@ -65,6 +65,8 @@ class SiteBrowser {
     extractUrlData(browserPage, url) {
         return this.loadUrl(browserPage, url).then(() => {
             return this.extractData(browserPage).catch(e => {
+                // A block while loading a later page (e.g. listings pagination) is not an extraction failure, keep it as is.
+                if (e instanceof BotBlockedError) throw e;
                 // Save HTML to a debug file for later analysis to understand what failed.
                 return this.captureDebugHtml(browserPage).then(filePath => {
                     let savedAt = filePath ? `HTML for debug was saved at ${filePath}` : `debug HTML could not be saved`;
