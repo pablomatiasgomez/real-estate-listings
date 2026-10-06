@@ -57,6 +57,13 @@ class MercadoLibreBrowser extends SiteBrowser {
                 if (!container) throw new Error("Couldn't find valid container!");
 
                 let eventData = getEventData();
+                // A closed listing is sometimes still rendered, instead of redirecting to the search view, so it's treated the same way.
+                if (eventData.item_status === "closed") {
+                    return {
+                        EXPORT_VERSION: EXPORT_VERSION,
+                        status: "OFFLINE",
+                    };
+                }
                 // item_status is e.g. "active" or "paused". The ".ui-pdp-message" banners are not used as there can be unrelated ones (e.g. seller reputation).
                 let status = eventData.item_status === "active" ? "ONLINE" : eventData.item_status.toUpperCase();
 
