@@ -30,7 +30,7 @@ class MercadoLibreBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
-            let EXPORT_VERSION = "8";
+            let EXPORT_VERSION = "9";
 
             // Item data sent to MercadoLibre's own analytics: melidata("add","event_data",{...});
             function getEventData() {
@@ -78,12 +78,7 @@ class MercadoLibreBrowser extends SiteBrowser {
                 //     return features;
                 // }, {});
 
-                // All gallery pictures are "img.ui-pdp-image" (with an optional --vertical/--horizontal orientation modifier).
-                // The carousel repeats some of them, so they are deduped.
-                let pictureUrls = [...new Set([...container.querySelectorAll(".ui-pdp-gallery img.ui-pdp-image")]
-                    .map(i => i.getAttribute("data-zoom") || (i.getAttribute("data-src") || i.getAttribute("src")).replace("-O.webp", "-F.webp")))];
-
-                // address, description and features removed for now as they are flaky (appear and disappear)
+                // address, description, features and pictures removed for now as they are flaky (appear and disappear, or depend on the page layout)
                 return {
                     EXPORT_VERSION: EXPORT_VERSION,
                     status: status,
@@ -96,7 +91,6 @@ class MercadoLibreBrowser extends SiteBrowser {
                     sellerId: sellerId,
                     listingType: listingType,
                     // features: features,
-                    pictureUrls: pictureUrls,
                 };
             } else {
                 throw new Error("Couldn't find any valid element!");
