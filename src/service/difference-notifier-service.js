@@ -13,10 +13,17 @@ const logger = newLogger('DifferenceNotifierService');
  *   Skipped: 8
  *     mercadolibre.com.ar: 5
  *     argenprop.com: 3
+ * Keys with a count lower than minCount are grouped together in a single "others" line, e.g. with minCount 2:
+ *   Skipped: 10
+ *     mercadolibre.com.ar: 5
+ *     others: 5
  */
-function formatBreakdown(label, countsByKey) {
+function formatBreakdown(label, countsByKey, minCount = 1) {
     let total = Object.values(countsByKey).reduce((sum, n) => sum + n, 0);
-    let lines = Object.entries(countsByKey).map(([key, count]) => `  ${key}: ${count}`);
+    let entries = Object.entries(countsByKey);
+    let lines = entries.filter(([, count]) => count >= minCount).map(([key, count]) => `  ${key}: ${count}`);
+    let othersCount = entries.filter(([, count]) => count < minCount).reduce((sum, [, count]) => sum + count, 0);
+    if (othersCount > 0) lines.push(`  others: ${othersCount}`);
     return [`${label}: ${total}`, ...lines].join("\n");
 }
 
@@ -74,7 +81,7 @@ class DifferenceNotifierService {
             let elapsedMinutes = Math.round(((Date.now() - startTime) / 1000 / 60));
             let message = `Finished checking ${urls.length} urls in ${elapsedMinutes} minutes.\n` +
                 formatBreakdown("Differences", diffsByBrowser) + "\n" +
-                formatBreakdown("Skipped", skippedByDomain) + "\n" +
+                formatBreakdown("Skipped", skippedByDomain, 2) + "\n" +
                 formatBreakdown("Blocked", blockedByBrowser) + "\n" +
                 formatBreakdown("Errors", errorsByBrowser);
             logger.info(message);

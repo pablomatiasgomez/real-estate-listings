@@ -109,13 +109,14 @@ describe('exportData()', function () {
     };
 
     it('happy path with all cases', function () {
-        // We will process 5 urls: 1 difference, 1 with no difference, 1 error, 1 skipped, 1 bot blocked.
+        // We will process 7 urls: 1 difference, 1 with no difference, 1 error, 3 skipped (2 from the same domain), 1 bot blocked.
         let urlWithDifference = `https://example.com/path-to-id-1`;
         let urlWithNoDifference = `https://example.com/path-to-id-2`;
         let urlWithError = `https://example.com/path-to-id-3`;
         let urlSkipped = `https://example.com/path-to-id-4`;
         let urlBlocked = `https://example.com/path-to-id-5`;
-        let urls = [urlWithDifference, urlWithNoDifference, urlWithError, urlSkipped, urlBlocked];
+        let urlsSkippedSameDomain = [`https://skipped.com/path-to-id-6`, `https://skipped.com/path-to-id-7`];
+        let urls = [urlWithDifference, urlWithNoDifference, urlWithError, urlSkipped, urlBlocked, ...urlsSkippedSameDomain];
 
         let fetchError = Object.assign(new Error(`Error getting ${urlWithError}`), { siteBrowserName: "TestBrowser" });
         let blockedError = Object.assign(new BotBlockedError("AWS WAF captcha", urlBlocked), { siteBrowserName: "TestBrowser" });
@@ -147,11 +148,13 @@ describe('exportData()', function () {
                 ` {\n+  newField: "newValue"\n }\n`;
             sinon.assert.calledWith(notifierService.notify, expectedMessage);
 
-            expectedMessage = `Finished checking 5 urls in 0 minutes.\n` +
+            // Domains with a single skip are grouped as "others".
+            expectedMessage = `Finished checking 7 urls in 0 minutes.\n` +
                 `Differences: 1\n` +
                 `  TestBrowser: 1\n` +
-                `Skipped: 1\n` +
-                `  example.com: 1\n` +
+                `Skipped: 3\n` +
+                `  skipped.com: 2\n` +
+                `  others: 1\n` +
                 `Blocked: 1\n` +
                 `  TestBrowser: 1\n` +
                 `Errors: 1\n` +
