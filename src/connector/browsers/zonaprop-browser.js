@@ -69,14 +69,17 @@ class ZonaPropBrowser extends SiteBrowser {
             });
             delete response.pictures;
 
-            // Zonaprop alternates between sending null fields and omitting them, which causes noisy diffs.
+            // ZonaProp alternates between sending null fields and omitting them, which causes noisy diffs.
             let removeNulls = obj => {
                 if (Array.isArray(obj)) {
                     obj.forEach(removeNulls);
                 } else if (obj && typeof obj === "object") {
                     Object.keys(obj).forEach(key => {
-                        if (obj[key] === null || obj[key] === undefined) delete obj[key];
-                        else removeNulls(obj[key]);
+                        if (obj[key] === null || obj[key] === undefined) {
+                            delete obj[key];
+                        } else {
+                            removeNulls(obj[key]);
+                        }
                     });
                 }
                 return obj;
