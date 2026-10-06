@@ -15,10 +15,6 @@ class ArgenPropListingsBrowser extends ListingsSiteBrowser {
         super(URL_REGEX);
     }
 
-    useStealthBrowser() {
-        return true;
-    }
-
     extractListPage(browserPage) {
         logger.info(`Extracting list data for ${browserPage.url()}`);
 

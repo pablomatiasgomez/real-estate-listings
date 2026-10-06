@@ -95,23 +95,29 @@ class Browser {
         this.browserOptions = {
             headless: !DEBUG,
             devtools: DEBUG,
+            // Use the window size as viewport, instead of puppeteer's default 800x600 (together with --screen-info, so they match).
+            defaultViewport: null,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
 
-                // These were added to run in WSL:
-                '--disable-gpu',
-                '--disable-dev-shm-usage',
-                '--no-first-run',
-                '--no-zygote',
-                // '--single-process', // Temporarily disabled as it was not working on Mac M1.
+                // Avoid an obvious automation fingerprint (e.g. navigator.webdriver = true, no WebGL, 800x600 screen).
+                // Don't use --disable-gpu as it disables WebGL. Instead, allow the software WebGL fallback on hosts without GPU.
+                '--disable-blink-features=AutomationControlled',
+                '--enable-unsafe-swiftshader',
+                '--window-size=1440,900',
+                '--screen-info={1440x900}',
 
-                config.browser.proxy ? '--proxy-server=' + config.browser.proxy : '',
+                // On Linux, avoid crashes when /dev/shm is small (e.g. in Docker), by using /tmp for shared memory instead.
+                '--disable-dev-shm-usage',
+
+                ...(config.browser.proxy ? ['--proxy-server=' + config.browser.proxy] : []),
             ],
         };
         this.currentBrowserKind = null;
         this.currentBrowser = null;
         this.currentBrowserPage = null;
+        this.userAgent = null;
     }
 
     fetchData(url, tryCount = 1) {
@@ -208,23 +214,36 @@ class Browser {
         // - Close the previous browser and open the new one in order to only have one open at a time.
         // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
         return this.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
+            return this.getUserAgent();
+        }).then(userAgent => {
             let launcher = browserKind === BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
             logger.info(`Opening a new browser for kind ${browserKind} ...`);
-            return launcher.launch(this.browserOptions);
+            let options = Object.assign({}, this.browserOptions, {args: [...this.browserOptions.args, `--user-agent=${userAgent}`]});
+            return launcher.launch(options);
         }).then(browser => {
             this.currentBrowser = browser;
             return this.currentBrowser.newPage();
         }).then(page => {
-            // Keep a single user agent per browser, consistent with the real Chrome running (a random one, or one that
-            // changes between requests on the same session, is a bot signal). The stealth browser already does this.
-            if (browserKind === BROWSER_KINDS.STEALTH) return page;
-            return this.currentBrowser.userAgent().then(userAgent => {
-                return page.setUserAgent(userAgent.replace("HeadlessChrome", "Chrome"));
-            }).then(() => page);
-        }).then(page => {
             this.currentBrowserKind = browserKind;
             this.currentBrowserPage = page;
             return this.currentBrowserPage;
+        });
+    }
+
+    /**
+     * Returns the user agent of the Chrome being used, without the "HeadlessChrome" marker. It is passed to Chrome as a
+     * launch flag (and not with page.setUserAgent, which wipes navigator.userAgentData), so that it stays consistent with
+     * the real browser. Retrieved once by launching a temporary browser, and cached.
+     * @returns {Promise<string>}
+     */
+    getUserAgent() {
+        if (this.userAgent) return Promise.resolve(this.userAgent);
+        return puppeteer.launch(this.browserOptions).then(browser => {
+            return browser.userAgent().finally(() => browser.close());
+        }).then(userAgent => {
+            this.userAgent = userAgent.replace("HeadlessChrome", "Chrome");
+            logger.info(`Using user agent: ${this.userAgent}`);
+            return this.userAgent;
         });
     }
 
