@@ -14,10 +14,6 @@ class RemaxBrowser extends SiteBrowser {
         super(URL_REGEX);
     }
 
-    useStealthBrowser() {
-        return true;
-    }
-
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 

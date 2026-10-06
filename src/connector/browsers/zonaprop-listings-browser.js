@@ -15,10 +15,6 @@ class ZonaPropListingsBrowser extends ListingsSiteBrowser {
         super(URL_REGEX);
     }
 
-    useStealthBrowser() {
-        return true;
-    }
-
     withJavascriptEnabled() {
         return false;
     }

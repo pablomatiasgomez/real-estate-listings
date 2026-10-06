@@ -14,10 +14,6 @@ class ZonaPropBrowser extends SiteBrowser {
         super(URL_REGEX);
     }
 
-    useStealthBrowser() {
-        return true;
-    }
-
     withJavascriptEnabled() {
         return false;
     }
