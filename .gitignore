@@ -5,7 +5,6 @@ logs/
 exports/
 .DS_Store
 .idea
-.nyc_output/
 
 config.json
 urls.txt
