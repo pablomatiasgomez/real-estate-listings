@@ -35,31 +35,7 @@ The currently supported websites are the following:
 
 ## Prerequisites
 
-Before you begin, you need to have chrome installed in your machine, if you don't have it, or you experience errors
-running `npm install` when installing puppeteer, try running the following to install a working Google Chrome version:
-
-```
-# Versions
-CHROME_DRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`
-
-# Remove existing downloads and binaries so we can start from scratch.
-sudo apt remove google-chrome-stable
-
-# Install dependencies.
-sudo apt update
-sudo apt install -y unzip openjdk-8-jre-headless xvfb libxi6 libgconf-2-4
-
-# Install Chrome.
-sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add
-echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-sudo apt -y update
-sudo apt -y install google-chrome-stable
-```
-
-You can also try installing chromium if using Ubuntu with WSL
-```
-sudo apt install chromium-browser
-```
+* Node.js 22.12 or newer (required by puppeteer).
 
 ## Installation
 
@@ -67,6 +43,20 @@ Run
 
 ```
 npm install
+```
+
+Puppeteer's `postinstall` script downloads the Chrome version it needs into `~/.cache/puppeteer`.
+If Chrome is still missing (e.g. it was installed with `--ignore-scripts`), install it manually:
+
+```
+npx puppeteer browsers install chrome
+```
+
+On a fresh Linux server, Chrome may also need some system libraries. Running the same command as root with
+`--install-deps` installs them as well:
+
+```
+npx puppeteer browsers install chrome --install-deps
 ```
 
 ## Usage
