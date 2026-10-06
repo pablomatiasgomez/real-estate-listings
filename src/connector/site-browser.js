@@ -27,10 +27,6 @@ class SiteBrowser {
         return this.browserName;
     }
 
-    useStealthBrowser() {
-        return false;
-    }
-
     withJavascriptEnabled() {
         return true;
     }
