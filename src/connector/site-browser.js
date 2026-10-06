@@ -1,5 +1,6 @@
 'use strict';
 
+const BotBlockedError = require('./bot-blocked-error.js');
 const Utils = require('../utils/utils.js');
 
 const logger = newLogger('SiteBrowser');
@@ -115,7 +116,35 @@ class SiteBrowser {
                 throw error;
             }
         }).then(Utils.delay(config.browser.timeBetweenPageFetchesMs)).then(() => {
+            // Checked after the delay so that interstitials that auto-solve and reload (e.g. AWS WAF silent challenge) are not reported.
+            return this.detectBotBlock(browserPage);
+        }).then(blockReason => {
+            if (blockReason) throw new BotBlockedError(blockReason, url);
             return this.addCommonFunctions(browserPage);
+        });
+    }
+
+    /**
+     * Detects whether the loaded page is an anti-bot interstitial (captcha / challenge / verification) instead of the real content.
+     * Markers are checked on the page source (not on executed JS state) so that it also works with javascript disabled.
+     * Covers generic anti-bot providers. Site browsers can override it to add site-specific checks.
+     * @param browserPage the puppeteer browser page
+     * @returns {Promise<string|null>} a short description of the block, or null if the page doesn't look blocked
+     */
+    detectBotBlock(browserPage) {
+        return browserPage.evaluate(() => {
+            let inlineScriptsInclude = str => [...document.scripts].some(script => script.textContent.includes(str));
+
+            // AWS WAF interstitial (used by argenprop): defines window.gokuProps. Note that regular pages may load the
+            // AWS WAF SDK (challenge.js) too, so that alone is not a block.
+            if (inlineScriptsInclude("window.gokuProps")) {
+                return document.querySelector("#captcha-container") ? "AWS WAF captcha" : "AWS WAF challenge";
+            }
+            // Cloudflare "Just a moment..." / managed challenge.
+            if (inlineScriptsInclude("window._cf_chl_opt")) {
+                return "Cloudflare challenge";
+            }
+            return null;
         });
     }
 

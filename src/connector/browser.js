@@ -4,8 +4,6 @@ const puppeteer = require('puppeteer');
 const puppeteerExtra = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
-const UserAgents = require('user-agents');
-
 const ZonaPropBrowser = require('./browsers/zonaprop-browser.js');
 const ZonaPropListingsBrowser = require('./browsers/zonaprop-listings-browser.js');
 const ArgenPropBrowser = require('./browsers/argenprop-browser.js');
@@ -38,6 +36,7 @@ const GrupoMegaListingsBrowser = require('./browsers/grupomega-listings-browser.
 const MudafyListingsBrowser = require("./browsers/mudafy-listings-browser");
 const MorselliBrowser = require("./browsers/morselli-browser");
 
+const BotBlockedError = require('./bot-blocked-error.js');
 const Utils = require('../utils/utils.js');
 
 const logger = newLogger('Browser');
@@ -92,7 +91,6 @@ class Browser {
 
     constructor() {
         puppeteerExtra.use(StealthPlugin());
-        this.userAgents = new UserAgents({deviceCategory: 'desktop'});
 
         this.browserOptions = {
             headless: !DEBUG,
@@ -132,9 +130,6 @@ class Browser {
                 let javascriptEnabled = siteBrowser.withJavascriptEnabled();
                 return page.setJavaScriptEnabled(javascriptEnabled);
             }).then(() => {
-                // Randomize user agent
-                return page.setUserAgent(this.userAgents.toString());
-            }).then(() => {
                 return siteBrowser.extractUrlData(page, url);
             }).then(data => {
                 logger.info(`Data fetched from url ${url} : `, JSON.stringify(data).length);
@@ -162,7 +157,11 @@ class Browser {
 
             // Allow to retry by closing the browser and opening again.
             if (!isRetryableError || tryCount >= MAX_RETRY_TIMES) {
-                logger.error(`Failed to fetch data for url ${url}, tried ${tryCount} times, isRetryableError: ${isRetryableError}, skipping...`, e);
+                if (e instanceof BotBlockedError) {
+                    logger.error(`Bot blocked fetching url ${url} (${e.blockReason}), tried ${tryCount} times, skipping...`);
+                } else {
+                    logger.error(`Failed to fetch data for url ${url}, tried ${tryCount} times, isRetryableError: ${isRetryableError}, skipping...`, e);
+                }
                 e.siteBrowserName = siteBrowser.name();
                 throw e;
             }
@@ -215,6 +214,13 @@ class Browser {
         }).then(browser => {
             this.currentBrowser = browser;
             return this.currentBrowser.newPage();
+        }).then(page => {
+            // Keep a single user agent per browser, consistent with the real Chrome running (a random one, or one that
+            // changes between requests on the same session, is a bot signal). The stealth browser already does this.
+            if (browserKind === BROWSER_KINDS.STEALTH) return page;
+            return this.currentBrowser.userAgent().then(userAgent => {
+                return page.setUserAgent(userAgent.replace("HeadlessChrome", "Chrome"));
+            }).then(() => page);
         }).then(page => {
             this.currentBrowserKind = browserKind;
             this.currentBrowserPage = page;

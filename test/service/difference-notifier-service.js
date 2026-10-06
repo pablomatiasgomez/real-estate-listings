@@ -9,6 +9,7 @@ const DifferenceNotifierService = require('../../src/service/difference-notifier
 const NotifierService = require('../../src/service/notifier-service.js');
 const FileDataRepository = require('../../src/repository/file-data-repository.js');
 const Browser = require('../../src/connector/browser.js');
+const BotBlockedError = require('../../src/connector/bot-blocked-error.js');
 
 // ---------
 
@@ -108,18 +109,21 @@ describe('exportData()', function () {
     };
 
     it('happy path with all cases', function () {
-        // We will process 4 urls: 1 difference, 1 with no difference, 1 error, 1 skipped.
+        // We will process 5 urls: 1 difference, 1 with no difference, 1 error, 1 skipped, 1 bot blocked.
         let urlWithDifference = `https://example.com/path-to-id-1`;
         let urlWithNoDifference = `https://example.com/path-to-id-2`;
         let urlWithError = `https://example.com/path-to-id-3`;
         let urlSkipped = `https://example.com/path-to-id-4`;
-        let urls = [urlWithDifference, urlWithNoDifference, urlWithError, urlSkipped];
+        let urlBlocked = `https://example.com/path-to-id-5`;
+        let urls = [urlWithDifference, urlWithNoDifference, urlWithError, urlSkipped, urlBlocked];
 
         let fetchError = Object.assign(new Error(`Error getting ${urlWithError}`), { siteBrowserName: "TestBrowser" });
+        let blockedError = Object.assign(new BotBlockedError("AWS WAF captcha", urlBlocked), { siteBrowserName: "TestBrowser" });
         let browserData = {
             [urlWithDifference]: Promise.resolve(dataForUrl(urlWithDifference)),
             [urlWithNoDifference]: Promise.resolve(dataForUrl(urlWithNoDifference)),
             [urlWithError]: Promise.reject(fetchError),
+            [urlBlocked]: Promise.reject(blockedError),
         };
         browser.fetchData.callsFake(url => browserData[url]);
 
@@ -143,11 +147,13 @@ describe('exportData()', function () {
                 ` {\n+  newField: "newValue"\n }\n`;
             sinon.assert.calledWith(notifierService.notify, expectedMessage);
 
-            expectedMessage = `Finished checking 4 urls in 0 minutes.\n` +
+            expectedMessage = `Finished checking 5 urls in 0 minutes.\n` +
                 `Differences: 1\n` +
                 `  TestBrowser: 1\n` +
                 `Skipped: 1\n` +
                 `  example.com: 1\n` +
+                `Blocked: 1\n` +
+                `  TestBrowser: 1\n` +
                 `Errors: 1\n` +
                 `  TestBrowser: 1`;
             sinon.assert.calledWith(notifierService.notify, expectedMessage);

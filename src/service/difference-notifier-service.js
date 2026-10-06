@@ -2,6 +2,8 @@
 
 const jsonDiff = require('json-diff');
 
+const BotBlockedError = require('../connector/bot-blocked-error.js');
+
 const logger = newLogger('DifferenceNotifierService');
 
 //----------------------
@@ -37,6 +39,7 @@ class DifferenceNotifierService {
         let skippedByDomain = {};
         let diffsByBrowser = {};
         let errorsByBrowser = {};
+        let blockedByBrowser = {};
         let promise = Promise.resolve();
         urls.forEach((url, i) => {
             promise = promise.then(() => {
@@ -60,9 +63,10 @@ class DifferenceNotifierService {
                     return this.fileDataRepository.createNewDataFile(response.id, response.data);
                 });
             }).catch(e => {
-                // Log error and continue
+                // Log error and continue. Bot blocks (captcha, challenge, etc.) are counted apart from other errors.
                 let browserName = e.siteBrowserName || "unknown";
-                errorsByBrowser[browserName] = (errorsByBrowser[browserName] || 0) + 1;
+                let countsByBrowser = e instanceof BotBlockedError ? blockedByBrowser : errorsByBrowser;
+                countsByBrowser[browserName] = (countsByBrowser[browserName] || 0) + 1;
                 logger.error(`Failed to export data for url: ${url} `, e);
             });
         });
@@ -71,6 +75,7 @@ class DifferenceNotifierService {
             let message = `Finished checking ${urls.length} urls in ${elapsedMinutes} minutes.\n` +
                 formatBreakdown("Differences", diffsByBrowser) + "\n" +
                 formatBreakdown("Skipped", skippedByDomain) + "\n" +
+                formatBreakdown("Blocked", blockedByBrowser) + "\n" +
                 formatBreakdown("Errors", errorsByBrowser);
             logger.info(message);
             return this.notifierService.notify(message);

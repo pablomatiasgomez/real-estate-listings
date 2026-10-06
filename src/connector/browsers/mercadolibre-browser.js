@@ -14,14 +14,19 @@ class MercadoLibreBrowser extends SiteBrowser {
         super(URL_REGEX);
     }
 
+    detectBotBlock(browserPage) {
+        return super.detectBotBlock(browserPage).then(blockReason => {
+            if (blockReason) return blockReason;
+            return browserPage.evaluate(() => {
+                return window.location.pathname.startsWith("/gz/account-verification") ? "MercadoLibre account verification" : null;
+            });
+        });
+    }
+
     extractData(browserPage) {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
-            if (window.location.pathname.startsWith("/gz/account-verification")) {
-                throw new Error("MercadoLibre bot-blocked: redirected to /gz/account-verification");
-            }
-
             let EXPORT_VERSION = "8";
 
             function findScript(strMatch) {
