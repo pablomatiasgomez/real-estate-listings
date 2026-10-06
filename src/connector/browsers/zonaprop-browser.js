@@ -27,7 +27,7 @@ class ZonaPropBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "7"
+                EXPORT_VERSION: "8"
             };
 
             // Grab and eval avisoInfo because JS is disabled.
@@ -69,7 +69,20 @@ class ZonaPropBrowser extends SiteBrowser {
             });
             delete response.pictures;
 
-            return response;
+            // Zonaprop alternates between sending null fields and omitting them, which causes noisy diffs.
+            let removeNulls = obj => {
+                if (Array.isArray(obj)) {
+                    obj.forEach(removeNulls);
+                } else if (obj && typeof obj === "object") {
+                    Object.keys(obj).forEach(key => {
+                        if (obj[key] === null || obj[key] === undefined) delete obj[key];
+                        else removeNulls(obj[key]);
+                    });
+                }
+                return obj;
+            };
+
+            return removeNulls(response);
         });
     }
 }
