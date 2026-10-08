@@ -86,6 +86,8 @@ const BROWSER_KINDS = {
     "STEALTH": "STEALTH",
 };
 const MAX_RETRY_TIMES = 3;
+// Chrome's memory keeps growing while the same browser is reused, so it's restarted after this many fetches.
+const MAX_FETCHES_PER_BROWSER = 20;
 
 class Browser {
 
@@ -117,6 +119,7 @@ class Browser {
         this.currentBrowserKind = null;
         this.currentBrowser = null;
         this.currentBrowserPage = null;
+        this.currentBrowserFetches = 0;
         this.userAgent = null;
     }
 
@@ -128,10 +131,16 @@ class Browser {
         }
 
         return Promise.resolve().then(() => {
+            if (this.currentBrowserFetches >= MAX_FETCHES_PER_BROWSER) {
+                logger.info(`Restarting browser after ${this.currentBrowserFetches} fetches...`);
+                return this.closeCurrentBrowser().then(Utils.delay(1000));
+            }
+        }).then(() => {
             let browserKind = siteBrowser.useStealthBrowser() ? BROWSER_KINDS.STEALTH : BROWSER_KINDS.NORMAL;
             logger.info(`Getting browser for url ${url} using ${siteBrowser.name()} with ${browserKind} browser, try ${tryCount}..`);
             return this.getBrowserPage(browserKind);
         }).then(page => {
+            this.currentBrowserFetches++;
             return Promise.resolve().then(() => {
                 let javascriptEnabled = siteBrowser.withJavascriptEnabled();
                 return page.setJavaScriptEnabled(javascriptEnabled);
@@ -263,6 +272,7 @@ class Browser {
             this.currentBrowserKind = null;
             this.currentBrowser = null;
             this.currentBrowserPage = null;
+            this.currentBrowserFetches = 0;
         });
     }
 }
