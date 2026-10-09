@@ -1,8 +1,6 @@
 'use strict';
 
 const puppeteer = require('puppeteer');
-const puppeteerExtra = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const ZonaPropBrowser = require('./browsers/zonaprop-browser.js');
 const ZonaPropListingsBrowser = require('./browsers/zonaprop-listings-browser.js');
@@ -81,10 +79,6 @@ const SITE_BROWSERS = [
     new MorselliBrowser(),
 ];
 
-const BROWSER_KINDS = {
-    "NORMAL": "NORMAL",
-    "STEALTH": "STEALTH",
-};
 const MAX_RETRY_TIMES = 3;
 // Chrome's memory keeps growing while the same browser is reused, so it's restarted after this many fetches.
 const MAX_FETCHES_PER_BROWSER = 20;
@@ -92,8 +86,6 @@ const MAX_FETCHES_PER_BROWSER = 20;
 class Browser {
 
     constructor() {
-        puppeteerExtra.use(StealthPlugin());
-
         this.browserOptions = {
             headless: !DEBUG,
             devtools: DEBUG,
@@ -116,7 +108,6 @@ class Browser {
                 ...(config.browser.proxy ? ['--proxy-server=' + config.browser.proxy] : []),
             ],
         };
-        this.currentBrowserKind = null;
         this.currentBrowser = null;
         this.currentBrowserPage = null;
         this.currentBrowserFetches = 0;
@@ -136,9 +127,8 @@ class Browser {
                 return this.closeCurrentBrowser().then(Utils.delay(1000));
             }
         }).then(() => {
-            let browserKind = siteBrowser.useStealthBrowser() ? BROWSER_KINDS.STEALTH : BROWSER_KINDS.NORMAL;
-            logger.info(`Getting browser for url ${url} using ${siteBrowser.name()} with ${browserKind} browser, try ${tryCount}..`);
-            return this.getBrowserPage(browserKind);
+            logger.info(`Getting browser for url ${url} using ${siteBrowser.name()}, try ${tryCount}..`);
+            return this.getBrowserPage();
         }).then(page => {
             this.currentBrowserFetches++;
             return Promise.resolve().then(() => {
@@ -213,27 +203,21 @@ class Browser {
         return siteBrowsers[0];
     }
 
-    getBrowserPage(browserKind) {
-        if (browserKind === this.currentBrowserKind) {
-            logger.info(`Reusing browser page for kind ${browserKind} ...`);
+    getBrowserPage() {
+        if (this.currentBrowserPage) {
+            logger.info(`Reusing browser page ...`);
             return Promise.resolve(this.currentBrowserPage);
         }
 
-        // There are 2 memory usage improvements being done here:
-        // - Close the previous browser and open the new one in order to only have one open at a time.
-        // - Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
-        return this.closeCurrentBrowser().then(Utils.delay(1000)).then(() => {
-            return this.getUserAgent();
-        }).then(userAgent => {
-            let launcher = browserKind === BROWSER_KINDS.NORMAL ? puppeteer : puppeteerExtra;
-            logger.info(`Opening a new browser for kind ${browserKind} ...`);
+        // Always reuse the browser page. They could eventually be closed and opened a new one, but it seems that chrome has a memory leak if that is done.
+        return this.getUserAgent().then(userAgent => {
+            logger.info(`Opening a new browser ...`);
             let options = Object.assign({}, this.browserOptions, {args: [...this.browserOptions.args, `--user-agent=${userAgent}`]});
-            return launcher.launch(options);
+            return puppeteer.launch(options);
         }).then(browser => {
             this.currentBrowser = browser;
             return this.currentBrowser.newPage();
         }).then(page => {
-            this.currentBrowserKind = browserKind;
             this.currentBrowserPage = page;
             return this.currentBrowserPage;
         });
@@ -262,14 +246,13 @@ class Browser {
     }
 
     closeCurrentBrowser() {
-        logger.info(`Closing current ${this.currentBrowserKind} browser...`);
+        logger.info(`Closing current browser...`);
 
         return Promise.resolve().then(() => {
             return this.currentBrowserPage && this.currentBrowserPage.close();
         }).then(() => {
             return this.currentBrowser && this.currentBrowser.close();
         }).then(() => {
-            this.currentBrowserKind = null;
             this.currentBrowser = null;
             this.currentBrowserPage = null;
             this.currentBrowserFetches = 0;
