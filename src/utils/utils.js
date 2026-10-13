@@ -89,6 +89,26 @@ class Utils {
 
         return Utils.createFile(filePath, html).then(() => filePath);
     }
+
+    /**
+     * Recursively deletes null and undefined fields. Useful for sites that send lots of null fields
+     * (or alternate between sending them and omitting them), which makes diffs noisy.
+     * @returns {*} the same object, mutated
+     */
+    static removeNulls(obj) {
+        if (Array.isArray(obj)) {
+            obj.forEach(Utils.removeNulls);
+        } else if (obj && typeof obj === "object") {
+            Object.keys(obj).forEach(key => {
+                if (obj[key] === null || obj[key] === undefined) {
+                    delete obj[key];
+                } else {
+                    Utils.removeNulls(obj[key]);
+                }
+            });
+        }
+        return obj;
+    }
 }
 
 

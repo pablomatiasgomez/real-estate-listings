@@ -1,6 +1,7 @@
 'use strict';
 
 const SiteBrowser = require('../site-browser.js');
+const Utils = require('../../utils/utils.js');
 
 const logger = newLogger('RemaxBrowser');
 
@@ -18,7 +19,7 @@ class RemaxBrowser extends SiteBrowser {
         logger.info(`Extracting data...`);
 
         return browserPage.evaluate(() => {
-            const EXPORT_VERSION = "4";
+            const EXPORT_VERSION = "5";
 
             let ngStateEl = document.querySelector("#ng-state");
             if (!ngStateEl) throw new Error("Remax: #ng-state not found - unexpected page.");
@@ -47,8 +48,14 @@ class RemaxBrowser extends SiteBrowser {
             delete response.geo.id;
             delete response.geo.rootCount;
 
+            // Only keep the photo paths, sorted by position. The rest of the fields are mostly noise in diffs.
+            response.photos = (response.photos || [])
+                .sort((a, b) => a.position - b.position)
+                .map(photo => photo.value);
+
             return response;
-        }).then(data => {
+        }).then(Utils.removeNulls) // Remax sends lots of null fields, which makes diffs very noisy.
+        .then(data => {
             // We have had some false positives for OFFLINE status, so dump the HTML to see what is going on.
             if (data && data.status === "OFFLINE") {
                 return this.captureDebugHtml(browserPage).then(filePath => {
