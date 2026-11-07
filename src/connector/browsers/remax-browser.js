@@ -54,17 +54,7 @@ class RemaxBrowser extends SiteBrowser {
                 .map(photo => photo.value);
 
             return response;
-        }).then(Utils.removeNulls) // Remax sends lots of null fields, which makes diffs very noisy.
-        .then(data => {
-            // We have had some false positives for OFFLINE status, so dump the HTML to see what is going on.
-            if (data && data.status === "OFFLINE") {
-                return this.captureDebugHtml(browserPage).then(filePath => {
-                    if (filePath) logger.warn(`Remax listing is OFFLINE. Saved debug HTML to ${filePath}`);
-                    return data;
-                });
-            }
-            return data;
-        });
+        }).then(Utils.removeNulls); // Remax sends lots of null fields, which makes diffs very noisy.
     }
 }
 
