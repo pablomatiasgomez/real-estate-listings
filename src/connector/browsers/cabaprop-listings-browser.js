@@ -6,7 +6,7 @@ const logger = newLogger('CabaPropListingsBrowser');
 
 //---------------
 
-const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\/(.+)\?.*$/;
+const URL_REGEX = /^https:\/\/cabaprop\.com\.ar\/propiedades\?(.+)$/;
 
 class CabaPropListingsBrowser extends ListingsSiteBrowser {
 
@@ -17,31 +17,38 @@ class CabaPropListingsBrowser extends ListingsSiteBrowser {
     extractListPage(browserPage) {
         logger.info(`Extracting list data for ${browserPage.url()}`);
 
-        return browserPage.evaluate(() => {
+        // The listings are fetched and rendered client side, wait until the loading placeholders are gone.
+        return browserPage.waitForFunction(() => {
+            return !document.querySelector("main .animate-pulse") &&
+                ![...document.querySelectorAll("main p")].some(p => p.innerText.includes("Buscando"));
+        }, {timeout: 60 * 1000}).then(() => browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "1"
+                EXPORT_VERSION: "2"
             };
 
-            [...document.querySelectorAll(".feat_property")].forEach(item => {
-                item = item.parentNode;
-                let url = item.querySelector(".gallery-slider  a").href;
+            let cleanText = text => text.replace(/\s+/g, " ").trim();
+
+            [...document.querySelectorAll("main article")].forEach(item => {
+                let titleLink = item.querySelector("h3").closest("a");
+                let url = titleLink.href.split("?")[0];
                 let id = url.split("/")[4];
 
-                let title = item.querySelector(".details .tc_content h4").innerText.trim();
-                let operation = item.querySelector(".img-thumb .tag2 li").innerText.trim();
-                let typeAndLocation = item.querySelector(".details .tc_content p").innerText.split("\n");
-                let type = typeAndLocation[0].trim();
-                let location = typeAndLocation[1].trim();
-
-                let price = [...item.querySelectorAll(".fp_footer .lc-price-normal, .fp_footer .lc-price-small")].map(i => i.innerText.trim());
-                let features = [...item.querySelectorAll(".details .prop_details li")].map(i => i.innerText.trim());
-                let date = item.querySelector(".fp_footer > li > span").innerText.trim();
+                let title = cleanText(item.querySelector("h3").innerText);
+                let location = cleanText(titleLink.nextElementSibling.innerText);
+                let operation = [...item.querySelectorAll(".top-3 span")].map(i => cleanText(i.innerText)).join(", ");
+                let price = cleanText(item.querySelector("p.text-2xl").innerText);
+                let date = [...item.querySelectorAll("p")]
+                    .map(p => cleanText(p.innerText))
+                    .find(text => text.startsWith("Publicado el"))
+                    ?.replace("Publicado el", "").trim();
+                let features = [...titleLink.nextElementSibling.nextElementSibling.querySelectorAll("span")]
+                    .map(i => cleanText(i.innerText))
+                    .filter(i => !!i);
 
                 response[id] = {
                     url: url,
                     title: title,
                     operation: operation,
-                    type: type,
                     location: location,
                     price: price,
                     features: features,
@@ -49,16 +56,21 @@ class CabaPropListingsBrowser extends ListingsSiteBrowser {
                 };
             });
 
-            let pagesSelector = document.querySelectorAll(".pagination li");
-            let pageCount = parseInt(pagesSelector[pagesSelector.length - 2].innerText.trim());
+            // Pagination only shows the first, last and pages around the current one, so we take the max.
+            let pageNumbers = [...document.querySelectorAll("main nav button")]
+                .map(button => parseInt(button.innerText.trim()))
+                .filter(pageNumber => !isNaN(pageNumber));
+            let pageCount = pageNumbers.length ? Math.max(...pageNumbers) : 1;
             response.pages = window.BrowserUtils.pageCountToPagesArray(pageCount);
 
             return response;
-        });
+        }));
     }
 
     getListPageUrl(listUrl, pageNumber) {
-        return listUrl.replace("pagina=1", "pagina=" + pageNumber);
+        let url = new URL(listUrl);
+        url.searchParams.set("page", pageNumber);
+        return url.toString();
     }
 }
 
