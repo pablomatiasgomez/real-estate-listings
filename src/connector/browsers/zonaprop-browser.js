@@ -24,7 +24,7 @@ class ZonaPropBrowser extends SiteBrowser {
 
         return browserPage.evaluate(() => {
             let response = {
-                EXPORT_VERSION: "8"
+                EXPORT_VERSION: "9"
             };
 
             // Grab and eval avisoInfo because JS is disabled.
@@ -48,6 +48,17 @@ class ZonaPropBrowser extends SiteBrowser {
             delete response.quintoAndarUrl;
             delete response.premier;
             delete response.publicationDateFormatted;
+
+            // publicationAreaId is just a number. The page maps it to a name (e.g. "superdestacado") in an inline
+            // script (`const publicationAreaIds = {...}`), so we grab that map.
+            // Only the object literal is evaluated, as the rest of that script depends on things like dataLayer.
+            let publicationAreaIds = eval("(" + [...document.scripts] // jshint ignore:line
+                .map(script => script.innerHTML)
+                .filter(script => script.indexOf("const publicationAreaIds = {") !== -1)
+                [0]
+                .match(/const publicationAreaIds = (\{[^}]*})/)[1] + ")");
+            let publicationAreaName = publicationAreaIds[response.publicationAreaId];
+            if (publicationAreaName) response.publicationAreaId = `${publicationAreaName} (${response.publicationAreaId})`;
 
             response.description = response.description.split(/(?:<br>|\. )+/).map(l => l.trim()).filter(l => !!l);
 
